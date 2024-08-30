@@ -1,7 +1,7 @@
 {
-  "name": "AI Reader",
-  "short_name": "AIReader",
-  "description": "AI-powered reader",
+  "name": "Wake The Dead",
+  "short_name": "WTD",
+  "description": "Breathe life into lifeless content! Transform any link into vibrant, handwritten-style notes with AI. Revive boring articles and dull videos into engaging, interactive learning experiences. Explore through chat, share knowledge instantly, and join a fun learning revolution. Paste a link, resurrect dead content, and dive into a world of lively, quick-witted exploration.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
