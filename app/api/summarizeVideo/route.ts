@@ -134,7 +134,7 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
         {
           role: "user",
           content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-          Use many relevant emojis ! Include:
+          Use many relevant emojis !! Include:
           - A super brief "what's this part about" line
           - A few key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets)
           - Maybe 1 question/thought or reaction
@@ -164,7 +164,7 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
         {
           role: "user",
           content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
-          Use many relevant emojis ! Include:
+          Use many relevant emojis !! Include:
           - A very brief "what's this part about" line
           - A few key points or interesting facts 
           - Maybe 1 question/thought or reaction
