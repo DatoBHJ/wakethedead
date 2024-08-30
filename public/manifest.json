@@ -1,0 +1,21 @@
+{
+  "name": "AI Reader",
+  "short_name": "AIReader",
+  "description": "AI-powered reader",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    }
+  ]
+}
