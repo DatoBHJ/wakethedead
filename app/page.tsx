@@ -317,14 +317,23 @@ export default function Page() {
         onCardsUpdate={handleCardsUpdate}
       />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex justify-between items-center p-4">
+        <header className="flex justify-start items-center p-4">
           <button 
             onClick={toggleSidebar}
             className="sidebar-toggle-button text-foreground/70 z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
           >
             <List size={24} />
           </button>
-          <div className="flex items-center space-x-4">
+          {/* <Button variant="outline" asChild> */}
+          <a
+            href="/"
+            className="text-foreground/70 font-semibold px-4"
+          >
+            WTD
+            {/* <IconGitHub /> */}
+          </a>
+          {/* </Button> */}
+          <div className="flex items-center space-x-4 ml-auto">
             <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
               <DialogTrigger asChild>
                 <button 

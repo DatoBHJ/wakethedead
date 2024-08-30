@@ -4,6 +4,7 @@ import { IconGitHub, IconTwitter } from '@/components/ui/icons';
 import EmailContactButton from '@/components/ui/EmailContactButton';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
+import { Button } from '@/components/ui/button';
 
 interface YouTubeCard {
   id: string;
@@ -104,7 +105,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
   return (
     <div 
       ref={ref}
-      className={`w-72 bg-background dark:bg-background shadow-lg transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} fixed left-0 top-0 h-full z-40 flex flex-col`}
+      className={`w-72 bg-background dark:bg-background shadow-lg transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} fixed left-0 top-0 h-full z-50 flex flex-col`}
     >
       <div className="h-16"></div> 
       <div className="flex-grow overflow-y-auto px-6 space-y-4 sm:space-y-6">
@@ -137,7 +138,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               type="text"
               value={newLink}
               onChange={(e) => setNewLink(e.target.value)}
-              placeholder="More links? Fuel the mind! 🧠🚀"
+              placeholder="More links? Feed me 🧠 !!!"
               className="flex-grow pb-2 pr-6 rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
             />
             <button 
@@ -149,6 +150,34 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
           </div>
         </form>
         <div className="flex justify-center space-x-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            asChild
+            className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+          >
+            <a
+              target="_blank"
+              href="https://github.com/DatoBHJ/wakethedead"
+              rel="noopener noreferrer"
+            >
+              <IconGitHub className="h-5 w-5" />
+            </a>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            asChild
+            className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+          >
+            <a
+              target="_blank"
+              href="https://x.com/DatoBHJ"
+              rel="noopener noreferrer"
+            >
+              <IconTwitter className="h-5 w-5" />
+            </a>
+          </Button>
           <EmailContactButton />
         </div>
       </div>

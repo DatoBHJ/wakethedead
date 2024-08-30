@@ -9,15 +9,15 @@ import { AI } from './action';
 import { Providers } from '@/components/providers';
 
 const meta = {
-  title: '',
-  description: '',
+  title: 'wake the dead with AI',
+  description: 'Breathe life into lifeless content! Transform any link into vibrant, handwritten-style notes with AI. Revive boring articles and dull videos into engaging, interactive learning experiences. Explore through chat, share knowledge instantly, and join a fun learning revolution. Paste a link, resurrect dead content, and dive into a world of lively, quick-witted exploration.',
 };
 
 export const metadata: Metadata = {
   ...meta,
   title: {
-    default: 'AI Reader',
-    template: `%s - AI Reader`,
+    default: 'wake the dead',
+    template: `%s - wake the dead`,
   },
   manifest: '/manifest.json', 
   icons: {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'AI Reader',
+    title: 'wake the dead',
   },
 };
 

@@ -39,7 +39,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   return (
-    <div className={`absolute bottom-0 left-0 right-0 backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isOpen ? 'h-full z-50' : 'h-1'} transition-all duration-100 overflow-hidden flex flex-col`}>
+    <div className={`absolute bottom-0 left-0 right-0 backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isOpen ? 'h-full z-30' : 'h-1'} transition-all duration-100 overflow-hidden flex flex-col`}>
       {isOpen && (
         <>
          <button 
