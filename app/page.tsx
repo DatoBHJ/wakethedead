@@ -460,9 +460,7 @@ export default function Page() {
       <UserSharedLinks 
         onAddLink={handleAddLink} 
         showUFO={showUFO}
-        setShowUFO={setShowUFO}
         mainContentRef={mainContentRef}
-
       />
           </div>
   );

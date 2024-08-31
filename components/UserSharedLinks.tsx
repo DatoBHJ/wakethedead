@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 
 const exampleLinks = [
-  { url: "https://youtu.be/oXbqFvAr0tw?si=Id4VyXSbl8F-VKt0", label: "Example YouTube Video 1" },
-  { url: "https://youtu.be/oFtjKbXKqbg?si=Z8RQHG6M7bV-kFZh", label: "Example YouTube Video 2" },
-  { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "DeepLearning.ai Article" },
+  { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA&t=3s", label: "Example Short YouTube Video" },
+  { url: "https://youtu.be/oFtjKbXKqbg?si=Z8RQHG6M7bV-kFZh", label: "Example Long YouTube Video" },
+  { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "Example Article" },
 ];
 
-const UserSharedLinks = ({ onAddLink, showUFO, setShowUFO, mainContentRef }) => {
+const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState(null);
   const dragControls = useDragControls();
@@ -69,7 +69,7 @@ const UserSharedLinks = ({ onAddLink, showUFO, setShowUFO, mainContentRef }) => 
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-2xl z-40"
+            className="fixed inset-0 backdrop-blur-3xl z-50"
             onClick={() => setIsOpen(false)}
           />
           <motion.div
@@ -80,16 +80,16 @@ const UserSharedLinks = ({ onAddLink, showUFO, setShowUFO, mainContentRef }) => 
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className="bg-white/50 dark:bg-white/[2%] rounded-lg shadow-lg p-6 w-80"
+              className="bg-white/2 dark:bg-white/[2%] rounded-lg shadow-lg p-6 w-80"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-lg font-semibold mb-4 text-black dark:text-white">Shared Links</h2>
+              <h2 className="text-lg font-semibold mb-4 text-center sm:text-left text-black dark:text-white">Shared Links</h2>
               <div className="space-y-2">
                 {exampleLinks.map((link, index) => (
                   <a
                     key={index}
                     href="#"
-                    className="block p-2 rounded text-sm text-black dark:text-white hover:bg-black/[5%] dark:hover:bg-white/[5%] transition-colors duration-150"
+                    className="block p-2 rounded text-sm text-center sm:text-left text-black dark:text-white hover:bg-black/[5%] dark:hover:bg-white/[5%] transition-colors duration-150"
                     onClick={(e) => {
                       e.preventDefault();
                       handleLinkClick(link.url);
