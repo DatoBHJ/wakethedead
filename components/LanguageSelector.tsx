@@ -14,8 +14,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguage, s
   const preferredLanguage = navigator.language || 'en';
 
   const languages = {
-    'en': 'English',
-    [preferredLanguage]: new Intl.DisplayNames([preferredLanguage], { type: 'language' }).of(preferredLanguage)
+    'en': 'American English',
+    [preferredLanguage]: `${new Intl.DisplayNames([preferredLanguage], { type: 'language' }).of(preferredLanguage)} (Preferred Language)`
   };
 
   useEffect(() => {
