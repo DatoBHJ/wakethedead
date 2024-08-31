@@ -138,7 +138,8 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               type="text"
               value={newLink}
               onChange={(e) => setNewLink(e.target.value)}
-              placeholder="More links? Feed me 🧠 !!!"
+              placeholder="More links? Paste them here!
+              "
               className="flex-grow pb-2 pr-6 rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
             />
             <button 

@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import ModelSelector from '@/components/ModelSelector';
 import LanguageSelector from '@/components/LanguageSelector';
 import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
+import UserSharedLinks from '@/components/UserSharedLinks';
 
 interface UserDataResult {
   title: string;
@@ -91,6 +92,8 @@ export default function Page() {
   const [showLinkInput, setShowLinkInput] = useState(true);
   const [currentLink, setCurrentLink] = useState<string | null>(null);
   const [cards, setCards] = useState<YouTubeCard[]>([]);
+  const [showUFO, setShowUFO] = useState(false);
+  const mainContentRef = useRef(null);
 
   // Ref declarations
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -304,6 +307,16 @@ export default function Page() {
     });
   }, []);
 
+  useEffect(() => {
+    // Show UFO after 5 seconds
+    const timer = setTimeout(() => {
+      setShowUFO(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
   return (
     <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
       <LeftSidebar 
@@ -375,22 +388,24 @@ export default function Page() {
             </button>
           </div>
         </header>
-        <main className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}>          
-          {showLinkInput ? (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full max-w-xl px-5 flex flex-col items-center"
-            >
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="w-full aspect-video mb-3 rounded-lg overflow-hidden"
-              >
-                <ThemeBasedVideo />
-              </motion.div>
+        <main 
+          ref={mainContentRef}
+          className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
+        >           {showLinkInput ? (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-xl px-5 flex flex-col items-center"
+        >
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
+          >
+            <ThemeBasedVideo />
+          </motion.div>
               <div className="w-full flex flex-col items-start">
                 <motion.form 
                   onSubmit={handleLinksSubmit} 
@@ -442,6 +457,13 @@ export default function Page() {
           </p>
         </div> */}
       </div>
-    </div>
+      <UserSharedLinks 
+        onAddLink={handleAddLink} 
+        showUFO={showUFO}
+        setShowUFO={setShowUFO}
+        mainContentRef={mainContentRef}
+
+      />
+          </div>
   );
 }
