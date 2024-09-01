@@ -306,15 +306,19 @@ export default function Page() {
       return prevLinks;
     });
   }, []);
-
   useEffect(() => {
-    // Show UFO after 5 seconds
-    const timer = setTimeout(() => {
-      setShowUFO(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
+    // UFO를 표시할지 결정하는 로직
+    if (youtubeLinks.length === 0) {
+      // 유튜브 링크가 없을 때만 UFO를 표시
+      const timer = setTimeout(() => {
+        setShowUFO(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      // 유튜브 링크가 있으면 UFO를 숨김
+      setShowUFO(false);
+    }
+  }, [youtubeLinks]);
 
 
   return (
@@ -373,10 +377,10 @@ export default function Page() {
                     selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
                   />
-                  <LanguageSelector
+                  {/* <LanguageSelector
                     selectedLanguage={selectedLanguage}
                     setSelectedLanguage={setSelectedLanguage}
-                  />
+                  /> */}
                 </div>
               </DialogContent>
             </Dialog>
