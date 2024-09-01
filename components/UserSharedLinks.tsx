@@ -3,9 +3,9 @@ import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { ArrowRight } from "@phosphor-icons/react";
 
 const exampleLinks = [
-  { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", title: "Album Review: Charli XCX's BRAT", duration: "14 mins", category: "Short Video" },
-  { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", title: "Deep Dive: AI & Digital Nomad Life", duration: "3h 43m", category: "Long Video" },
-  { url: "https://www.deeplearning.ai/the-batch/issue-264/", title: "Read: LLM Token Prices Decline", category: "Article" },
+  { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review: Charli XCX's BRAT", duration: "14 mins", category: "Short YouTube Video" },
+  { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", label: "🎙️ Deep Dive: AI & Digital Nomad Life", duration: "3h 43m", category: "Long YouTube Video" },
+  { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "📊 Read: LLM Token Prices Decline", duration: "14 min read", category: "Article" },
 ];
 
 const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
@@ -55,14 +55,14 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
         }}
         initial={position}
         animate={position}
-        className="fixed z-0"
+        className="fixed z-50"
         style={{ touchAction: 'none' }}
       >
         <button
           onPointerDown={(e) => dragControls.start(e)}
           onClick={() => setIsOpen(!isOpen)}
-          className="text-4xl sm:text-5xl hover:scale-110 transition-transform duration-200 cursor-move"
-          aria-label="Show shared links"
+          className="text-4xl sm:text-5xl hover:scale-110 transition-transform duration-200 cursor-move "
+          aria-label="Activate interstellar communication portal"
         >
           🛸
         </button>
@@ -81,52 +81,44 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className="text-black dark:text-white p-6 w-full max-w-4xl mx-auto"
+              className="text-black dark:text-white p-6 max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-2xl font-bold mb-4 text-center font-handwriting sm:text-3xl">🔗 Community Picks</h2>
-              <p className="text-center mb-6 text-sm font-handwriting sm:text-base">Discover what others are exploring!</p>
-              <div className="text-center mb-6">
-                <p className="text-xs italic">
-                  Our platform supports various <span className="text-purple-600 dark:text-purple-400 font-semibold">content types</span>.
-                </p>
-                <p className="text-xs italic mt-1">
-                  Here are some examples:
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <p className="text-center mb-6 text-sm font-handwriting sm:text-base">
+                Our platform supports various <span className="text-purple-600 dark:text-purple-400 font-semibold">content types</span>.
+                Here are some examples:
+              </p>
+              <div className="space-y-4">
                 {exampleLinks.map((link, index) => (
                   <div
                     key={index}
-                    className="font-handwriting bg-background dark:bg-backgroundsecond rounded-lg shadow-2xl shadow-black/10 p-4 transition-all hover:shadow-lg"
+                    className="font-handwriting flex items-center justify-between py-2 px-4 text-sm sm:text-base"
                   >
                     <a
                       href="#"
-                      className="block"
+                      className="flex-grow pr-4"
                       onClick={(e) => {
                         e.preventDefault();
                         handleLinkClick(link.url);
                       }}
                     >
-                      <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold mb-2 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
-                        {link.category}
+                      <span className="text-purple-600 dark:text-purple-400">{link.category}</span>
+                      <span className="text-gray-500 ml-2">({link.duration})</span>
+                      <span className="text-xs block font-medium mt-1">
+                        {link.label}
                       </span>
-                      <h3 className="font-medium text-lg mb-2">{link.title}</h3>
-                      <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
-                        {link.duration && <span title="Estimated time to consume this content">{link.duration}</span>}
-                      </div>
                     </a>
-                    <button 
-                      className="mt-4 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 flex items-center"
+                    <ArrowRight 
+                      size={20} 
+                      className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 flex-shrink-0"
                       onClick={() => handleLinkClick(link.url)}
-                    >
-                      Beam me up ⚡️<ArrowRight size={16} className="ml-1" />
-                    </button>
+                    />
                   </div>
                 ))}
               </div>
-              <p className="mt-6 text-sm text-center italic">
-                👆 Explore these examples of supported <span className="text-purple-600 dark:text-purple-400 font-semibold">content types</span> or add your own link on the home page!
+              <p className="mt-4 text-sm text-center italic sm:text-base">
+                👆 Explore these examples or add your own link on the home page!
               </p>
             </motion.div>
           </motion.div>
