@@ -7,6 +7,12 @@ import './globals.css';
 
 import { AI } from './action';
 import { Providers } from '@/components/providers';
+import dynamic from 'next/dynamic';
+
+const AddToHomeScreenPrompt = dynamic(
+  () => import('@/components/AddToHomeScreenPrompt').then(mod => mod.AddToHomeScreenPrompt),
+  { ssr: false }
+);
 
 const meta = {
   title: 'Wake The Dead with AI',
@@ -82,6 +88,7 @@ export default function RootLayout({
                 {children}
               </main>
             </div>
+            <AddToHomeScreenPrompt />
           </Providers>
         </AI>
         <Analytics />
