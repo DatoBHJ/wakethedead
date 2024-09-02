@@ -55,7 +55,7 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
         }}
         initial={position}
         animate={position}
-        className="fixed z-50"
+        className="fixed z-0"
         style={{ touchAction: 'none' }}
       >
         <button
