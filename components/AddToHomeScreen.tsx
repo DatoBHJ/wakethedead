@@ -31,7 +31,12 @@ const AddToHomeScreen: React.FC = () => {
     }
   };
 
-  if (!showPrompt) return null;
+  // 개발 모드에서 프롬프트를 강제로 표시하는 함수
+  const forceShowPrompt = () => {
+    setShowPrompt(true);
+  };
+
+  if (!showPrompt && process.env.NODE_ENV !== 'development') return null;
 
   return (
     <div className="fixed bottom-4 left-4 right-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg z-50">
@@ -42,6 +47,15 @@ const AddToHomeScreen: React.FC = () => {
       >
         Add to Home Screen
       </button>
+      
+      {process.env.NODE_ENV === 'development' && !showPrompt && (
+        <button
+          onClick={forceShowPrompt}
+          className="ml-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        >
+          Test Prompt
+        </button>
+      )}
     </div>
   );
 };
