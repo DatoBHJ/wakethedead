@@ -4,7 +4,7 @@ import { GeistSans } from 'geist/font/sans';
 import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
-import AddToHomeScreen from '@/components/AddToHomeScreen';
+import AddToHomeScreen from '../components/AddToHomeScreen';
 import { AI } from './action';
 import { Providers } from '@/components/providers';
 
