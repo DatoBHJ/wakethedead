@@ -4,7 +4,6 @@ import { GeistSans } from 'geist/font/sans';
 import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
-import dynamic from 'next/dynamic';
 
 import { AI } from './action';
 import { Providers } from '@/components/providers';
@@ -13,7 +12,6 @@ const meta = {
   title: 'Wake The Dead with AI',
   description: 'Breathe life into lifeless content! Transform any link into vibrant, handwritten-style notes with AI. Revive boring articles and dull videos into engaging, interactive learning experiences. Explore through chat, share knowledge instantly, and join a fun learning revolution. Paste a link, resurrect dead content, and dive into a world of lively, quick-witted exploration.',
 };
-const AddToHomeScreen = dynamic(() => import('@/components/AddToHomeScreen'), { ssr: false });
 
 export const metadata: Metadata = {
   ...meta,
@@ -84,7 +82,6 @@ export default function RootLayout({
                 {children}
               </main>
             </div>
-            <AddToHomeScreen />
           </Providers>
         </AI>
         <Analytics />
