@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 const AddToHomeScreen: React.FC = () => {
-  // 개발 중 테스트를 위해 초기값을 true로 설정
   const [showPrompt, setShowPrompt] = useState(true);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
