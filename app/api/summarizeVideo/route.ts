@@ -129,7 +129,7 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
       messages: [
         {
           role: "system",
-          content: "You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions. Imagine you're scribbling these notes while watching."
+          content: "You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions."
         },
         {
           role: "user",

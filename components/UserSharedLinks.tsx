@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { ArrowRight } from "@phosphor-icons/react";
+import { url } from 'inspector';
 
 const exampleLinks = [
-  { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "📊 Read - LLM Token Prices Decline", duration: "14 min read", category: "Article" },
-  { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review - Charli XCX's BRAT", duration: "14 mins", category: "Short YouTube Video" },
+  { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14 min read", category: "Article" },
+  {url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "📱 Marques is checking out the world's largest fake iPhone lol", duration: "55s", category: "Short YouTube Video"},
+  { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review - Charli XCX's BRAT", duration: "14 mins", category: "Medium YouTube Video" },
+  // { url: "https://www.youtube.com/watch?v=9-Jl0dxWQs8", label: "📚 3Blue1Brown - How LLMs store facts | Deep Learning", duration: "22m 42s", category: "Medium YouTube Video" },
   { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", label: "🎙️ Lex Fridman Podcast - Pieter Levels: AI & Digital Nomad Life", duration: "3h 43m", category: "Long YouTube Video" },
 ];
 

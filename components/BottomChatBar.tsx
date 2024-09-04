@@ -33,7 +33,6 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   setInputValue,
   handleFormSubmit,
   onAddLink,
-
 }) => {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -42,7 +41,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
     <div className={`absolute bottom-0 left-0 right-0 backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isOpen ? 'h-full z-30' : 'h-1'} transition-all duration-100 overflow-hidden flex flex-col`}>
       {isOpen && (
         <>
-         <button 
+          <button 
             onClick={() => setIsOpen(!isOpen)} 
             className="w-full h-14 bg-transparent flex items-center justify-center"
           >
@@ -58,7 +57,6 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   index={index}
                   isolatedView={false}
                   onAddLink={onAddLink}
-
                 />
                 {message.followUp && (
                   <FollowUpComponent
@@ -72,16 +70,21 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
           <div className="absolute bottom-0 left-0 right-0 px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2">
             <div className="mx-auto max-w-xl">
               {messages.length === 0 && !inputValue && (
-                <InitialQueries
-                questions={[
-                "When did Ye drop Ye? 🎵",
-                "How's NVIDIA stock doing? 📈",
-                "Explain black holes like I'm 5 🕳️",
-                "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
-                "What's hot in the US election? 🗳️",
-                ]}
-                handleFollowUpClick={handleFollowUpClick}
-                />
+                <>
+                  <div className="text-center mb-20 sm:mb-44 sm:text-sm text-xs text-gray-500 dark:text-gray-400">
+                    💬 Chat • 🔗 Click Links • 📚 Learn More • 🔄 Repeat
+                  </div>
+                  <InitialQueries
+                    questions={[               
+                      "But what is a GPT? 🤖",
+                      "When did Ye drop Ye? 🎵",
+                      "How's NVIDIA stock doing? 📈",
+                      "Explain black holes like I'm 5 🕳️",
+                      "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
+                    ]}
+                    handleFollowUpClick={handleFollowUpClick}
+                  />
+                </>
               )}
               <form ref={formRef} onSubmit={handleFormSubmit}>
                 <div className="relative px-3 py-4 pt-5">

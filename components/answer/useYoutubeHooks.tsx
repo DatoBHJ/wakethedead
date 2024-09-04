@@ -19,6 +19,8 @@ export const useArticleGenerator = (
       return;
     }
 
+    setError(null);
+
     requestedArticles.current.add(videoId);
     setStreamingContent(prev => ({ ...prev, [videoId]: '' }));
     setIsGenerating(prev => ({ ...prev, [videoId]: true }));
