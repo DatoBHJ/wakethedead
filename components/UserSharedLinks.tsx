@@ -84,10 +84,10 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
               className="text-black dark:text-white p-6 max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-2xl font-bold mb-4 text-center font-handwriting sm:text-3xl">🔗 Community Picks</h2>
-              <p className="text-center mb-6 text-sm font-handwriting sm:text-base">
-                Our platform supports various <span className="text-purple-600 dark:text-purple-400 font-semibold">content types</span>.<br />
-                Here are some examples:
+              <h2 className="text-2xl font-bold mb-4 text-center font-handwriting sm:text-3xl">👽</h2>
+              <p className="text-center mb-4 text-sm font-handwriting sm:text-base">
+                Boring Earth hyperlinks? We've got you covered. <br />
+                We support various <span className="text-purple-600 dark:text-purple-400 font-semibold">content types</span> 📡✨🌌:
               </p>
               <div className="space-y-4">
                 {exampleLinks.map((link, index) => (
@@ -118,8 +118,9 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
                 ))}
               </div>
               <p className="mt-4 text-sm text-center italic sm:text-base">
-                👆 Explore these examples or add your own link on the home page!
-              </p>
+              👆 Dig these examples or transmit your own link on the home portal
+              and let us cook! 🍳🛸
+             </p>
             </motion.div>
           </motion.div>
         </>

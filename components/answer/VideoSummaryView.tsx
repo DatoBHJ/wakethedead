@@ -38,21 +38,22 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
 
   const renderWithClickableTimestamps = (children: ReactNode): ReactNode => {
     if (typeof children === 'string') {
-      const parts = children.split(/(\[\d{2}:\d{2}(:\d{2})?\])/);
+      const regex = /\[(\d{2}:\d{2}:\d{2})\]|\[(\d{2}:\d{2})\]/g;
+      const parts = children.split(regex);
       return parts.map((part, index) => {
-        if (part && typeof part === 'string' && part.match(/^\[\d{2}:\d{2}(:\d{2})?\]$/)) {
-          const seconds = parseTimestamp(part.slice(1, -1));
+        if (part && (part.match(/^\d{2}:\d{2}:\d{2}$/) || part.match(/^\d{2}:\d{2}$/))) {
+          const seconds = parseTimestamp(part);
           return (
             <span
               key={index}
               className="text-blue-500 cursor-pointer"
               onClick={() => onTimestampClick && onTimestampClick(seconds)}
             >
-              {part}
+              [{part}]
             </span>
           );
         }
-        return part || '';
+        return part;
       });
     } else if (Array.isArray(children)) {
       return children.map((child, index) => 
