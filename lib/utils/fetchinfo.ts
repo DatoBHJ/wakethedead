@@ -55,16 +55,22 @@ export async function fetchVideoInfo(videoId: string) {
     return { title, content, publishedTime };
   }
   
-  async function fallbackScraping(url: string): Promise<{ title: string; content: string; publishedTime: string }> {
-    const response = await fetch(url);
-    const html = await response.text();
-    return extractMetadata(html);
-  }
-  
   export async function fetchLinkInfo(link: string): Promise<{ title: string; content: string; publishedTime: string }> {
     try {
+      // First, attempt standard scraping
+      console.log('Attempting standard scraping method');
+      const scrapingResult = await fallbackScraping(link);
+      
+      // If scraping is successful, return the result
+      if (scrapingResult.title && scrapingResult.content) {
+        return scrapingResult;
+      }
+  
+      // If scraping fails or returns incomplete data, try Jina
+      console.log('Standard scraping failed or incomplete, attempting Jina.ai');
+      
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5초 타임아웃
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
   
       const jinaResponse = await Promise.race([
         fetch(`https://r.jina.ai/${link}`, {
@@ -74,7 +80,7 @@ export async function fetchVideoInfo(videoId: string) {
           },
           signal: controller.signal
         }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Jina.ai timeout')), 5000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Jina.ai timeout')), 10000))
       ]);
   
       clearTimeout(timeoutId);
@@ -90,11 +96,22 @@ export async function fetchVideoInfo(videoId: string) {
         }
       }
   
-      console.log('Falling back to standard scraping method');
-      return await fallbackScraping(link);
+      // If both methods fail, return the result from standard scraping
+      console.log('Both scraping methods failed, returning best available data');
+      return scrapingResult;
+  
     } catch (error) {
       console.error('Error fetching link info:', error);
-      console.log('Falling back to standard scraping method due to error');
+      // If an error occurs, attempt standard scraping as a last resort
+      console.log('Error occurred, falling back to standard scraping method');
       return await fallbackScraping(link);
     }
   }
+  
+  // The fallbackScraping and extractMetadata functions remain unchanged
+  async function fallbackScraping(url: string): Promise<{ title: string; content: string; publishedTime: string }> {
+    const response = await fetch(url);
+    const html = await response.text();
+    return extractMetadata(html);
+  }
+  

@@ -9,7 +9,6 @@ import FollowUpComponent from '@/components/answer/FollowUpComponent';
 import InitialQueries from '@/components/answer/InitialQueries';
 import { motion } from 'framer-motion';
 
-
 interface BottomChatBarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -20,7 +19,6 @@ interface BottomChatBarProps {
   setInputValue: (value: string) => void;
   handleFormSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onAddLink: (link: string) => void;
-
 }
 
 const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -47,7 +45,14 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
           >
             <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
           </button>
-          <div className="flex-1 overflow-y-auto px-4 sm:px-60 pb-32">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-40 pb-32 flex flex-col">
+            {messages.length === 0 && !inputValue && (
+              <div className="flex-grow flex items-center justify-center mb-72">
+                <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                  💬 Ask • 🔗 Click Links • 📚 Learn • 🔄 Repeat
+                </div>
+              </div>
+            )}
             {messages.map((message, index) => (
               <div key={index}>
                 <UserMessageComponent message={message.userMessage} />
@@ -70,21 +75,16 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
           <div className="absolute bottom-0 left-0 right-0 px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2">
             <div className="mx-auto max-w-xl">
               {messages.length === 0 && !inputValue && (
-                <>
-                  <div className="text-center mb-20 sm:mb-44 sm:text-sm text-xs text-gray-500 dark:text-gray-400">
-                    💬 Chat • 🔗 Click Links • 📚 Learn More • 🔄 Repeat
-                  </div>
-                  <InitialQueries
-                    questions={[               
-                      "But what is a GPT? 🤖",
-                      "When did Ye drop Ye? 🎵",
-                      "How's NVIDIA stock doing? 📈",
-                      "Explain black holes like I'm 5 🕳️",
-                      "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
-                    ]}
-                    handleFollowUpClick={handleFollowUpClick}
-                  />
-                </>
+                <InitialQueries
+                  questions={[               
+                    "But what is a GPT? 🤖",
+                    "When did Ye drop Ye? 🎵",
+                    "How's NVIDIA stock doing? 📈",
+                    "Explain black holes like I'm 5 🕳️",
+                    "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
+                  ]}
+                  handleFollowUpClick={handleFollowUpClick}
+                />
               )}
               <form ref={formRef} onSubmit={handleFormSubmit}>
                 <div className="relative px-3 py-4 pt-5">
@@ -119,7 +119,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                 </div>
               </form>
             </div>
-          </div>ㅇ
+          </div>
         </>
       )}
     </div>

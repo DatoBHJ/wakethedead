@@ -103,7 +103,7 @@ const relevantQuestions = async (allResults: any[], userMessage: string, selecte
 
 // 5. Fetch contents of top 10 search results
 export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
-  async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 800): Promise<Response> {
+  async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 1000): Promise<Response> {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -129,7 +129,7 @@ export async function get10BlueLinksContents(sources: SearchResult[]): Promise<C
   }
   const promises = sources.map(async (source): Promise<ContentResult | null> => {
     try {
-      const response = await fetchWithTimeout(source.link, {}, 800);
+      const response = await fetchWithTimeout(source.link, {}, 1000);
       if (!response.ok) {
         throw new Error(`Failed to fetch ${source.link}. Status: ${response.status}`);
       }
@@ -137,7 +137,7 @@ export async function get10BlueLinksContents(sources: SearchResult[]): Promise<C
       const mainContent = extractMainContent(html);
       return { ...source, html: mainContent };
     } catch (error) {
-      // console.error(`Error processing ${source.link}:`, error);
+      console.error(`Error processing ${source.link}:`, error);
       return null;
     }
   });
@@ -156,8 +156,8 @@ async function processAndVectorizeContent(
   textChunkSize = config.textChunkSize,
   textChunkOverlap = config.textChunkOverlap,
   numberOfSimilarityResults = config.numberOfSimilarityResults,
-  similarityThreshold = 0.7 // Add a similarity threshold
-): Promise<DocumentInterface[]> {
+  similarityThreshold = 0.7
+): Promise<{ title: string; pageContent: string; link: string }[]> {
   const allResults: [DocumentInterface, number][] = [];
   try {
     for (let i = 0; i < contents.length; i++) {
@@ -174,17 +174,20 @@ async function processAndVectorizeContent(
         }
       }
     }
-    // Sort results by score (descending) and filter based on the similarity threshold
+    // Sort results by score (descending), filter based on the similarity threshold, and return only title, pageContent, and link
     return allResults
       .sort((a, b) => b[1] - a[1])
       .filter(([_, score]) => score >= similarityThreshold)
-      .map(([doc, _]) => doc);
+      .map(([doc, _]) => ({
+        title: doc.metadata.title as string,
+        pageContent: doc.pageContent,
+        link: doc.metadata.link as string
+      }));
   } catch (error) {
     console.error('Error processing and vectorizing content:', error);
     throw error;
   }
 }
-
 
 // 6. Main action function that orchestrates the entire process
 async function myAction(
@@ -216,20 +219,26 @@ async function myAction(
           // score: result.score
       }));
 
+      console.log('Relevant documents:', relevantDocuments, '\n');
+
     // New DuckDuckGo search using the Route Handler
     const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(latestUserMessage)}`);
     const searchResults = await searchResponse.json();
 
-    console.log('Search results:', searchResults.results.slice(0, 5), '\n');
+    // console.log('Search results:', searchResults.results.slice(0, 5), '\n');
     // Process web search results
     const webSearchResults = searchResults.results.slice(0, 4).map(result => ({
       title: result.title,
-      pageContent: result.description,
-      url: result.url
+      snippet: result.description,
+      link: result.url
       }));
-  
+    console.log('Web search results:', webSearchResults, '\n');
+
   const blueLinksContents = await get10BlueLinksContents(webSearchResults);
+  console.log('Blue links contents:', blueLinksContents, '\n');
+
   const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
+  console.log('Processed web results:', processedWebResults, '\n');
 
   // Combine relevant documents from both sources
   const combinedRelevantDocuments = [...webSearchResults, ...relevantDocuments, ...processedWebResults];

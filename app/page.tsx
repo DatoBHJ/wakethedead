@@ -423,8 +423,11 @@ export default function Page() {
                       type="text"
                       value={inputLinks}
                       onChange={(e) => setInputLinks(e.target.value)}
-                      placeholder="Link goes here, thoughts incoming... 💭⚡️"
-                      className="w-full rounded-none pb-2 pr-8 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
+                      placeholder="Beam up your article or video link ... 💭⚡"
+                      // placeholder="Link goes here, thoughts incoming... 💭⚡️"                      
+                      // placeholder="Article or YouTube link goes here ... 💭⚡️"                      
+                      // placeholder="Transmit article or video link ... 💭⚡️"                      
+                      className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
                     />
                     <motion.button 
                       type="submit" 
