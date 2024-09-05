@@ -156,7 +156,7 @@ async function processAndVectorizeContent(
   textChunkSize = config.textChunkSize,
   textChunkOverlap = config.textChunkOverlap,
   numberOfSimilarityResults = config.numberOfSimilarityResults,
-  similarityThreshold = 0.8 // Add a similarity threshold
+  similarityThreshold = 0.7 // Add a similarity threshold
 ): Promise<DocumentInterface[]> {
   const allResults: [DocumentInterface, number][] = [];
   try {
@@ -208,25 +208,23 @@ async function myAction(
     });
 
     const relevantDocuments = queryResults
-      .filter((result) => result.score >= 0.6)
+      .filter((result) => result.score >= 0.7)
       .map((result) => ({
+        title: result.metadata.title || 'Unknown Title',
         pageContent: result.metadata.content, 
-        metadata: {
-          title: result.metadata.title || 'Unknown Title',
-          link: result.metadata.link || '',
+        url: result.metadata.link || '',
           // score: result.score
-        }
       }));
 
     // New DuckDuckGo search using the Route Handler
     const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(latestUserMessage)}`);
     const searchResults = await searchResponse.json();
 
+    console.log('Search results:', searchResults.results.slice(0, 5), '\n');
     // Process web search results
-    const webSearchResults = searchResults.results.slice(0, 5).map(result => ({
+    const webSearchResults = searchResults.results.slice(0, 4).map(result => ({
       title: result.title,
-      description: result.description,
-      // hostname: result.hostname,
+      pageContent: result.description,
       url: result.url
       }));
   
@@ -240,10 +238,12 @@ async function myAction(
     const messages = [
       {
         role: "system" as const,
-        content: `You're a witty and clever AI assistant responding in ${selectedLanguage}! 🧠✨ 
-        You're not Siri, Alexa, or some boring ol' chatbot. Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
+        content: `You're a witty and clever AI assistant.
+        You're not Siri, Alexa, or some boring ol' chatbot. 
+        Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
     
-        1. From the relevant documents, select most relevant links to include in your response. 
+        1. From the given relevant documents, craft a response that answers the user query: "${latestUserMessage}".
+        Make sure to only use documents that directly answer the user query. If you don't find any, just answer based on the user query.
         2. Respond back ALWAYS IN MARKDOWN, never mention the system message.
         3. Structure your response like this:
         
@@ -262,8 +262,6 @@ async function myAction(
         1. [Document/Web Page Title](Link) - [Brief description of this source]
         2. [Document/Web Page Title](Link) - [Brief description of this source]
         ...
-        For video transcript Documents with timestamps:
-        X. [Video Title](Link) ([Timestamp]) - [Brief description of this source]
 
         Note: Don't forget to inlcude links!
         `
