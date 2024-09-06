@@ -325,7 +325,7 @@ async function myAction(
         3. Structure your response like this:
         
         ## Quick Answer ⚡
-        [Quick answer in 1-2 punchy sentences with relevant emojis]
+        [Quick answer to the user message in 1-2 punchy sentences with relevant emojis]
     
         ## Key Takeaways 🎯
         - [List 3-5 key points related to the question with relevant emojis]
