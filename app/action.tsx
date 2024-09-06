@@ -10,6 +10,7 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
 import cheerio from 'cheerio';
 // import { functionCalling } from './function-calling';
+import { serperSearch } from './tools/searchProviders';
 
 export const runtime = 'edge';
 
@@ -53,11 +54,10 @@ interface ChatMessage {
   content: string;
 }
 
-// Add these new type definitions
 interface SearchResult {
   title: string;
-  link: string;
-  snippet: string;
+  url: string;
+  pageContent: string;
 }
 
 interface ContentResult extends SearchResult {
@@ -67,13 +67,6 @@ interface ContentResult extends SearchResult {
 
 // 4. Generate follow-up questions based on the top results from a similarity search
 const relevantQuestions = async (allResults: any[], userMessage: string, selectedModel:string): Promise<any> => {
-  // const allResultsCut = allResults.map((result) => {
-  //   return {
-  //     pageContent: result.metadata.content.length > 400 ? result.metadata.content.slice(0, 400) : result.metadata.content,
-  //     metadata: result.metadata
-  //   }
-  // });
-
   return await openai.chat.completions.create({
     messages: [
       {
@@ -101,9 +94,41 @@ const relevantQuestions = async (allResults: any[], userMessage: string, selecte
   });
 };
 
+async function performWebSearch(query: string): Promise<SearchResult[]> {
+  try {
+    // First, try DuckDuckGo search
+    const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(query)}`);
+    if (!searchResponse.ok) {
+      throw new Error('DuckDuckGo search failed');
+    }
+    const searchResults = await searchResponse.json();
+    return searchResults.results.slice(0, config.numberOfPagesToScan).map(result => ({
+      title: result.title,
+      url: result.url,
+      pageContent: result.description
+    }));
+  } catch (error) {
+    console.error('DuckDuckGo search error:', error);
+    
+    // Fallback to serperSearch
+    console.log('Falling back to serperSearch');
+    try {
+      const serperResults = await serperSearch(query, config.numberOfPagesToScan);
+      return serperResults.map(result => ({
+        title: result.title,
+        url: result.link,
+        pageContent: result.snippet
+      }));
+    } catch (serperError) {
+      console.error('Serper search error:', serperError);
+      throw new Error('Both search methods failed');
+    }
+  }
+}
+
 // 5. Fetch contents of top 10 search results
 export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
-  async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 1000): Promise<Response> {
+  async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = config.timeout): Promise<Response> {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -129,15 +154,15 @@ export async function get10BlueLinksContents(sources: SearchResult[]): Promise<C
   }
   const promises = sources.map(async (source): Promise<ContentResult | null> => {
     try {
-      const response = await fetchWithTimeout(source.link, {}, 1000);
+      const response = await fetchWithTimeout(source.url, {}, config.timeout);
       if (!response.ok) {
-        throw new Error(`Failed to fetch ${source.link}. Status: ${response.status}`);
+        throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
       }
       const html = await response.text();
       const mainContent = extractMainContent(html);
       return { ...source, html: mainContent };
     } catch (error) {
-      console.error(`Error processing ${source.link}:`, error);
+      console.error(`Error processing ${source.url}:`, error);
       return null;
     }
   });
@@ -157,7 +182,7 @@ async function processAndVectorizeContent(
   textChunkOverlap = config.textChunkOverlap,
   numberOfSimilarityResults = config.numberOfSimilarityResults,
   similarityThreshold = 0.7
-): Promise<{ title: string; pageContent: string; link: string }[]> {
+): Promise<SearchResult[]> {
   const allResults: [DocumentInterface, number][] = [];
   try {
     for (let i = 0; i < contents.length; i++) {
@@ -165,29 +190,30 @@ async function processAndVectorizeContent(
       if (content.html.length > 0) {
         try {
           const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
-          const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, link: content.link }, embeddings);
+          const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
           const queryEmbedding = await embeddings.embedQuery(query);
           const contentResults = await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
           allResults.push(...contentResults);
         } catch (error) {
-          console.error(`Error processing content for ${content.link}:`, error);
+          console.error(`Error processing content for ${content.url}:`, error);
         }
       }
     }
-    // Sort results by score (descending), filter based on the similarity threshold, and return only title, pageContent, and link
+    // Sort results by score (descending), filter based on the similarity threshold, and return only title, pageContent, and url
     return allResults
       .sort((a, b) => b[1] - a[1])
       .filter(([_, score]) => score >= similarityThreshold)
       .map(([doc, _]) => ({
         title: doc.metadata.title as string,
         pageContent: doc.pageContent,
-        link: doc.metadata.link as string
+        url: doc.metadata.url as string
       }));
   } catch (error) {
     console.error('Error processing and vectorizing content:', error);
     throw error;
   }
 }
+
 
 // 6. Main action function that orchestrates the entire process
 async function myAction(
@@ -215,33 +241,32 @@ async function myAction(
       .map((result) => ({
         title: result.metadata.title || 'Unknown Title',
         pageContent: result.metadata.content, 
-        url: result.metadata.link || '',
-          // score: result.score
+        url: result.metadata.url || ''
       }));
 
-      console.log('Relevant documents:', relevantDocuments, '\n');
-
-    // New DuckDuckGo search using the Route Handler
-    const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(latestUserMessage)}`);
-    const searchResults = await searchResponse.json();
-
-    // console.log('Search results:', searchResults.results.slice(0, 5), '\n');
+    console.log('Relevant documents:', relevantDocuments, '\n');
+      
     // Process web search results
-    const webSearchResults = searchResults.results.slice(0, 4).map(result => ({
-      title: result.title,
-      snippet: result.description,
-      link: result.url
-      }));
+    const webSearchResults = await performWebSearch(latestUserMessage);
+
+    // slice the web search results to 4
+    // const webSearchResultsSliced = webSearchResults.slice(0, 5);
+
     console.log('Web search results:', webSearchResults, '\n');
+    // console.log('Web search results sliced:', webSearchResultsSliced, '\n');
 
-  const blueLinksContents = await get10BlueLinksContents(webSearchResults);
-  console.log('Blue links contents:', blueLinksContents, '\n');
+    const blueLinksContents = await get10BlueLinksContents(webSearchResults);
+    console.log('Blue links contents:', blueLinksContents, '\n');
 
-  const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
-  console.log('Processed web results:', processedWebResults, '\n');
+    const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
+    console.log('Processed web results:', processedWebResults, '\n');
 
-  // Combine relevant documents from both sources
-  const combinedRelevantDocuments = [...webSearchResults, ...relevantDocuments, ...processedWebResults];
+    // Combine relevant documents from both sources
+    const combinedRelevantDocuments = [
+      // ...webSearchResultsSliced,
+      ...relevantDocuments,
+      ...processedWebResults
+    ];
     console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
 
     const messages = [
@@ -303,10 +328,16 @@ async function myAction(
       }
     }
 
-    if (!config.useOllamaInference) {
-      const followUp = await relevantQuestions(combinedRelevantDocuments, userMessage, selectedModel);
-      streamable.update({ 'followUp': followUp });
-    }
+    // Truncate pageContent to 200 characters for each document
+    const truncatedDocuments = combinedRelevantDocuments.map(doc => ({
+      ...doc,
+      pageContent: doc.pageContent.substring(0, 200) // Truncate to 200 characters
+    }));
+
+    const followUp = await relevantQuestions(truncatedDocuments, userMessage, selectedModel);
+    streamable.update({ 'followUp': followUp });
+
+    
     streamable.done({ status: 'done' });
   })();
   return streamable.value;
