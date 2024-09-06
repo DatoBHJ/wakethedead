@@ -11,5 +11,7 @@ export const config = {
     numberOfPagesToScan: 5,
     timeout: 800,
     similarityThreshold: 0.6,
+    numberOfVideosToScan: 6,
+    numberOfImagesToScan: 6,
 }
 

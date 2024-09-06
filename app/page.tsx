@@ -45,6 +45,13 @@ interface SearchResult {
   pageContent: string;
 }
 
+interface Image {
+  link: string;
+}
+interface Video {
+  link: string;
+  imageUrl: string;
+}
 
 interface Message {
   logo: string | undefined;
@@ -54,16 +61,16 @@ interface Message {
   userMessage: string;
   followUp: FollowUp | null;
   isStreaming: boolean;
-  userDataResults? : UserDataResult[];
   status?: string;
   isolatedView: boolean;
   combinedRelevantDocuments?: RelevantLink[];
   SearchResult?: SearchResult[];
+  images?: Image[];
+  videos?: Video[];
 }
 
 interface StreamMessage {
   isolatedView: any;
-  userDataResults?: any;
   userMessage?: string;
   llmResponse?: string;
   llmResponseEnd?: boolean;
@@ -71,6 +78,8 @@ interface StreamMessage {
   status?: string;
   combinedRelevantDocuments?: RelevantLink[];
   SearchResult?: SearchResult[];
+  images?: Image[];
+  videos?: Video[];
 }
 
 interface FollowUp {
@@ -190,7 +199,6 @@ export default function Page() {
       content: '',
       followUp: null,
       isStreaming: true,
-      userDataResults: [] as UserDataResult[],
       status: '',
     };
 
@@ -228,10 +236,11 @@ export default function Page() {
             }
 
             currentMessage.isStreaming = typedMessage.llmResponseEnd ? false : currentMessage.isStreaming;
-            currentMessage.userDataResults = typedMessage.userDataResults || currentMessage.userDataResults;
             currentMessage.followUp = typedMessage.followUp || currentMessage.followUp;
             currentMessage.combinedRelevantDocuments = typedMessage.combinedRelevantDocuments || currentMessage.combinedRelevantDocuments;
             currentMessage.SearchResult = typedMessage.SearchResult || currentMessage.SearchResult;
+            currentMessage.images = typedMessage.images || currentMessage.images;
+            currentMessage.videos = typedMessage.videos || currentMessage.videos;
           }
           return messagesCopy;
         });

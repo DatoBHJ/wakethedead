@@ -10,7 +10,7 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
 import cheerio from 'cheerio';
 // import { functionCalling } from './function-calling';
-import { performWebSearch, getImages, getVideos } from './tools/Providers';
+import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 export const runtime = 'edge';
 
@@ -239,19 +239,19 @@ async function myAction(
     const latestUserMessage = chatHistory[chatHistory.length - 1].content;
 
     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
-      getImages(userMessage),
-      performWebSearch(userMessage),
-      getVideos(userMessage),
+      performImageSearch(userMessage, config.numberOfImagesToScan),
+      performWebSearch(userMessage, config.numberOfPagesToScan),
+      performVideoSearch(userMessage, config.numberOfVideosToScan),
       getUserSharedDocument(latestUserMessage, embeddings, index)
     ]);
     streamable.update({ 'searchResults': webSearchResults });
     streamable.update({ 'images': images });
     streamable.update({ 'videos': videos });
 
-    console.log('Relevant documents:', relevantDocuments, '\n');
-    console.log('Web search results:', webSearchResults, '\n');
+    // console.log('Relevant documents:', relevantDocuments, '\n');
+    // console.log('Web search results:', webSearchResults, '\n');
     console.log('Images:', images, '\n');
-    console.log('Videos:', videos, '\n');
+    // console.log('Videos:', videos, '\n');
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
     const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
@@ -278,7 +278,7 @@ async function myAction(
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 10);
 
-    console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
+    // console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
 
     const messages = [
       {

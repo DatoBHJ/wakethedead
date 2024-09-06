@@ -311,6 +311,75 @@ function IconSparkles({ className, ...props }: React.ComponentProps<'svg'>) {
     </svg>
   );
 }
+function IconPlay({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('h-4 w-4', className)}
+      {...props}
+    >
+      <path d="M240 128a15.74 15.74 0 0 1-7.6 13.51L88.32 229.65a16 16 0 0 1-16.2.3A15.86 15.86 0 0 1 64 216.13V39.87a15.86 15.86 0 0 1 8.12-13.82 16 16 0 0 1 16.2.3l144.08 88.14A15.74 15.74 0 0 1 240 128Z" />
+    </svg>
+  );
+}
+
+function IconClock({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('h-4 w-4', className)}
+      {...props}
+    >
+      <path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88Zm64-88a8 8 0 0 1-8 8h-56a8 8 0 0 1-8-8V72a8 8 0 0 1 16 0v48h48a8 8 0 0 1 8 8Z" />
+    </svg>
+  );
+}
+
+function IconExpand({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('h-4 w-4', className)}
+      {...props}
+    >
+      <path d="M224 56v48a8 8 0 0 1-16 0V75.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L196.69 64H168a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8ZM122.34 130.34 56 196.69V168a8 8 0 0 0-16 0v48a8 8 0 0 0 8 8h48a8 8 0 0 0 0-16H67.31l66.35-66.34a8 8 0 0 0-11.32-11.32Z" />
+    </svg>
+  );
+}
+
+function IconShrink({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={cn('h-4 w-4', className)}
+      {...props}
+    >
+      <path d="M224 56v48a8 8 0 0 1-16 0v-32h-32a8 8 0 0 1 0-16h40a8 8 0 0 1 8 8ZM80 192H48v-32a8 8 0 0 0-16 0v40a8 8 0 0 0 8 8h40a8 8 0 0 0 0-16Zm128-40a8 8 0 0 0-8 8v32h-32a8 8 0 0 0 0 16h40a8 8 0 0 0 8-8v-40a8 8 0 0 0-8-8ZM72 64H32a8 8 0 0 0-8 8v40a8 8 0 0 0 16 0V80h32a8 8 0 0 0 0-16Z" />
+    </svg>
+  );
+}
+
+function IconPhoto({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 256"
+      fill="currentColor"
+      className={className}
+      {...props}
+    >
+      <path d="M208 32H48a16 16 0 0 0-16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16Zm0 176H48V48h160v160ZM144 120a16 16 0 1 1 16-16 16 16 0 0 1-16 16Zm-51.49 35.08l-26.19 26.18a8 8 0 0 1-11.32-11.32l40-40a8 8 0 0 1 11.24-.08l40.39 39.58 38.75-38.75a8 8 0 0 1 11.24-.08l38.46 37.71a8 8 0 0 1-11.16 11.44l-32.79-32.14-38.75 38.75a8 8 0 0 1-11.24.08Z"/>
+    </svg>
+  );
+}
 
 export {
   IconAI,
@@ -333,4 +402,9 @@ export {
   IconExternalLink,
   IconChevronUpDown,
   IconSparkles,
+  IconPlay, 
+  IconClock,
+  IconExpand,
+  IconShrink,
+  IconPhoto
 };

@@ -9,6 +9,8 @@ import FollowUpComponent from '@/components/answer/FollowUpComponent';
 import InitialQueries from '@/components/answer/InitialQueries';
 import { motion } from 'framer-motion';
 import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
+import VideosComponent from '@/components/answer/VideosComponent';
+import ImagesComponent from '@/components/answer/ImagesComponent';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -57,6 +59,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             {messages.map((message, index) => (
               <div key={index}>
                 <UserMessageComponent message={message.userMessage} />
+
                 <LLMResponseComponent
                   llmResponse={message.content}
                   currentLlmResponse={currentLlmResponse}
@@ -76,6 +79,13 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     handleFollowUpClick={handleFollowUpClick}
                   />
                 )}
+                {message.videos && (
+                  <VideosComponent videos={message.videos} />
+                )}
+                {message.images && (
+                  <ImagesComponent images={message.images} />
+                )}
+                
               </div>
             ))}
           </div>
