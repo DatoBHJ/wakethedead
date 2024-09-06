@@ -4,11 +4,12 @@ export const config = {
     inferenceAPIKey: process.env.GROQ_API_KEY, 
     embeddingsModel: 'text-embedding-3-small',
     textChunkSize: 800, 
-    textChunkOverlap: 160, 
-    numberOfSimilarityResults: 5, 
+    textChunkOverlap: 200, 
+    numberOfSimilarityResults: 4, 
     nonOllamaBaseURL: 'https://api.groq.com/openai/v1', 
     useSemanticCache: true, 
-    numberOfPagesToScan: 10,
+    numberOfPagesToScan: 5,
     timeout: 800,
+    similarityThreshold: 0.6,
 }
 

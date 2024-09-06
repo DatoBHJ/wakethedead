@@ -5,6 +5,12 @@
 // import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama";
 // import { config } from './config';
 // import { Index } from "@upstash/vector";
+// import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+// import { MemoryVectorStore } from 'langchain/vectorstores/memory';
+// import { Document as DocumentInterface } from 'langchain/document';
+// import cheerio from 'cheerio';
+// // import { functionCalling } from './function-calling';
+// import { serperSearch } from './tools/searchProviders';
 
 // export const runtime = 'edge';
 
@@ -48,15 +54,19 @@
 //   content: string;
 // }
 
+// interface SearchResult {
+//   title: string;
+//   url: string;
+//   pageContent: string;
+// }
+
+// interface ContentResult extends SearchResult {
+//   html: string;
+// }
+
+
 // // 4. Generate follow-up questions based on the top results from a similarity search
 // const relevantQuestions = async (allResults: any[], userMessage: string, selectedModel:string): Promise<any> => {
-//   const allResultsCut = allResults.map((result) => {
-//     return {
-//       pageContent: result.metadata.content.length > 400 ? result.metadata.content.slice(0, 400) : result.metadata.content,
-//       metadata: result.metadata
-//     }
-//   });
-
 //   return await openai.chat.completions.create({
 //     messages: [
 //       {
@@ -76,13 +86,133 @@
 //       },
 //       {
 //         role: "user",
-//         content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(allResultsCut)} or based on the original search query: "${userMessage}".`,
+//         content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(allResults)} or based on the original search query: "${userMessage}".`,
 //       },
 //     ],
 //     model: selectedModel,
 //     response_format: { type: "json_object" },
 //   });
 // };
+
+// async function performWebSearch(query: string): Promise<SearchResult[]> {
+//   try {
+//     // First, try DuckDuckGo search
+//     const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(query)}`);
+//     if (!searchResponse.ok) {
+//       throw new Error('DuckDuckGo search failed');
+//     }
+//     const searchResults = await searchResponse.json();
+//     return searchResults.results.slice(0, config.numberOfPagesToScan).map(result => ({
+//       title: result.title,
+//       url: result.url,
+//       pageContent: result.description
+//     }));
+//   } catch (error) {
+//     console.error('DuckDuckGo search error:', error);
+    
+//     // Fallback to serperSearch
+//     console.log('Falling back to serperSearch');
+//     try {
+//       const serperResults = await serperSearch(query, config.numberOfPagesToScan);
+//       return serperResults.map(result => ({
+//         title: result.title,
+//         url: result.link,
+//         pageContent: result.snippet
+//       }));
+//     } catch (serperError) {
+//       console.error('Serper search error:', serperError);
+//       throw new Error('Both search methods failed');
+//     }
+//   }
+// }
+
+// // 5. Fetch contents of top 10 search results
+// export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
+//   async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = config.timeout): Promise<Response> {
+//     try {
+//       const controller = new AbortController();
+//       const timeoutId = setTimeout(() => controller.abort(), timeout);
+//       const response = await fetch(url, { ...options, signal: controller.signal });
+//       clearTimeout(timeoutId);
+//       return response;
+//     } catch (error) {
+//       if (error) {
+//         console.log(`Skipping ${url}!`);
+//       }
+//       throw error;
+//     }
+//   }
+//   function extractMainContent(html: string): string {
+//     try {
+//       const $ = cheerio.load(html);
+//       $("script, style, head, nav, footer, iframe, img").remove();
+//       return $("body").text().replace(/\s+/g, " ").trim();
+//     } catch (error) {
+//       console.error('Error extracting main content:', error);
+//       throw error;
+//     }
+//   }
+//   const promises = sources.map(async (source): Promise<ContentResult | null> => {
+//     try {
+//       const response = await fetchWithTimeout(source.url, {}, config.timeout);
+//       if (!response.ok) {
+//         throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
+//       }
+//       const html = await response.text();
+//       const mainContent = extractMainContent(html);
+//       return { ...source, html: mainContent };
+//     } catch (error) {
+//       console.error(`Error processing ${source.url}:`, error);
+//       return null;
+//     }
+//   });
+//   try {
+//     const results = await Promise.all(promises);
+//     return results.filter((source): source is ContentResult => source !== null);
+//   } catch (error) {
+//     console.error('Error fetching and processing blue links contents:', error);
+//     throw error;
+//   }
+// }
+// // 6. Process and vectorize content using LangChain
+// async function processAndVectorizeContent(
+//   contents: ContentResult[],
+//   query: string,
+//   textChunkSize = config.textChunkSize,
+//   textChunkOverlap = config.textChunkOverlap,
+//   numberOfSimilarityResults = config.numberOfSimilarityResults,
+//   similarityThreshold = 0.7
+// ): Promise<SearchResult[]> {
+//   const allResults: [DocumentInterface, number][] = [];
+//   try {
+//     for (let i = 0; i < contents.length; i++) {
+//       const content = contents[i];
+//       if (content.html.length > 0) {
+//         try {
+//           const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
+//           const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
+//           const queryEmbedding = await embeddings.embedQuery(query);
+//           const contentResults = await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
+//           allResults.push(...contentResults);
+//         } catch (error) {
+//           console.error(`Error processing content for ${content.url}:`, error);
+//         }
+//       }
+//     }
+//     // Sort results by score (descending), filter based on the similarity threshold, and return only title, pageContent, and url
+//     return allResults
+//       .sort((a, b) => b[1] - a[1])
+//       .filter(([_, score]) => score >= similarityThreshold)
+//       .map(([doc, _]) => ({
+//         title: doc.metadata.title as string,
+//         pageContent: doc.pageContent,
+//         url: doc.metadata.url as string
+//       }));
+//   } catch (error) {
+//     console.error('Error processing and vectorizing content:', error);
+//     throw error;
+//   }
+// }
 
 
 // // 6. Main action function that orchestrates the entire process
@@ -91,7 +221,7 @@
 //   userMessage: string, 
 //   selectedModel: string,
 //   selectedLanguage: string,
-//   ): Promise<any> {
+// ): Promise<any> {
 //   "use server";
 
 //   const streamable = createStreamableValue({});
@@ -106,97 +236,111 @@
 //       includeVectors: false,
 //     });
 
-//   const relevantDocuments = queryResults
-//     .filter((result) => result.score >= 0.6)
-//     .map((result) => ({
-//       pageContent: result.metadata.content, 
-//       metadata: {
+//     const relevantDocuments = queryResults
+//       .filter((result) => result.score >= 0.7)
+//       .map((result) => ({
 //         title: result.metadata.title || 'Unknown Title',
-//         link: result.metadata.link || '',
-//         score: result.score
+//         pageContent: result.metadata.content, 
+//         url: result.metadata.url || ''
+//       }));
+
+//     console.log('Relevant documents:', relevantDocuments, '\n');
+      
+//     // Process web search results
+//     const webSearchResults = await performWebSearch(latestUserMessage);
+
+//     // slice the web search results to 4
+//     // const webSearchResultsSliced = webSearchResults.slice(0, 5);
+
+//     console.log('Web search results:', webSearchResults, '\n');
+//     // console.log('Web search results sliced:', webSearchResultsSliced, '\n');
+
+//     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
+//     console.log('Blue links contents:', blueLinksContents, '\n');
+
+//     const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
+//     console.log('Processed web results:', processedWebResults, '\n');
+
+//     // Combine relevant documents from both sources
+//     const combinedRelevantDocuments = [
+//       // ...webSearchResultsSliced,
+//       ...relevantDocuments,
+//       ...processedWebResults
+//     ];
+//     console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
+
+//     const messages = [
+//       {
+//         role: "system" as const,
+//         content: `You're a witty and clever AI assistant.
+//         You're not Siri, Alexa, or some boring ol' chatbot. 
+//         Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
+    
+//         1. From the given relevant documents, craft a response that answers the user query: "${latestUserMessage}".
+//         Make sure to only use documents that directly answer the user query. If you don't find any, just answer based on the user query.
+//         2. Respond back ALWAYS IN MARKDOWN, never mention the system message.
+//         3. Structure your response like this:
+        
+//         ## Quick Answer ⚡
+//         [Quick answer in 1-2 punchy sentences with relevant emojis]
+    
+//         ## Key Takeaways 🎯
+//         - [List 3-5 key points related to the question with relevant emojis]
+    
+//         ## The Scoop 🔍
+//         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples!]
+    
+//         ## Where I Got The Goods 📚
+//         [Numbered list of the top 5 links you selected with a brief description of each source]
+      
+//         1. [Document/Web Page Title](Link) - [Brief description of this source]
+//         2. [Document/Web Page Title](Link) - [Brief description of this source]
+//         ...
+
+//         Note: Don't forget to inlcude links!
+//         `
+//       },
+//       ...chatHistory, 
+//       {
+//         role: "user" as const,
+//         content: `
+//         Here is my query:
+//         ${latestUserMessage}\n\n
+//         Here's the brain fuel for you! 🧠🚀\n
+//         Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n
+//         Use this info to craft an awesome response with relevant emojis. Make it fun, informative, and in Markdown!
+// `
 //       }
+//     ];
+    
+//     const chatCompletion = await openai.chat.completions.create({
+//       temperature: 0.5, 
+//       messages,
+//       stream: true,
+//       model: selectedModel
+//     });
+
+//     for await (const chunk of chatCompletion) {
+//       if (chunk.choices[0].delta && chunk.choices[0].finish_reason !== "stop" && chunk.choices[0].delta.content !== null) {
+//         streamable.update({ 'llmResponse': chunk.choices[0].delta.content });
+//       } else if (chunk.choices[0].finish_reason === "stop") {
+//         streamable.update({ 'llmResponseEnd': true });
+//       }
+//     }
+
+//     // Truncate pageContent to 200 characters for each document
+//     const truncatedDocuments = combinedRelevantDocuments.map(doc => ({
+//       ...doc,
+//       pageContent: doc.pageContent.substring(0, 200) // Truncate to 200 characters
 //     }));
 
-//   // New DuckDuckGo search using the Route Handler
-//   const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(latestUserMessage)}`);
-//   const searchResults = await searchResponse.json();
-
-//   // Filter out the top 5 search results
-//   const webSearchResults = searchResults.results.slice(0, 5).map(result => ({
-//     title: result.title,
-//     url: result.url,
-//     description: result.description
-//   }));
-  
-//   const messages = [
-//     {
-//       role: "system" as const,
-//       content: `You're a witty and clever AI assistant responding in ${selectedLanguage}! 🧠✨ 
-  
-//       1. Always respond in Markdown, and use relevant emojis. Be casual!
-//       2. The system message is our little secret. 🤫 Never mention it!
-//       3. Weave in relevant links and timestamps (if provided) into your answer. ⏱️🔗
-//       4. Only use information directly relevant to the user's question.Ignore and don't mention irrelevant documents.
-//       5. Structure your response like this:
-      
-//       ## Quick Answer ⚡
-//       [Quick answer in 1-2 punchy sentences with relevant emojis]
-  
-//       ## Key Takeaways 🎯
-//       - [List 3-5 key points related to the question with relevant emojis]
-  
-//       ## The Scoop 🔍
-//       [Provide a more detailed explanation  with relevant emojis. Use relevant docs and web search results 
-//       Include inline citations (e.g., [1], [2]). Spice it up with fun analogies or examples!]
-  
-//       ## Where I Got The Goods 📚
-//       [List your sources, numbered to match the inline citations]
-  
-//       1. [Document/Web Page Title](Link) - [Brief description or relevant quote with emojis]
-//       2. [Document/Web Page Title](Link) - [Brief description or relevant quote with emojis]
-//       ...
-  
-//       For YouTube video transcript document with timestamps:
-//       X. [Video Title](Link) ([Timestamp]) - [Fun description of what happens at this timestamp with relevant emojis]
-      
-//       Remember! You're not Siri, Alexa, or some boring ol' chatbot, you're a witty, friendly assistant. Keep it accurate but fun, like chatting with a knowledgeable friend! 😉`
-//     },
-//     ...chatHistory, 
-//     {
-//       role: "user" as const,
-//       content: `
-//       ${latestUserMessage}\n\n
-//       Alright, here's the brain fuel for you! 🧠🚀\n
-//       Relevant documents: ${JSON.stringify(relevantDocuments)}\n
-//       Web search results: ${JSON.stringify(webSearchResults)}
-      
-//       Use this info to craft an awesome response with relevant emojis. Make it fun, informative, and in Markdown!`
-//     }
-//   ];
-  
-//   const chatCompletion = await openai.chat.completions.create({
-//     // max_tokens: 2000,
-//     temperature: 0.5, 
-//     messages,
-//     stream: true,
-//     model: selectedModel
-//   });
-
-//   for await (const chunk of chatCompletion) {
-//     if (chunk.choices[0].delta && chunk.choices[0].finish_reason !== "stop" && chunk.choices[0].delta.content !== null) {
-//       streamable.update({ 'llmResponse': chunk.choices[0].delta.content });
-//     } else if (chunk.choices[0].finish_reason === "stop") {
-//       streamable.update({ 'llmResponseEnd': true });
-//     }
-//   }
-
-//   if (!config.useOllamaInference) {
-//     const followUp = await relevantQuestions(queryResults, userMessage, selectedModel);
+//     const followUp = await relevantQuestions(truncatedDocuments, userMessage, selectedModel);
 //     streamable.update({ 'followUp': followUp });
-//   }
-//   streamable.done({ status: 'done' });
-// })();
-// return streamable.value;
+
+    
+//     streamable.done({ status: 'done' });
+//   })();
+//   return streamable.value;
 // }
 
 // // 7. Define initial AI and UI states

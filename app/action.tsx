@@ -66,7 +66,7 @@ interface ContentResult extends SearchResult {
 
 
 // 4. Generate follow-up questions based on the top results from a similarity search
-const relevantQuestions = async (allResults: any[], userMessage: string, selectedModel:string): Promise<any> => {
+const relevantQuestions = async (userMessage: string, selectedModel:string): Promise<any> => {
   return await openai.chat.completions.create({
     messages: [
       {
@@ -75,7 +75,7 @@ const relevantQuestions = async (allResults: any[], userMessage: string, selecte
           You are a Question generator who generates an array of 3 follow-up questions in JSON format.
           The JSON schema should include:
           {
-            "original": "The original search query or context",
+            "original": "User message or context",
             "followUp": [
               "Question 1",
               "Question 2", 
@@ -86,7 +86,7 @@ const relevantQuestions = async (allResults: any[], userMessage: string, selecte
       },
       {
         role: "user",
-        content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(allResults)} or based on the original search query: "${userMessage}".`,
+        content: `Generate follow-up questions based on the user message: "${userMessage}".`,
       },
     ],
     model: selectedModel,
@@ -142,16 +142,44 @@ export async function get10BlueLinksContents(sources: SearchResult[]): Promise<C
       throw error;
     }
   }
+
+  // function extractMainContent(html: string): string {
+  //   try {
+  //     const $ = cheerio.load(html);
+  //     $("script, style, head, nav, footer, iframe, img").remove();
+  //     return $("body").text().replace(/\s+/g, " ").trim();
+  //   } catch (error) {
+  //     console.error('Error extracting main content:', error);
+  //     throw error;
+  //   }
+  // }
+  
   function extractMainContent(html: string): string {
-    try {
-      const $ = cheerio.load(html);
-      $("script, style, head, nav, footer, iframe, img").remove();
-      return $("body").text().replace(/\s+/g, " ").trim();
-    } catch (error) {
-      console.error('Error extracting main content:', error);
-      throw error;
+    let content = '';
+    const mainContent = html.match(/<main[\s\S]*?>([\s\S]*?)<\/main>/i) ||
+                        html.match(/<article[\s\S]*?>([\s\S]*?)<\/article>/i) ||
+                        html.match(/<div[\s\S]*?class=["'][\s\S]*?content[\s\S]*?["'][\s\S]*?>([\s\S]*?)<\/div>/i);
+    
+    if (mainContent) {
+      content = mainContent[1]
+        .replace(/<script[\s\S]*?<\/script>/gi, '') // Remove script tags
+        .replace(/<style[\s\S]*?<\/style>/gi, '')   // Remove style tags
+        .replace(/<[^>]*>/g, ' ')              // Remove remaining HTML tags
+        .replace(/\s+/g, ' ')                  // Replace multiple spaces with single space
+        .trim();                               // Trim leading and trailing spaces
+    } else {
+      // Fallback to extracting content from body if main content is not found
+      content = html.replace(/<head[\s\S]*?<\/head>/i, '')
+                    .replace(/<script[\s\S]*?<\/script>/gi, '')
+                    .replace(/<style[\s\S]*?<\/style>/gi, '')
+                    .replace(/<[^>]*>/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
     }
+    
+    return content;
   }
+
   const promises = sources.map(async (source): Promise<ContentResult | null> => {
     try {
       const response = await fetchWithTimeout(source.url, {}, config.timeout);
@@ -181,9 +209,8 @@ async function processAndVectorizeContent(
   textChunkSize = config.textChunkSize,
   textChunkOverlap = config.textChunkOverlap,
   numberOfSimilarityResults = config.numberOfSimilarityResults,
-  similarityThreshold = 0.7
 ): Promise<SearchResult[]> {
-  const allResults: [DocumentInterface, number][] = [];
+  const relevantDocuments: [DocumentInterface, number][] = [];
   try {
     for (let i = 0; i < contents.length; i++) {
       const content = contents[i];
@@ -193,27 +220,27 @@ async function processAndVectorizeContent(
           const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
           const queryEmbedding = await embeddings.embedQuery(query);
           const contentResults = await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
-          allResults.push(...contentResults);
+          relevantDocuments.push(...contentResults);
         } catch (error) {
           console.error(`Error processing content for ${content.url}:`, error);
         }
       }
     }
-    // Sort results by score (descending), filter based on the similarity threshold, and return only title, pageContent, and url
-    return allResults
+    // Sort results by score (descending), filter based on the similarity threshold, and return title, pageContent, url, and score
+    return relevantDocuments
       .sort((a, b) => b[1] - a[1])
-      .filter(([_, score]) => score >= similarityThreshold)
-      .map(([doc, _]) => ({
+      .filter(([_, score]) => score >= config.similarityThreshold)
+      .map(([doc, score]) => ({
         title: doc.metadata.title as string,
         pageContent: doc.pageContent,
-        url: doc.metadata.url as string
+        url: doc.metadata.url as string,
+        score: score
       }));
   } catch (error) {
     console.error('Error processing and vectorizing content:', error);
     throw error;
   }
 }
-
 
 // 6. Main action function that orchestrates the entire process
 async function myAction(
@@ -237,23 +264,23 @@ async function myAction(
     });
 
     const relevantDocuments = queryResults
-      .filter((result) => result.score >= 0.7)
-      .map((result) => ({
-        title: result.metadata.title || 'Unknown Title',
-        pageContent: result.metadata.content, 
-        url: result.metadata.url || ''
-      }));
-
+    .filter((result) => 
+      result.score >= config.similarityThreshold &&
+      result.metadata.title &&
+      result.metadata.content &&
+      result.metadata.link
+    )
+    .map((result) => ({
+      title: result.metadata.title,
+      pageContent: result.metadata.content,
+      url: result.metadata.link,
+      score: result.score
+    }));
+  
     console.log('Relevant documents:', relevantDocuments, '\n');
       
     // Process web search results
     const webSearchResults = await performWebSearch(latestUserMessage);
-
-    // slice the web search results to 4
-    // const webSearchResultsSliced = webSearchResults.slice(0, 5);
-
-    console.log('Web search results:', webSearchResults, '\n');
-    // console.log('Web search results sliced:', webSearchResultsSliced, '\n');
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
     console.log('Blue links contents:', blueLinksContents, '\n');
@@ -262,11 +289,27 @@ async function myAction(
     console.log('Processed web results:', processedWebResults, '\n');
 
     // Combine relevant documents from both sources
-    const combinedRelevantDocuments = [
-      // ...webSearchResultsSliced,
-      ...relevantDocuments,
-      ...processedWebResults
-    ];
+    let combinedRelevantDocuments;
+
+    if (relevantDocuments.length === 0 && processedWebResults.length === 0) {
+      // If both are empty, use webSearchResults
+      combinedRelevantDocuments = webSearchResults.map(result => ({
+        ...result,
+        score: 0.5 // Assign a default score since webSearchResults doesn't have scores
+      }));
+    } else {
+      // Use the existing logic if either source has results
+      combinedRelevantDocuments = [
+        ...relevantDocuments,
+        ...processedWebResults
+      ];
+    }
+
+    // Sort by score in descending order and limit to 10 elements
+    combinedRelevantDocuments = combinedRelevantDocuments
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .slice(0, 10);
+
     console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
 
     const messages = [
@@ -289,15 +332,7 @@ async function myAction(
     
         ## The Scoop 🔍
         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples!]
-    
-        ## Where I Got The Goods 📚
-        [Numbered list of the top 5 links you selected with a brief description of each source]
-      
-        1. [Document/Web Page Title](Link) - [Brief description of this source]
-        2. [Document/Web Page Title](Link) - [Brief description of this source]
-        ...
-
-        Note: Don't forget to inlcude links!
+  
         `
       },
       ...chatHistory, 
@@ -327,17 +362,12 @@ async function myAction(
         streamable.update({ 'llmResponseEnd': true });
       }
     }
+    
+    streamable.update({ 'combinedRelevantDocuments': combinedRelevantDocuments });
 
-    // Truncate pageContent to 200 characters for each document
-    const truncatedDocuments = combinedRelevantDocuments.map(doc => ({
-      ...doc,
-      pageContent: doc.pageContent.substring(0, 200) // Truncate to 200 characters
-    }));
-
-    const followUp = await relevantQuestions(truncatedDocuments, userMessage, selectedModel);
+    const followUp = await relevantQuestions(userMessage, selectedModel);
     streamable.update({ 'followUp': followUp });
 
-    
     streamable.done({ status: 'done' });
   })();
   return streamable.value;

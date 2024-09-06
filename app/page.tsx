@@ -14,6 +14,7 @@ import ModelSelector from '@/components/ModelSelector';
 import LanguageSelector from '@/components/LanguageSelector';
 import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
 import UserSharedLinks from '@/components/UserSharedLinks';
+import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
 
 interface UserDataResult {
   title: string;
@@ -33,6 +34,11 @@ interface ChatMessage {
   content: string;
 }
 
+interface RelevantLink {
+  title: string;
+  url: string;
+}
+
 interface Message {
   logo: string | undefined;
   id: number;
@@ -44,6 +50,8 @@ interface Message {
   userDataResults? : UserDataResult[];
   status?: string;
   isolatedView: boolean;
+  combinedRelevantDocuments?: RelevantLink[];
+
 }
 
 interface StreamMessage {
@@ -54,6 +62,8 @@ interface StreamMessage {
   llmResponseEnd?: boolean;
   followUp?: any;
   status?: string;
+  combinedRelevantDocuments?: RelevantLink[];
+
 }
 
 interface FollowUp {
@@ -213,6 +223,8 @@ export default function Page() {
             currentMessage.isStreaming = typedMessage.llmResponseEnd ? false : currentMessage.isStreaming;
             currentMessage.userDataResults = typedMessage.userDataResults || currentMessage.userDataResults;
             currentMessage.followUp = typedMessage.followUp || currentMessage.followUp;
+            currentMessage.combinedRelevantDocuments = typedMessage.combinedRelevantDocuments || currentMessage.combinedRelevantDocuments;
+
           }
           return messagesCopy;
         });
@@ -448,16 +460,16 @@ export default function Page() {
           )}
         </main>
         <BottomChatBar 
-          isOpen={isChatOpen} 
-          setIsOpen={setIsChatOpen}
-          messages={messages}
-          currentLlmResponse={currentLlmResponse}
-          handleFollowUpClick={handleFollowUpClick}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          handleFormSubmit={handleFormSubmit}
-          onAddLink={handleAddLink}
-        />
+    isOpen={isChatOpen} 
+    setIsOpen={setIsChatOpen}
+    messages={messages}
+    currentLlmResponse={currentLlmResponse}
+    handleFollowUpClick={handleFollowUpClick}
+    inputValue={inputValue}
+    setInputValue={setInputValue}
+    handleFormSubmit={handleFormSubmit}
+    onAddLink={handleAddLink}
+  />
         {/* <div className="absolute bottom-20 left-0 right-0 text-center p-2">
           <p className="text-sm text-blue-300/30 dark:text-blue-400/20 transition-colors duration-200">
             Psst! Try clicking all the blue things... 😉

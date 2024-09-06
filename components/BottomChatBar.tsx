@@ -8,6 +8,7 @@ import UserMessageComponent from '@/components/answer/UserMessageComponent';
 import FollowUpComponent from '@/components/answer/FollowUpComponent';
 import InitialQueries from '@/components/answer/InitialQueries';
 import { motion } from 'framer-motion';
+import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -63,6 +64,12 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   isolatedView={false}
                   onAddLink={onAddLink}
                 />
+                {message.combinedRelevantDocuments && (
+                  <RelevantLinksComponent
+                  combinedRelevantDocuments={message.combinedRelevantDocuments}
+                    onAddLink={onAddLink}
+                  />
+                )}
                 {message.followUp && (
                   <FollowUpComponent
                     followUp={message.followUp}
@@ -77,9 +84,9 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               {messages.length === 0 && !inputValue && (
                 <InitialQueries
                   questions={[               
-                    "But what is a GPT? 🤖",
-                    "When did Ye drop Ye? 🎵",
-                    "How's NVIDIA stock doing? 📈",
+                    "What is a GPT? 🤖",
+                    "When did Ye release 'Ye'? 🎵",
+                    "How's NVIDIA stock doing these days? 📈",
                     "Explain black holes like I'm 5 🕳️",
                     "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
                   ]}
