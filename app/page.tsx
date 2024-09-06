@@ -14,7 +14,6 @@ import ModelSelector from '@/components/ModelSelector';
 import LanguageSelector from '@/components/LanguageSelector';
 import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
 import UserSharedLinks from '@/components/UserSharedLinks';
-import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
 
 interface UserDataResult {
   title: string;
