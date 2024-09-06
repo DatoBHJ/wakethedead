@@ -10,7 +10,7 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
 import cheerio from 'cheerio';
 // import { functionCalling } from './function-calling';
-import { serperSearch } from './tools/searchProviders';
+import { performWebSearch, getImages, getVideos } from './tools/Providers';
 
 export const runtime = 'edge';
 
@@ -66,7 +66,7 @@ interface ContentResult extends SearchResult {
 
 
 // 4. Generate follow-up questions based on the top results from a similarity search
-const relevantQuestions = async (userMessage: string, selectedModel:string): Promise<any> => {
+const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
   return await openai.chat.completions.create({
     messages: [
       {
@@ -75,7 +75,7 @@ const relevantQuestions = async (userMessage: string, selectedModel:string): Pro
           You are a Question generator who generates an array of 3 follow-up questions in JSON format.
           The JSON schema should include:
           {
-            "original": "User message or context",
+            "original": "The original search query or context",
             "followUp": [
               "Question 1",
               "Question 2", 
@@ -86,7 +86,7 @@ const relevantQuestions = async (userMessage: string, selectedModel:string): Pro
       },
       {
         role: "user",
-        content: `Generate follow-up questions based on the user message: "${userMessage}".`,
+        content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(sources)}. The original search query is: "${userMessage}".`,
       },
     ],
     model: selectedModel,
@@ -94,37 +94,6 @@ const relevantQuestions = async (userMessage: string, selectedModel:string): Pro
   });
 };
 
-async function performWebSearch(query: string): Promise<SearchResult[]> {
-  try {
-    // First, try DuckDuckGo search
-    const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(query)}`);
-    if (!searchResponse.ok) {
-      throw new Error('DuckDuckGo search failed');
-    }
-    const searchResults = await searchResponse.json();
-    return searchResults.results.slice(0, config.numberOfPagesToScan).map(result => ({
-      title: result.title,
-      url: result.url,
-      pageContent: result.description
-    }));
-  } catch (error) {
-    console.error('DuckDuckGo search error:', error);
-    
-    // Fallback to serperSearch
-    console.log('Falling back to serperSearch');
-    try {
-      const serperResults = await serperSearch(query, config.numberOfPagesToScan);
-      return serperResults.map(result => ({
-        title: result.title,
-        url: result.link,
-        pageContent: result.snippet
-      }));
-    } catch (serperError) {
-      console.error('Serper search error:', serperError);
-      throw new Error('Both search methods failed');
-    }
-  }
-}
 
 // 5. Fetch contents of top 10 search results
 export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
@@ -143,16 +112,6 @@ export async function get10BlueLinksContents(sources: SearchResult[]): Promise<C
     }
   }
 
-  // function extractMainContent(html: string): string {
-  //   try {
-  //     const $ = cheerio.load(html);
-  //     $("script, style, head, nav, footer, iframe, img").remove();
-  //     return $("body").text().replace(/\s+/g, " ").trim();
-  //   } catch (error) {
-  //     console.error('Error extracting main content:', error);
-  //     throw error;
-  //   }
-  // }
   
   function extractMainContent(html: string): string {
     let content = '';
@@ -242,28 +201,16 @@ async function processAndVectorizeContent(
   }
 }
 
-// 6. Main action function that orchestrates the entire process
-async function myAction(
-  chatHistory: ChatMessage[],
-  userMessage: string, 
-  selectedModel: string,
-  selectedLanguage: string,
-): Promise<any> {
-  "use server";
+async function getUserSharedDocument(latestUserMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
+  const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
+  const queryResults = await index.query({
+    vector: queryEmbedding,
+    topK: config.numberOfSimilarityResults,
+    includeMetadata: true,
+    includeVectors: false,
+  });
 
-  const streamable = createStreamableValue({});
-  (async () => {
-    const latestUserMessage = chatHistory[chatHistory.length - 1].content;
-    let queryResults;
-    const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
-    queryResults = await index.query({
-      vector: queryEmbedding,
-      topK: config.numberOfSimilarityResults,
-      includeMetadata: true,
-      includeVectors: false,
-    });
-
-    const relevantDocuments = queryResults
+  return queryResults
     .filter((result) => 
       result.score >= config.similarityThreshold &&
       result.metadata.title &&
@@ -276,17 +223,38 @@ async function myAction(
       url: result.metadata.link,
       score: result.score
     }));
-  
+}
+
+// 6. Main action function that orchestrates the entire process
+async function myAction(
+  chatHistory: ChatMessage[],
+  userMessage: string, 
+  selectedModel: string,
+  selectedLanguage: string,
+): Promise<any> {
+  "use server";
+
+  const streamable = createStreamableValue({});
+  (async () => {
+    const latestUserMessage = chatHistory[chatHistory.length - 1].content;
+
+    const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
+      getImages(userMessage),
+      performWebSearch(userMessage),
+      getVideos(userMessage),
+      getUserSharedDocument(latestUserMessage, embeddings, index)
+    ]);
+    streamable.update({ 'searchResults': webSearchResults });
+    streamable.update({ 'images': images });
+    streamable.update({ 'videos': videos });
+
     console.log('Relevant documents:', relevantDocuments, '\n');
-      
-    // Process web search results
-    const webSearchResults = await performWebSearch(latestUserMessage);
+    console.log('Web search results:', webSearchResults, '\n');
+    console.log('Images:', images, '\n');
+    console.log('Videos:', videos, '\n');
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
-    console.log('Blue links contents:', blueLinksContents, '\n');
-
     const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
-    console.log('Processed web results:', processedWebResults, '\n');
 
     // Combine relevant documents from both sources
     let combinedRelevantDocuments;
@@ -365,7 +333,7 @@ async function myAction(
     
     streamable.update({ 'combinedRelevantDocuments': combinedRelevantDocuments });
 
-    const followUp = await relevantQuestions(userMessage, selectedModel);
+    const followUp = await relevantQuestions(webSearchResults, userMessage, selectedModel);
     streamable.update({ 'followUp': followUp });
 
     streamable.done({ status: 'done' });

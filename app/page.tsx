@@ -38,6 +38,14 @@ interface RelevantLink {
   url: string;
 }
 
+
+interface SearchResult {
+  title: string;
+  url: string;
+  pageContent: string;
+}
+
+
 interface Message {
   logo: string | undefined;
   id: number;
@@ -50,7 +58,7 @@ interface Message {
   status?: string;
   isolatedView: boolean;
   combinedRelevantDocuments?: RelevantLink[];
-
+  SearchResult?: SearchResult[];
 }
 
 interface StreamMessage {
@@ -62,7 +70,7 @@ interface StreamMessage {
   followUp?: any;
   status?: string;
   combinedRelevantDocuments?: RelevantLink[];
-
+  SearchResult?: SearchResult[];
 }
 
 interface FollowUp {
@@ -223,7 +231,7 @@ export default function Page() {
             currentMessage.userDataResults = typedMessage.userDataResults || currentMessage.userDataResults;
             currentMessage.followUp = typedMessage.followUp || currentMessage.followUp;
             currentMessage.combinedRelevantDocuments = typedMessage.combinedRelevantDocuments || currentMessage.combinedRelevantDocuments;
-
+            currentMessage.SearchResult = typedMessage.SearchResult || currentMessage.SearchResult;
           }
           return messagesCopy;
         });
