@@ -12,9 +12,11 @@ export async function GET(request: Request) {
   }
 
   try {
-    const results = await search(query, {
-      safeSearch: SafeSearchType.MODERATE
-    });
+    const results = await search(query, 
+    //   {
+    //   safeSearch: SafeSearchType.MODERATE
+    // }
+  );
     return NextResponse.json(results);
   } catch (error) {
     console.error('DuckDuckGo search error:', error);
