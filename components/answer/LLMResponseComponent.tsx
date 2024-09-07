@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { type AI } from '../../app/action';
 import { useActions } from 'ai/rsc';
 import Markdown from 'react-markdown';
@@ -9,7 +9,6 @@ import { Tooltip } from 'react-tooltip'
 import ChatView from './ChatView';
 import { IconAI } from '@/components/ui/icons';
 
-
 interface LLMResponseComponentProps {
     llmResponse: string;
     currentLlmResponse: string;
@@ -17,79 +16,110 @@ interface LLMResponseComponentProps {
     isolatedView: boolean;
     logo?: string;
     onAddLink: (link: string) => void;
-
 }
+
+enum LoadingStage {
+    Idle,
+    SearchingSource,
+    WebSearching,
+    DataFound,
+    AIStarting,
+    Responding
+}
+
+const LoadingMessage = ({ stage }: { stage: LoadingStage }) => {
+    const messages = [
+        "Searching source...",
+        "Web searching...",
+        "Data found!",
+        "AI is starting to respond.",
+        "Generating response..."
+    ];
+
+    return (
+        <div className="text-foreground animate-pulse pt-4">
+            {messages[stage - 1]}
+        </div>
+    );
+};
 
 const SkeletonLoader = () => {
     return (
-        <div className="backdrop-blur-md shadow-lg rounded-lg p-6 mt-4 transition-all duration-300">
+        <div className="transition-all duration-300 pt-4">
             <div className="flex items-center mb-4">
-                <div className="h-6 w-6 bg-gray-300 rounded-full dark:bg-gray-600 animate-pulse mr-3"></div>
-                <div className="h-4 bg-gray-300 rounded-full dark:bg-gray-600 w-32 animate-pulse"></div>
+                {/* <div className="h-6 w-6 bg-gray-300 rounded-full dark:bg-gray-700 animate-pulse mr-3"></div> */}
+                <div className="h-5 bg-gray-300 rounded-lg dark:bg-gray-700/70 w-32 animate-pulse"></div>
             </div>
             <div className="flex flex-col space-y-3">
-                <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-700 w-full animate-pulse delay-75"></div>
-                <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-700 w-3/4 animate-pulse delay-100"></div>
-                <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-700 w-2/3 animate-pulse delay-150"></div>
+                <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-700/50 w-full animate-pulse delay-75"></div>
+                <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-700/50 w-3/4 animate-pulse delay-100"></div>
+                <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-700/50 w-2/3 animate-pulse delay-150"></div>
             </div>
         </div>
     );
 };
 
-const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolatedView, logo, onAddLink,}: LLMResponseComponentProps) => {
+const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolatedView, logo, onAddLink }: LLMResponseComponentProps) => {
     const [copied, setCopied] = useState(false);
+    const [loadingStage, setLoadingStage] = useState<LoadingStage>(LoadingStage.Idle);
     const hasLlmResponse = llmResponse && llmResponse.trim().length > 0;
     const hasCurrentLlmResponse = currentLlmResponse && currentLlmResponse.trim().length > 0;
 
+    useEffect(() => {
+        if (!hasLlmResponse && !hasCurrentLlmResponse) {
+            const stages = [
+                LoadingStage.SearchingSource,
+                LoadingStage.WebSearching,
+                LoadingStage.DataFound,
+                LoadingStage.AIStarting,
+                LoadingStage.Responding
+            ];
+            
+            stages.forEach((stage, index) => {
+                setTimeout(() => setLoadingStage(stage), index * 2000);
+            });
+        }
+    }, [hasLlmResponse, hasCurrentLlmResponse]);
 
     return (
         <div className={isolatedView ? 'flex flex-col max-w-[800px] mx-auto' : ''}>
             {hasLlmResponse || hasCurrentLlmResponse ? (
-                <>
-                        <div className="mt-4 backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6 pb-6 transition-all duration-300">
-                            {/* <div className="flex items-center mb-4"> */}
-                                {/* <IconAI className="h-6 w-6 text-green-600 dark:text-green-400 mr-3" /> */}
-                                {/* <h2 className="text-xl font-medium flex-grow text-green-700 dark:text-green-200">Response</h2> */}
-                            {/* </div> */}
-                            <div className="text-card-foreground dark:text-card-foreground leading-relaxed">
-                            <ChatView 
+                <div className="mt-4 backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6 pb-6 transition-all duration-300">
+                    <div className="text-card-foreground dark:text-card-foreground leading-relaxed">
+                        <ChatView 
                             content={llmResponse} 
                             onAddLink={onAddLink}
-                            />                           
-                             </div>
-                            <div className="flex items-center justify-between mt-6">
-                                <div className="flex items-center space-x-4">
-                                    <CopyToClipboard text={llmResponse} onCopy={() => setCopied(true)}>
-                                        <button className="text-black dark:text-white focus:outline-none transition-colors duration-200 hover:text-gray-600 dark:hover:text-gray-300">
-                                            {copied ? <Check size={18} /> : <Copy size={18} />}
-                                        </button>
-                                    </CopyToClipboard>
-                                    {/* {!isolatedView && (
-                                        <button id="#not-clickable2" className="text-black dark:text-white focus:outline-none" onClick={handleClearCache}>
-                                            <ArrowsCounterClockwise size={20} />
-                                        </button>
-                                    )} */}
-                                </div>
-                                {!isolatedView && (
-                                    <div className="flex items-center justify-end">
-                                        <img src="./powered-by-groq.svg" alt="powered by groq" className='h-5 opacity-70' />
-                                    </div>
-                                )}
-                                {logo && (
-                                    <img src={logo} alt="logo" className='h-5 ml-auto opacity-70' />
-                                )}
-                            </div>
+                        />                           
+                    </div>
+                    <div className="flex items-center justify-between mt-6">
+                        <div className="flex items-center space-x-4">
+                            <CopyToClipboard text={llmResponse} onCopy={() => setCopied(true)}>
+                                <button className="text-black dark:text-white focus:outline-none transition-colors duration-200 hover:text-gray-600 dark:hover:text-gray-300">
+                                    {copied ? <Check size={18} /> : <Copy size={18} />}
+                                </button>
+                            </CopyToClipboard>
                         </div>
-                    
-                </>
+                        {!isolatedView && (
+                            <div className="flex items-center justify-end">
+                                <img src="./powered-by-groq.svg" alt="powered by groq" className='h-5 opacity-70' />
+                            </div>
+                        )}
+                        {logo && (
+                            <img src={logo} alt="logo" className='h-5 ml-auto opacity-70' />
+                        )}
+                    </div>
+                </div>
             ) : (
-                <SkeletonLoader />
+                <div className="mt-4 backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-5 pb-6 transition-all duration-300">
+                    {loadingStage !== LoadingStage.Responding ? (
+                        <LoadingMessage stage={loadingStage} />
+                    ) : (
+                        <SkeletonLoader />
+                    )}
+                </div>
             )}
         </div>
     );
 };
 
 export default LLMResponseComponent;
-
-
-
