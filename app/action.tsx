@@ -250,7 +250,7 @@ async function myAction(
 
     // console.log('Relevant documents:', relevantDocuments, '\n');
     // console.log('Web search results:', webSearchResults, '\n');
-    console.log('Images:', images, '\n');
+    // console.log('Images:', images, '\n');
     // console.log('Videos:', videos, '\n');
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
@@ -279,7 +279,7 @@ async function myAction(
       .slice(0, 10);
     streamable.update({ 'combinedRelevantDocuments': combinedRelevantDocuments });
 
-    // console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
+    console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
 
     const messages = [
       {
