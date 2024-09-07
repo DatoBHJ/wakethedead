@@ -372,7 +372,7 @@ export default function Page() {
           {/* <Button variant="outline" asChild> */}
           <a
             href="/"
-            className="text-foreground/70 font-semibold px-4"
+            className="text-foreground/70 z-50 font-semibold px-4"
           >
             WTD
             {/* <IconGitHub /> */}
