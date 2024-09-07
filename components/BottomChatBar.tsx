@@ -80,8 +80,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   />
                 )}
                 {message.videos && (
-                  <VideosComponent videos={message.videos} />
-                )}
+                  <VideosComponent videos={message.videos} onAddLink={onAddLink} />                )}
                 {message.images && (
                   <ImagesComponent images={message.images} />
                 )}

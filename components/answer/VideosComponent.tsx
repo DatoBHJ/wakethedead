@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconPlay, IconClock, IconChevronUpDown, IconClose } from '@/components/ui/icons';
+import { IconPlay, IconClock, IconChevronUpDown, IconClose, IconCheck, IconArrowRight } from '@/components/ui/icons';
 
 interface Video {
   title: string;
@@ -10,14 +10,17 @@ interface Video {
 
 interface VideosComponentProps {
   videos: Video[];
+  onAddLink: (link: string) => void;
 }
 
-const VideosComponent: React.FC<VideosComponentProps> = ({ videos }) => {
+const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) => {
   const [showMore, setShowMore] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   useEffect(() => {
     setLoadedImages(Array(videos.length).fill(false));
@@ -48,14 +51,21 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos }) => {
     });
   };
 
-  const handleVideoClick = (link: string) => {
-    setSelectedVideo(link);
+  const handleVideoClick = (video: Video) => {
+    setSelectedVideo(video);
   };
 
   const handleCloseModal = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       setSelectedVideo(null);
     }
+  };
+
+  const handleAddLink = (url: string) => {
+    onAddLink(url);
+    setAddedLinks(prev => new Set(prev).add(url));
+    setShowTooltip(url);
+    setTimeout(() => setShowTooltip(null), 2000);
   };
 
   const VideosSkeleton = () => (
@@ -76,7 +86,7 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos }) => {
       <div
         key={index}
         className={`${isMobile ? 'w-full' : 'w-1/3'} p-1 cursor-pointer`}
-        onClick={() => handleVideoClick(video.link)}
+        onClick={() => handleVideoClick(video)}
       >
         <div className={`relative group ${isMobile && showMore ? 'flex items-center' : ''}`}>
           <div className={`${isMobile && showMore ? 'w-2/5' : 'w-full'} overflow-hidden rounded-lg`}>
@@ -110,6 +120,9 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos }) => {
                 <IconClock className="w-3 h-3 mr-1" />
                 <span>{video.duration}</span>
               </div>
+            )}
+            {addedLinks.has(video.link) && (
+              <IconCheck className="w-4 h-4 text-green-500 ml-2" />
             )}
           </div>
         </div>
@@ -146,21 +159,37 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos }) => {
         >
           <div className="relative w-full max-w-4xl max-h-full bg-black rounded-lg shadow-lg">
             <iframe
-              src={`https://www.youtube.com/embed/${getYouTubeVideoId(selectedVideo)}?autoplay=1`}
+              src={`https://www.youtube.com/embed/${getYouTubeVideoId(selectedVideo.link)}?autoplay=1`}
               title="YouTube Video"
               allowFullScreen
               className="w-full aspect-video rounded-lg"
               allow="autoplay"
             ></iframe>
             <button
-              className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 text-white focus:outline-none"
+              className="absolute top-2 right-2 p-2 rounded-full bg-white hover:bg-gray-200 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none group"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedVideo(null);
+                handleAddLink(selectedVideo.link);
               }}
             >
-              {/* <IconClose className="w-6 h-6" /> */}
+              {/* <IconArrowRight className="w-6 h-6" />
+              <span className="absolute bottom-full right-0 transform translate-y-[-10px] bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                {addedLinks.has(selectedVideo.link) ? 'Video beamed up!⚡️' : 'Beam me up!🚀'}
+              </span> */}
+              {addedLinks.has(selectedVideo.link) ? (
+                <IconCheck className="w-6 h-6 text-green-500" />
+              ) : (
+                <IconArrowRight className="w-6 h-6" />
+              )}
+              <span className="absolute bottom-full right-0 transform translate-y-[-10px] bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                {addedLinks.has(selectedVideo.link) ? 'Video beamed up!⚡️' : 'Beam me up!🚀'}
+              </span>
             </button>
+            {/* {showTooltip === selectedVideo.link && (
+              <div className="absolute top-14 right-2 bg-green-500 text-white text-sm rounded py-1 px-2">
+                Video sent to home portal! 🚀
+              </div>
+            )} */}
           </div>
         </div>
       )}
