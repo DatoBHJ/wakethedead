@@ -1,6 +1,6 @@
 import React, { useState, useEffect, forwardRef } from 'react';
 import { X, Plus } from "@phosphor-icons/react";
-import { IconGitHub, IconTwitter } from '@/components/ui/icons';
+import { IconGitHub, IconPlus, IconTwitter } from '@/components/ui/icons';
 import EmailContactButton from '@/components/ui/EmailContactButton';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
@@ -132,7 +132,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
 
       <div className="p-6 mb-8 bg-background dark:bg-background">
         <form onSubmit={handleAddLink} className="flex flex-col mb-5">
-          <div className="flex relative">
+          <div className="flex relative items-center pb-2">
             <input
               id="add-link"
               type="text"
@@ -140,13 +140,13 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               onChange={(e) => setNewLink(e.target.value)}
               placeholder="More links? Paste them here!
               "
-              className="flex-grow pb-2 pr-6 rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
+              className="flex-grow pr-1 rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
             />
             <button 
               type="submit" 
-              className="absolute right-0 bottom-3 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
+              className="flex text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
             >
-              <Plus size={20} weight="bold" />
+             <IconPlus className='w-5 h-5' />
             </button>
           </div>
         </form>

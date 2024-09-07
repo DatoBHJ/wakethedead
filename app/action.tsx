@@ -277,6 +277,7 @@ async function myAction(
     combinedRelevantDocuments = combinedRelevantDocuments
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 10);
+    streamable.update({ 'combinedRelevantDocuments': combinedRelevantDocuments });
 
     // console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
 
@@ -331,7 +332,6 @@ async function myAction(
       }
     }
     
-    streamable.update({ 'combinedRelevantDocuments': combinedRelevantDocuments });
 
     const followUp = await relevantQuestions(webSearchResults, userMessage, selectedModel);
     streamable.update({ 'followUp': followUp });

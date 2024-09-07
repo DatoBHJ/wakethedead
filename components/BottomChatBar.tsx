@@ -59,7 +59,12 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             {messages.map((message, index) => (
               <div key={index}>
                 <UserMessageComponent message={message.userMessage} />
-
+                {message.combinedRelevantDocuments && (
+                  <RelevantLinksComponent
+                  combinedRelevantDocuments={message.combinedRelevantDocuments}
+                    onAddLink={onAddLink}
+                  />
+                )}
                 <LLMResponseComponent
                   llmResponse={message.content}
                   currentLlmResponse={currentLlmResponse}
@@ -67,12 +72,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   isolatedView={false}
                   onAddLink={onAddLink}
                 />
-                {message.combinedRelevantDocuments && (
-                  <RelevantLinksComponent
-                  combinedRelevantDocuments={message.combinedRelevantDocuments}
-                    onAddLink={onAddLink}
-                  />
-                )}
+             
                 {message.followUp && (
                   <FollowUpComponent
                     followUp={message.followUp}

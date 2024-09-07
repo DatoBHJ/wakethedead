@@ -46,7 +46,7 @@ const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolated
         <div className={isolatedView ? 'flex flex-col max-w-[800px] mx-auto' : ''}>
             {hasLlmResponse || hasCurrentLlmResponse ? (
                 <>
-                        <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-6 mt-2 transition-all duration-300">
+                        <div className="mt-4 backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6 pb-6 transition-all duration-300">
                             {/* <div className="flex items-center mb-4"> */}
                                 {/* <IconAI className="h-6 w-6 text-green-600 dark:text-green-400 mr-3" /> */}
                                 {/* <h2 className="text-xl font-medium flex-grow text-green-700 dark:text-green-200">Response</h2> */}

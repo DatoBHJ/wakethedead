@@ -14,8 +14,6 @@ const InitialQueries = ({ questions, handleFollowUpClick }: InitialQueriesProps)
   
   return (
     <div className="">
-      <div className="flex items-center">
-      </div>
       <ul className="mt-2">
         {questions.map((question, index) => (
           <li
@@ -26,9 +24,9 @@ const InitialQueries = ({ questions, handleFollowUpClick }: InitialQueriesProps)
             {/* <span role="img" aria-label="link" className="mr-2 dark:text-white text-black"> */}
             <span role="img" aria-label="link" className="mr-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300">
 
-              <Plus size={20} weight="bold"/>
+              <IconPlus className='flex h-6 w-6 pb-1' />
             </span>
-            <p className="block sm:inline text-md sm:text-lg font-handwriting dark:text-white text-black">{question}</p>
+            <p className="text-md sm:text-lg font-handwriting dark:text-white text-black">{question}</p>
           </li>
         ))}
       </ul>
