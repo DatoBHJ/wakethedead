@@ -1,81 +1,64 @@
-// 1. Import the 'useState' hook from React
 import { useState } from 'react';
-import { IconPlus, IconClose } from '@/components/ui/icons';
+import { IconPlus, IconClose, IconChevronUpDown } from '@/components/ui/icons';
 
-// 2. Define the 'Image' interface with a required 'link' property and an optional 'alt' property
 interface Image {
     link: string;
     alt?: string;
 }
 
-// 3. Define the 'ImagesComponentProps' interface with an 'images' property of type 'Image[]'
 interface ImagesComponentProps {
     images: Image[];
 }
 
-// 4. Define the 'ImagesComponent' functional component that takes 'images' as a prop
 const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
-    // 5. Use the 'useState' hook to manage the 'showMore' and 'selectedImage' state
     const [showMore, setShowMore] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-    // 6. Define the 'ImagesSkeleton' component to render a loading skeleton
     const ImagesSkeleton = () => (
         <>
             {Array.from({ length: showMore ? 9 : 3 }).map((_, index) => (
-                <div key={index} className="w-1/3 p-1">
-                    <div className="w-full overflow-hidden aspect-square">
-                        <div className="w-full h-full bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
-                    </div>
+                <div key={index} className="aspect-square w-full">
+                    <div className="w-full h-full bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
                 </div>
             ))}
-            {/* <div className="flex justify-center mt-4 w-full">
-                <div className="bg-gray-300 dark:bg-gray-700 rounded-lg animate-pulse py-5 px-15 " style={{ height: '24px', width: '85px' }}></div>
-            </div> */}
         </>
     );
 
-    // 7. Define the 'handleImageClick' function to set the 'selectedImage' state
     const handleImageClick = (link: string) => {
         setSelectedImage(link);
     };
 
-    // 8. Define the 'handleCloseModal' function to close the modal when clicking outside
     const handleCloseModal = (event: React.MouseEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
             setSelectedImage(null);
         }
     };
 
-    // 9. Render the 'ImagesComponent'
     return (
         <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
-            <div className="flex items-center">
+            <div className="flex items-center mb-4">
                 <h2 className="text-lg font-semibold flex-grow text-black dark:text-white">Images</h2>
-                {/* <img src="./brave.png" alt="brave logo" className="w-6 h-6" /> */}
                 {images.length > 3 && (
                     <div className="flex justify-center ml-2">
                         <button
                             className="text-black dark:text-white focus:outline-none"
                             onClick={() => setShowMore(!showMore)}>
-            {showMore ? <IconClose className="w-6 h-6" /> : <IconPlus className="w-6 h-6" />}
-            </button>
+                            {showMore ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
+                        </button>
                     </div>
                 )}
             </div>
-            <div className={`flex flex-wrap mx-1 transition-all duration-500 ${showMore ? 'max-h-[500px]' : 'max-h-[200px]'} overflow-hidden`}>
+            <div className={`grid grid-cols-3 gap-4 transition-all duration-500 ${showMore ? 'max-h-[1000px]' : 'max-h-[400px]'} overflow-hidden`}>
                 {images.length === 0 ? (
-                    // 10. Render the 'ImagesSkeleton' if there are no images
                     <ImagesSkeleton />
                 ) : (
-                    // 11. Render the images with a hover effect and click handler
                     images.slice(0, showMore ? 9 : 3).map((image, index) => (
                         <div
                             key={index}
-                            className="transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-200 w-1/3 p-1 cursor-pointer"
+                            className="aspect-square w-full transition ease-in-out hover:scale-105 duration-200 cursor-pointer"
                             onClick={() => handleImageClick(image.link)}
                         >
-                            <div className="w-full overflow-hidden aspect-square">
+                            <div className="w-full h-full overflow-hidden">
                                 <img
                                     src={image.link}
                                     alt={image.alt || `Image ${index}`}
@@ -88,7 +71,6 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
             </div>
 
             {selectedImage && (
-                // 13. Render a modal with the selected image if 'selectedImage' is not null
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
                     onClick={handleCloseModal}
