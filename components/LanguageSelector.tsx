@@ -81,7 +81,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguage, s
               </div>
             ))}
             <div className="px-4 pb-5 pt-2 text-xs font-extralight text-muted-foreground">
-              Note: Some language models may not support your preferred language. For multilingual support, we recommend using Llama-3.1 models.
+              Note: For multilingual support, we recommend using Llama-3.1 models. Some language models may not support your preferred language. 
             </div>
           </div>
         </div>

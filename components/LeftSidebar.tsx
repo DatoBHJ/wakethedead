@@ -1,6 +1,6 @@
 import React, { useState, useEffect, forwardRef } from 'react';
 import { X, Plus } from "@phosphor-icons/react";
-import { IconGitHub, IconPlus, IconTwitter } from '@/components/ui/icons';
+import { IconGitHub, IconPlus, IconTwitter, IconBuyMeACoffee } from '@/components/ui/icons';
 import EmailContactButton from '@/components/ui/EmailContactButton';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
@@ -180,6 +180,22 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
             </a>
           </Button>
           <EmailContactButton />
+          <Button 
+            variant="ghost" 
+            size="icon"
+            asChild
+            className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+          >
+            <a
+              target="_blank"
+              href="https://buymeacoffee.com/dbhyperdrive"
+              rel="noopener noreferrer"
+              title="Buy Me a Coffee"
+            >
+              <IconBuyMeACoffee className="h-5 w-5" />
+            </a>
+          </Button>
+
         </div>
       </div>
     </div>

@@ -74,7 +74,8 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Your edited article has been saved and cached successfully.",
+          // description: "Your edited article has been saved and cached successfully.",
+          description: "Your edits have been saved and cached. Thanks for boosting the quality!",
           duration: 3000,
         });
       } else {

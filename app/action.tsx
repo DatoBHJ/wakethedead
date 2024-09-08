@@ -313,9 +313,7 @@ async function myAction(
         ${latestUserMessage}\n\n
         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
         Use this info to craft an awesome response with relevant emojis. Make it fun, informative, and in Markdown!
-        Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n
-
-`
+        Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n`
       }
     ];
     
