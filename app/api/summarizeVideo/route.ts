@@ -263,12 +263,13 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
               accumulatedResponse += '\n\n---\n\n';
             }
           }
+          // Cache the complete generated summary
+          await semanticCache.set(cacheKey, accumulatedResponse);
+          console.log('Summary cached with key:', cacheKey);
           
           controller.close();
   
-        // Cache the complete generated summary
-          await semanticCache.set(cacheKey, accumulatedResponse);
-          console.log('Summary cached with key:', cacheKey);
+
         },
       });
   
