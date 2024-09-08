@@ -266,11 +266,9 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
           
           controller.close();
   
-          // Cache the complete generated summary
-          if (config.useSemanticCache && semanticCache) {
-            await semanticCache.set(cacheKey, accumulatedResponse);
-            console.log('Summary cached with key:', cacheKey);
-          }
+        // Cache the complete generated summary
+          await semanticCache.set(cacheKey, accumulatedResponse);
+          console.log('Summary cached with key:', cacheKey);
         },
       });
   
