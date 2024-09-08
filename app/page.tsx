@@ -405,10 +405,10 @@ export default function Page() {
                     selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
                   />
-                  {/* <LanguageSelector
+                  <LanguageSelector
                     selectedLanguage={selectedLanguage}
                     setSelectedLanguage={setSelectedLanguage}
-                  /> */}
+                  />
                 </div>
               </DialogContent>
             </Dialog>

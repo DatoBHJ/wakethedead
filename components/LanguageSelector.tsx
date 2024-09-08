@@ -15,7 +15,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguage, s
 
   const languages = {
     'en': 'American English',
-    [preferredLanguage]: `${new Intl.DisplayNames([preferredLanguage], { type: 'language' }).of(preferredLanguage)} (Preferred Language)`
+    [preferredLanguage]: `${new Intl.DisplayNames([preferredLanguage], { type: 'language' }).of(preferredLanguage)}<br />(Your Preferred Language)`
   };
 
   useEffect(() => {
@@ -42,9 +42,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguage, s
       onClick={handleSelectorClick}
       className="flex items-center justify-between w-full text-left bg-transparent cursor-pointer transition-colors duration-200"
     >
-      <div className="flex items-center px-3 py-2">
-        <span className={`truncate text-black dark:text-white transition-all duration-200 ${isTextSemibold ? 'font-semibold' : 'font-normal'}`}>
-          {languages[selectedLanguage as keyof typeof languages]}
+      <div className="flex items-center px-3 py-2 max-w-[calc(100%-28px)]">
+        <span className={`break-words text-black dark:text-white transition-all duration-200 ${isTextSemibold ? 'font-semibold' : 'font-normal'}`}>
+          <span dangerouslySetInnerHTML={{ __html: languages[selectedLanguage as keyof typeof languages] }} />
         </span>
       </div>
       <CaretRight
@@ -76,11 +76,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguage, s
                   setIsTextSemibold(false);
                 }}
               >
-                <div className="px-5 py-1">{name}</div>
+                <div className="px-5 py-1" dangerouslySetInnerHTML={{ __html: name }} />
               </div>
             ))}
             <div className="px-4 pb-5 pt-2 text-xs font-extralight text-muted-foreground">
-              Note: Some language models may not support your preferred language.
+              Note: Some language models may not support your preferred language. For multilingual support, we recommend using Llama-3.1 models.
             </div>
           </div>
         </div>

@@ -287,6 +287,7 @@ async function myAction(
         content: `You're a witty and clever AI assistant.
         You're not Siri, Alexa, or some boring ol' chatbot. 
         Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
+        Always respond in user preference language whcih is ${selectedLanguage}. 
     
         1. From the given relevant documents, craft a response that answers the user query: "${latestUserMessage}".
         Make sure to only use documents that directly answer the user query. If you don't find any, just answer based on the user query.
@@ -310,9 +311,10 @@ async function myAction(
         content: `
         Here is my query:
         ${latestUserMessage}\n\n
-        Here's the brain fuel for you! 🧠🚀\n
-        Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n
+        I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
         Use this info to craft an awesome response with relevant emojis. Make it fun, informative, and in Markdown!
+        Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n
+
 `
       }
     ];

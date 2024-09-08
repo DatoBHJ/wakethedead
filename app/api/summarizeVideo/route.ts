@@ -121,7 +121,7 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
     });
   }
   
-  async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number): Promise<any> {
+  async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
     const formattedChunk = convertTimestamps(chunk);
     console.log('formattedChunk:', formattedChunk);
     const response = await openai.chat.completions.create({
@@ -129,11 +129,13 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
       messages: [
         {
           role: "system",
-          content: "You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions."
+          content: `You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions.
+                  Always respond in user preference language whcih is ${selectedLanguage}. `
         },
         {
           role: "user",
           content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+          I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
           Use many relevant emojis !! Include:
           - A super brief "what's this part about" line
           - A few key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets)
@@ -153,17 +155,19 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
     return response;
   }
   
-  async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number): Promise<any> {
+  async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
     const response = await openai.chat.completions.create({
       model: selectedModel,
       messages: [
         {
           role: "system",
-          content: "You're quickly skimming through an article and taking brief, informal notes. Use everyday language, and include short personal reactions or questions."
+          content: `You're quickly skimming through an article and taking brief, informal notes. Use everyday language, and include short personal reactions or questions.
+                      Always respond in user preference language whcih is ${selectedLanguage}. `
         },
         {
           role: "user",
           content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
+          I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
           Use many relevant emojis !! Include:
           - A very brief "what's this part about" line
           - A few key points or interesting facts 
@@ -249,8 +253,8 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
             console.log(`Processing chunk ${i + 1} of ${chunks.length}`);
             const chunk = chunks[i];
             const summaryStream = isYouTube
-              ? await generateCasualSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length)
-              : await generateArticleSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length);
+              ? await generateCasualSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language)
+              : await generateArticleSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language);
   
             for await (const part of summaryStream) {
               const content = part.choices[0]?.delta?.content || '';
