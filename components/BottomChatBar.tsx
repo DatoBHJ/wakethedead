@@ -52,7 +52,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             {messages.length === 0 && !inputValue && (
               <div className="flex-grow flex items-center justify-center mb-72">
                 <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                  💬 Ask • 🔗 Click Links • 📚 Learn • 🔄 Repeat
+                  💬 Chat • 🔗 Click Links • 🔍 Explore • 🔄 Repeat
                 </div>
               </div>
             )}
@@ -93,11 +93,11 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               {messages.length === 0 && !inputValue && (
                 <InitialQueries
                   questions={[               
-                    "What is a GPT? 🤖",
-                    "When did Ye release 'Ye'? 🎵",
+                    "Give me some memes 🤣",
+                    "When did Ye release Ye? 🎧",
                     "How's NVIDIA stock doing these days? 📈",
-                    "Explain black holes like I'm 5 🕳️",
-                    "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
+                    "Explain GPT like I'm 5 🤖",
+                    "I need a kindle link to The Hobbit 📚",
                   ]}
                   handleFollowUpClick={handleFollowUpClick}
                 />

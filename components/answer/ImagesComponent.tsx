@@ -16,7 +16,7 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
 
     const ImagesSkeleton = () => (
         <>
-            {Array.from({ length: showMore ? 9 : 3 }).map((_, index) => (
+            {Array.from({ length: 9 }).map((_, index) => (
                 <div key={index} className="aspect-square w-full">
                     <div className="w-full h-full bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></div>
                 </div>
@@ -48,7 +48,7 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
                     </div>
                 )}
             </div>
-            <div className={`grid grid-cols-3 gap-4 transition-all duration-500 ${showMore ? 'max-h-[1000px]' : 'max-h-[400px]'} overflow-hidden`}>
+            <div className={`grid grid-cols-3 gap-4 transition-all duration-500 ${showMore ? 'max-h-none' : 'max-h-[400px]'} overflow-hidden`}>
                 {images.length === 0 ? (
                     <ImagesSkeleton />
                 ) : (
