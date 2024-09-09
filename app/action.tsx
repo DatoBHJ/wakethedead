@@ -241,7 +241,7 @@ async function myAction(
     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
       performImageSearch(userMessage),
       performWebSearch(userMessage, config.numberOfPagesToScan),
-      performVideoSearch(userMessage, config.numberOfVideosToScan),
+      performVideoSearch(userMessage),
       getUserSharedDocument(latestUserMessage, embeddings, index)
     ]);
 

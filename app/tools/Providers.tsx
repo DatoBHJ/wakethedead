@@ -98,7 +98,7 @@ export async function performWebSearch(query: string, numberOfPagesToScan: numbe
     }
   }
 
-  export async function duckDuckGoVideo(message: string, numberOfVideosToScan): Promise<VideoResult[]> {
+  export async function duckDuckGoVideo(message: string): Promise<VideoResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/video-search?query=${encodeURIComponent(message)}`;
     
     try {
@@ -116,14 +116,14 @@ export async function performWebSearch(query: string, numberOfPagesToScan: numbe
             imageUrl: result.image,
             duration: result.duration || 'Unknown' // 새로 추가된 필드
         }));
-        return videos.slice(0, numberOfVideosToScan);
+        return videos
     } catch (error) {
         console.error('Error fetching DuckDuckGo video search results:', error);
         throw error;
     }
 }
 
-export async function getVideos(message: string, numberOfVideosToScan): Promise<VideoResult[]> {
+export async function getVideos(message: string): Promise<VideoResult[]> {
     const url = 'https://google.serper.dev/videos';
     const data = JSON.stringify({
         "q": message
@@ -164,24 +164,24 @@ export async function getVideos(message: string, numberOfVideosToScan): Promise<
             })
         );
         const filteredLinks = validLinks.filter((link): link is VideoResult => link !== null);
-        return filteredLinks.slice(0, numberOfVideosToScan);
+        return filteredLinks
     } catch (error) {
         console.error('Error fetching videos:', error);
         throw error;
     }
 }
 
-export async function performVideoSearch(query: string, numberOfVideosToScan: number): Promise<VideoResult[]> {
+export async function performVideoSearch(query: string): Promise<VideoResult[]> {
     try {
         // First, try DuckDuckGo video search
-        const duckDuckGoResults = await duckDuckGoVideo(query, numberOfVideosToScan);
-        return duckDuckGoResults.slice(0, 9);
+        const duckDuckGoResults = await duckDuckGoVideo(query);
+        return duckDuckGoResults
     } catch (error) {
         console.error('DuckDuckGo video search error:', error);
         
         console.log('Falling back to serper video search');
         try {
-            const serperResults = await getVideos(query, numberOfVideosToScan);
+            const serperResults = await getVideos(query);
             return serperResults || [];
         } catch (serperError) {
             console.error('Serper video search error:', serperError);
@@ -214,27 +214,6 @@ export async function duckDuckGoImage(message: string): Promise<ImageResult[]> {
   }
 }
 
-export async function performImageSearch(query: string): Promise<ImageResult[]> {
-  try {
-      // First, try DuckDuckGo image search
-      const duckDuckGoResults = await duckDuckGoImage(query);
-      return duckDuckGoResults
-  } catch (error) {
-      console.error('DuckDuckGo image search error:', error);
-      
-      // Fallback to serperSearch (getImages)
-      console.log('Falling back to serper image search');
-      try {
-          const serperResults = await getImages(query);
-          return serperResults;
-      } catch (serperError) {
-          console.error('Serper image search error:', serperError);
-          throw new Error('Both image search methods failed');
-      }
-  }
-}
-
-// 기존의 getImages 함수를 수정합니다.
 export async function getImages(message: string): Promise<ImageResult[]> {
   const url = 'https://google.serper.dev/images';
   const data = JSON.stringify({
@@ -283,3 +262,25 @@ export async function getImages(message: string): Promise<ImageResult[]> {
     throw error;
   }
 }
+
+
+export async function performImageSearch(query: string): Promise<ImageResult[]> {
+    try {
+        // First, try DuckDuckGo image search
+        const duckDuckGoResults = await duckDuckGoImage(query);
+        return duckDuckGoResults
+    } catch (error) {
+        console.error('DuckDuckGo image search error:', error);
+        
+        // Fallback to serperSearch (getImages)
+        console.log('Falling back to serper image search');
+        try {
+            const serperResults = await getImages(query);
+            return serperResults;
+        } catch (serperError) {
+            console.error('Serper image search error:', serperError);
+            throw new Error('Both image search methods failed');
+        }
+    }
+  }
+  
