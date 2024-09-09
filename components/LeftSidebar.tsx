@@ -159,20 +159,6 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
           >
             <a
               target="_blank"
-              href="https://github.com/DatoBHJ/wakethedead"
-              rel="noopener noreferrer"
-            >
-              <IconGitHub className="h-5 w-5" />
-            </a>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            asChild
-            className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-          >
-            <a
-              target="_blank"
               href="https://x.com/DatoBHJ"
               rel="noopener noreferrer"
             >
@@ -195,7 +181,20 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               <IconBuyMeACoffee className="h-5 w-5" />
             </a>
           </Button>
-
+          <Button 
+            variant="ghost" 
+            size="icon"
+            asChild
+            className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+          >
+            <a
+              target="_blank"
+              href="https://github.com/DatoBHJ/wakethedead"
+              rel="noopener noreferrer"
+            >
+              <IconGitHub className="h-5 w-5" />
+            </a>
+          </Button>
         </div>
       </div>
     </div>

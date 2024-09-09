@@ -98,6 +98,9 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     "How's NVIDIA stock doing these days? 📈",
                     "Explain GPT like I'm 5 🤖",
                     "I need a kindle link to The Hobbit 📚",
+                    // "Tell me today's headlines 📰",
+                    // "I need a timestamp of Pieter saying he's drinking 4 cups of strong coffee ☕ in the lex Fridman podcast",
+
                   ]}
                   handleFollowUpClick={handleFollowUpClick}
                 />
