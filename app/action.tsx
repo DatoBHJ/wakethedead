@@ -239,11 +239,13 @@ async function myAction(
     const latestUserMessage = chatHistory[chatHistory.length - 1].content;
 
     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
-      performImageSearch(userMessage, config.numberOfImagesToScan),
+      performImageSearch(userMessage),
       performWebSearch(userMessage, config.numberOfPagesToScan),
       performVideoSearch(userMessage, config.numberOfVideosToScan),
       getUserSharedDocument(latestUserMessage, embeddings, index)
     ]);
+
+    console.log('length of images', images.length);
     streamable.update({ 'searchResults': webSearchResults });
     streamable.update({ 'images': images });
     streamable.update({ 'videos': videos });

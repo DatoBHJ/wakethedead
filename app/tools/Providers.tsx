@@ -191,7 +191,7 @@ export async function performVideoSearch(query: string, numberOfVideosToScan: nu
 }
 
 
-export async function duckDuckGoImage(message: string, numberOfImagesToScan): Promise<ImageResult[]> {
+export async function duckDuckGoImage(message: string): Promise<ImageResult[]> {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/image-search?query=${encodeURIComponent(message)}`;
   
   try {
@@ -207,17 +207,17 @@ export async function duckDuckGoImage(message: string, numberOfImagesToScan): Pr
           title: result.title,
           link: result.image
       }));
-      return final.slice(0, numberOfImagesToScan);
+      return final
   } catch (error) {
       console.error('Error fetching DuckDuckGo image search results:', error);
       throw error;
   }
 }
 
-export async function performImageSearch(query: string, numberOfImagesToScan:number): Promise<ImageResult[]> {
+export async function performImageSearch(query: string): Promise<ImageResult[]> {
   try {
       // First, try DuckDuckGo image search
-      const duckDuckGoResults = await duckDuckGoImage(query,numberOfImagesToScan);
+      const duckDuckGoResults = await duckDuckGoImage(query);
       return duckDuckGoResults
   } catch (error) {
       console.error('DuckDuckGo image search error:', error);
@@ -225,7 +225,7 @@ export async function performImageSearch(query: string, numberOfImagesToScan:num
       // Fallback to serperSearch (getImages)
       console.log('Falling back to serper image search');
       try {
-          const serperResults = await getImages(query, numberOfImagesToScan);
+          const serperResults = await getImages(query);
           return serperResults;
       } catch (serperError) {
           console.error('Serper image search error:', serperError);
@@ -235,7 +235,7 @@ export async function performImageSearch(query: string, numberOfImagesToScan:num
 }
 
 // 기존의 getImages 함수를 수정합니다.
-export async function getImages(message: string, numberOfImagesToScan): Promise<ImageResult[]> {
+export async function getImages(message: string): Promise<ImageResult[]> {
   const url = 'https://google.serper.dev/images';
   const data = JSON.stringify({
     "q": message
@@ -277,7 +277,7 @@ export async function getImages(message: string, numberOfImagesToScan): Promise<
       })
     );
     const filteredLinks = validLinks.filter((link): link is ImageResult => link !== null);
-    return filteredLinks.slice(0, numberOfImagesToScan);
+    return filteredLinks
   } catch (error) {
     console.error('Error fetching images:', error);
     throw error;

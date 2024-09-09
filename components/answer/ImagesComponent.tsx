@@ -12,7 +12,9 @@ interface ImagesComponentProps {
 }
 
 const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
-    const [showMore, setShowMore] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [visibleImages, setVisibleImages] = useState(3);
+    const [expandedVisibleImages, setExpandedVisibleImages] = useState(9);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const ImagesSkeleton = () => (
@@ -35,25 +37,38 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
         }
     };
 
+    const handleExpand = () => {
+        setIsExpanded(!isExpanded);
+        if (!isExpanded) {
+            setVisibleImages(expandedVisibleImages);
+        } else {
+            setVisibleImages(3);
+        }
+    };
+
+    const handleShowMore = () => {
+        const newVisibleImages = Math.min(visibleImages + 9, images.length);
+        setVisibleImages(newVisibleImages);
+        setExpandedVisibleImages(newVisibleImages);
+    };
+
     return (
         <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
             <div className="flex items-center mb-4">
                 <h2 className="text-lg font-semibold flex-grow text-black dark:text-white">Images</h2>
-                {images.length > 3 && (
-                    <div className="flex justify-center ml-2">
-                        <button
-                            className="text-black dark:text-white focus:outline-none"
-                            onClick={() => setShowMore(!showMore)}>
-                            {showMore ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
-                        </button>
-                    </div>
-                )}
+                <div className="flex justify-center ml-2">
+                    <button
+                        className="text-black dark:text-white focus:outline-none"
+                        onClick={handleExpand}>
+                        {isExpanded ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
+                    </button>
+                </div>
             </div>
-            <div className={`grid grid-cols-3 gap-4 transition-all duration-500 ${showMore ? 'max-h-none' : 'max-h-[400px]'} overflow-hidden`}>
+            <div className="grid grid-cols-3 gap-4">
                 {images.length === 0 ? (
                     <ImagesSkeleton />
                 ) : (
-                    images.slice(0, showMore ? 9 : 3).map((image, index) => (
+                    images.slice(0, visibleImages).map((image, index) => (
                         <div
                             key={index}
                             className="aspect-square w-full transition ease-in-out hover:scale-105 duration-200 cursor-pointer"
@@ -70,6 +85,17 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
                     ))
                 )}
             </div>
+
+            {isExpanded && visibleImages < images.length && (
+                <div className="flex justify-center mt-4">
+                    <button
+                        className="py-2 text-center text-xs sm:text-sm text-gray-400 dark:text-gray-400"
+                        onClick={handleShowMore}
+                    >
+                        Show More
+                    </button>
+                </div>
+            )}
 
             {selectedImage && (
                 <div
