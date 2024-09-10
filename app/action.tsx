@@ -250,13 +250,13 @@ async function myAction(
       getUserSharedDocument(latestUserMessage, embeddings, index)
     ]);
 
-    console.log('length of images', images.length);
+    // console.log('length of images', images.length);
     streamable.update({'relevantDocuments': relevantDocuments});
     streamable.update({ 'searchResults': webSearchResults });
     streamable.update({ 'images': images });
     streamable.update({ 'videos': videos });
 
-    console.log('Relevant documents:', relevantDocuments, '\n');
+    // console.log('Relevant documents:', relevantDocuments, '\n');
     // console.log('Web search results:', webSearchResults, '\n');
     // console.log('Images:', images, '\n');
     // console.log('Videos:', videos, '\n');
@@ -266,7 +266,7 @@ async function myAction(
 
     // processedWebResults 있으면 그대로 processedWebResults 를 사용하고, 없으면 webSearchResults 를 사용한다.
     processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
-    console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
+    // console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
 
     streamable.update({ 'processedWebResults': processedWebResults.slice(0,config.numberOfSimilarityResults) });
 
