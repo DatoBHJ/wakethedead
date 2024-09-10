@@ -103,8 +103,9 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     "Give me some memes 🤣",
                     "When did Ye release Ye? 🎧",
                     "How's NVIDIA stock doing these days? 📈",
-                    "Explain GPT like I'm 5 🤖",
+                    // "Explain GPT like I'm 5 🤖",
                     "I need a kindle link to The Hobbit 📚",
+                    "How many people did Pieter mute on Twitter? I need timestamps for proof 🤐",
                     // "Tell me today's headlines 📰",
                     // "I need a timestamp of Pieter saying he's drinking 4 cups of strong coffee ☕ in the lex Fridman podcast",
 

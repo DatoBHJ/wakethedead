@@ -65,34 +65,29 @@ interface ContentResult extends SearchResult {
 }
 
 
-// 4. Generate follow-up questions based on the top results from a similarity search
-const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
-  return await openai.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content: `
-          You are a Question generator who generates an array of 3 follow-up questions in JSON format.
-          The JSON schema should include:
-          {
-            "original": "The original search query or context",
-            "followUp": [
-              "Question 1",
-              "Question 2", 
-              "Question 3"
-            ]
-          }
-          `,
-      },
-      {
-        role: "user",
-        content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(sources)}. The original search query is: "${userMessage}".`,
-      },
-    ],
-    model: selectedModel,
-    response_format: { type: "json_object" },
+async function getUserSharedDocument(latestUserMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
+  const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
+  const queryResults = await index.query({
+    vector: queryEmbedding,
+    topK: config.numberOfSimilarityResults,
+    includeMetadata: true,
+    includeVectors: false,
   });
-};
+
+  return queryResults
+    .filter((result) => 
+      result.score >= config.similarityThreshold &&
+      result.metadata.title &&
+      result.metadata.content &&
+      result.metadata.link
+    )
+    .map((result) => ({
+      title: result.metadata.title,
+      pageContent: result.metadata.content,
+      url: result.metadata.link,
+      score: result.score
+    }));
+}
 
 
 // 5. Fetch contents of top 10 search results
@@ -201,29 +196,36 @@ async function processAndVectorizeContent(
   }
 }
 
-async function getUserSharedDocument(latestUserMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
-  const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
-  const queryResults = await index.query({
-    vector: queryEmbedding,
-    topK: config.numberOfSimilarityResults,
-    includeMetadata: true,
-    includeVectors: false,
-  });
 
-  return queryResults
-    .filter((result) => 
-      result.score >= config.similarityThreshold &&
-      result.metadata.title &&
-      result.metadata.content &&
-      result.metadata.link
-    )
-    .map((result) => ({
-      title: result.metadata.title,
-      pageContent: result.metadata.content,
-      url: result.metadata.link,
-      score: result.score
-    }));
-}
+// 4. Generate follow-up questions based on the top results from a similarity search
+const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
+  return await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: `
+          You are a Question generator who generates an array of 3 follow-up questions in JSON format.
+          The JSON schema should include:
+          {
+            "original": "The original search query or context",
+            "followUp": [
+              "Question 1",
+              "Question 2", 
+              "Question 3"
+            ]
+          }
+          `,
+      },
+      {
+        role: "user",
+        content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(sources)}. The original search query is: "${userMessage}".`,
+      },
+    ],
+    model: selectedModel,
+    response_format: { type: "json_object" },
+  });
+};
+
 
 // 6. Main action function that orchestrates the entire process
 async function myAction(
@@ -278,6 +280,7 @@ async function myAction(
     
         1. Answer the user query using only relevant documents from the provided sources.
         If you find any conflicting or outdated information, trust sources shared by web search results over user-shared documents.
+        Also fyi squared brackets like [HH:MM:SS] or [MM:SS] are timestamps for videos.\n\n
         Today's date and time: 
         ${currentTimestamp}\n\n
         Sources from the web:
