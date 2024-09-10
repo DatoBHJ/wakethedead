@@ -65,43 +65,43 @@ if (config.useSemanticCache) {
 
   semanticCache = new SemanticCache({ index, minProximity: 0.99 });
 }
-async function embedTranscripts(transcript: string, videoId: string, videoInfo: any, videoUrl:string): Promise<void> {
-    const textSplitter = new RecursiveCharacterTextSplitter({ 
-      chunkSize: config.textChunkSize,
-      chunkOverlap: config.textChunkOverlap
-    });
-  
-    try {
-      const metadata = {
-        title: videoInfo.title || '',
-        author: videoInfo.author || '',
-        link: videoUrl,
-      };
-  
-      const chunks = await textSplitter.createDocuments([transcript], [metadata]);
-  
-      const embeddingPromises = chunks.map(async (chunk) => {
-        const formattedContent = convertTimestamps(chunk.pageContent);
-        const embedding = await embeddings.embedQuery(formattedContent);
-        return embeddingsIndex.upsert([
-          {
-            id: `${videoId}-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-            vector: embedding,
-            metadata: {
-              content: formattedContent,
-              title: metadata.title,
-              link: metadata.link
-            }
+async function embedTranscripts(transcript: string, videoId: string, videoInfo: any, videoUrl: string, cacheKey: string): Promise<void> {
+  const textSplitter = new RecursiveCharacterTextSplitter({ 
+    chunkSize: config.textChunkSize,
+    chunkOverlap: config.textChunkOverlap
+  });
+
+  try {
+    const metadata = {
+      title: videoInfo.title || '',
+      author: videoInfo.author || '',
+      link: videoUrl,
+    };
+
+    const chunks = await textSplitter.createDocuments([transcript], [metadata]);
+
+    const embeddingPromises = chunks.map(async (chunk, index) => {
+      const formattedContent = convertTimestamps(chunk.pageContent);
+      const embedding = await embeddings.embedQuery(formattedContent);
+      return embeddingsIndex.upsert([
+        {
+          id: `${cacheKey}-chunk${index + 1}`,
+          vector: embedding,
+          metadata: {
+            content: formattedContent,
+            title: metadata.title,
+            link: metadata.link
           }
-        ]);
-      });
-      
-      await Promise.all(embeddingPromises);
-      console.log(`Embeddings created for video: ${videoId}`);
-    } catch (error) {
-      console.error("Error in embedTranscripts:", error);
-    }
+        }
+      ]);
+    });
+    
+    await Promise.all(embeddingPromises);
+    console.log(`Embeddings created for video: ${videoId}`);
+  } catch (error) {
+    console.error("Error in embedTranscripts:", error);
   }
+}
 
   function formatTimestamp(seconds: number): string {
     const hours = Math.floor(seconds / 3600);
@@ -235,7 +235,7 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
       console.log('app/api/summarizeContent contentInfo:', { contentInfo });
   
       if (!forceRegenerate && !exists) {
-        embedTranscripts(transcript, videoId, contentInfo, videoUrl);
+        embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
       }
     
       const textSplitter = new RecursiveCharacterTextSplitter({
