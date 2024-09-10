@@ -281,8 +281,6 @@ async function myAction(
       processedWebResults.slice(0, config.numberOfSimilarityResults)
     );
 
-    // streamable 업데이트
-    streamable.update({'relevantDocuments': relevantDocuments});
     streamable.update({ 'processedWebResults': uniqueProcessedWebResults });
 
     // 프롬프트를 위한 중복 제거
@@ -347,7 +345,12 @@ async function myAction(
     }
     
 
-    const followUp = await relevantQuestions(webSearchResults, userMessage, selectedModel);
+    const followUp = await relevantQuestions(
+      [...promptProcessedWebResults, ...promptRelevantDocuments],
+      userMessage,
+      selectedModel
+    );
+    streamable.update({ 'followUp': followUp });
     streamable.update({ 'followUp': followUp });
 
     streamable.done({ status: 'done' });
