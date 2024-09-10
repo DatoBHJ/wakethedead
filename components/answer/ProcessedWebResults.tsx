@@ -7,8 +7,8 @@ interface RelevantLink {
   url: string;
 }
 
-interface RelevantLinksComponentProps {
-  relevantDocuments: RelevantLink[];
+interface ProcessedWebResultsComponentProps {
+  processedWebResults: RelevantLink[];
   onAddLink: (link: string) => void;
 }
 
@@ -18,12 +18,12 @@ const decodeHtmlEntities = (text: string): string => {
   return textArea.value;
 };
 
-const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevantDocuments, onAddLink }) => {
+const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> = ({ processedWebResults, onAddLink }) => {
   const [addedLinks, setAddedLinks] = React.useState<Set<string>>(new Set());
 
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
-    relevantDocuments.forEach(link => {
+    processedWebResults.forEach(link => {
       if (!linkMap.has(link.url)) {
         linkMap.set(link.url, {
           ...link,
@@ -32,7 +32,7 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevan
       }
     });
     return Array.from(linkMap.values());
-  }, [relevantDocuments]);
+  }, [processedWebResults]);
 
   const handleLinkClick = (url: string) => {
     onAddLink(url);
@@ -49,7 +49,7 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevan
         <div className="flex items-center">
           {/* <LinkIcon className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" /> */}
           <h2 className="text-2xl font-bold font-handwriting">
-            Shared by our users 🤝
+            Web search results 🌐
           </h2>
         </div>
         {/* <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 ml-9 italic">
@@ -86,4 +86,4 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevan
   );
 };
 
-export default RelevantLinksComponent;
+export default ProcessedWebResultsComponent;

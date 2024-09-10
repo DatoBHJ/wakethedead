@@ -9,6 +9,7 @@ import FollowUpComponent from '@/components/answer/FollowUpComponent';
 import InitialQueries from '@/components/answer/InitialQueries';
 import { motion } from 'framer-motion';
 import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
+import ProcessedWebResults from '@/components/answer/ProcessedWebResults';
 import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
 
@@ -59,9 +60,15 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             {messages.map((message, index) => (
               <div key={index}>
                 <UserMessageComponent message={message.userMessage} />
-                {message.combinedRelevantDocuments && (
+                {message.relevantDocuments && (
                   <RelevantLinksComponent
-                  combinedRelevantDocuments={message.combinedRelevantDocuments}
+                  relevantDocuments={message.relevantDocuments}
+                    onAddLink={onAddLink}
+                  />
+                )}
+                {message.processedWebResults && (
+                  <ProcessedWebResults
+                  processedWebResults={message.processedWebResults}
                     onAddLink={onAddLink}
                   />
                 )}

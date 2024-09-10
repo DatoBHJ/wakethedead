@@ -8,9 +8,9 @@ export const config = {
     numberOfSimilarityResults: 4, 
     nonOllamaBaseURL: 'https://api.groq.com/openai/v1', 
     useSemanticCache: true, 
-    numberOfPagesToScan: 5,
-    timeout: 800,
-    similarityThreshold: 0.65,
+    numberOfPagesToScan: 10,
+    timeout: 800, 
+    similarityThreshold: 0.6,
     numberOfVideosToScan: 6,
     numberOfImagesToScan: 9,
 }

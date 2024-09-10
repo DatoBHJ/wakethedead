@@ -63,7 +63,8 @@ interface Message {
   isStreaming: boolean;
   status?: string;
   isolatedView: boolean;
-  combinedRelevantDocuments?: RelevantLink[];
+  relevantDocuments?: RelevantLink[];
+  processedWebResults?: UserDataResult[];
   SearchResult?: SearchResult[];
   images?: Image[];
   videos?: Video[];
@@ -76,7 +77,8 @@ interface StreamMessage {
   llmResponseEnd?: boolean;
   followUp?: any;
   status?: string;
-  combinedRelevantDocuments?: RelevantLink[];
+  relevantDocuments?: RelevantLink[];
+  processedWebResults?: UserDataResult[];
   SearchResult?: SearchResult[];
   images?: Image[];
   videos?: Video[];
@@ -237,7 +239,8 @@ export default function Page() {
 
             currentMessage.isStreaming = typedMessage.llmResponseEnd ? false : currentMessage.isStreaming;
             currentMessage.followUp = typedMessage.followUp || currentMessage.followUp;
-            currentMessage.combinedRelevantDocuments = typedMessage.combinedRelevantDocuments || currentMessage.combinedRelevantDocuments;
+            currentMessage.relevantDocuments = typedMessage.relevantDocuments || currentMessage.relevantDocuments;
+            currentMessage.processedWebResults = typedMessage.processedWebResults || currentMessage.processedWebResults;
             currentMessage.SearchResult = typedMessage.SearchResult || currentMessage.SearchResult;
             currentMessage.images = typedMessage.images || currentMessage.images;
             currentMessage.videos = typedMessage.videos || currentMessage.videos;

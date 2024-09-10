@@ -142,9 +142,9 @@ export async function get10BlueLinksContents(sources: SearchResult[]): Promise<C
   const promises = sources.map(async (source): Promise<ContentResult | null> => {
     try {
       const response = await fetchWithTimeout(source.url, {}, config.timeout);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
+      // }
       const html = await response.text();
       const mainContent = extractMainContent(html);
       return { ...source, html: mainContent };
@@ -237,65 +237,56 @@ async function myAction(
   const streamable = createStreamableValue({});
   (async () => {
     const latestUserMessage = chatHistory[chatHistory.length - 1].content;
-
+    const currentTimestamp = new Date().toISOString();
+    const userMessageWithTimestamp = `${currentTimestamp}: ${latestUserMessage}`;
+    console.log('User message:', userMessageWithTimestamp, '\n');
+    
     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
-      performImageSearch(userMessage),
-      performWebSearch(userMessage, config.numberOfPagesToScan),
-      performVideoSearch(userMessage),
-      getUserSharedDocument(latestUserMessage, embeddings, index)
+      performImageSearch(userMessageWithTimestamp),
+      performWebSearch(userMessageWithTimestamp, config.numberOfPagesToScan),
+      performVideoSearch(userMessageWithTimestamp),
+      getUserSharedDocument(userMessageWithTimestamp, embeddings, index)
     ]);
 
     console.log('length of images', images.length);
+    streamable.update({'relevantDocuments': relevantDocuments});
     streamable.update({ 'searchResults': webSearchResults });
     streamable.update({ 'images': images });
     streamable.update({ 'videos': videos });
 
-    // console.log('Relevant documents:', relevantDocuments, '\n');
+    console.log('Relevant documents:', relevantDocuments, '\n');
     // console.log('Web search results:', webSearchResults, '\n');
     // console.log('Images:', images, '\n');
     // console.log('Videos:', videos, '\n');
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
-    const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
+    let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
 
-    // Combine relevant documents from both sources
-    let combinedRelevantDocuments;
+    // processedWebResults 있으면 그대로 processedWebResults 를 사용하고, 없으면 webSearchResults 를 사용한다.
+    processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
+    console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
 
-    if (relevantDocuments.length === 0 && processedWebResults.length === 0) {
-      // If both are empty, use webSearchResults
-      combinedRelevantDocuments = webSearchResults.map(result => ({
-        ...result,
-        score: 0.5 // Assign a default score since webSearchResults doesn't have scores
-      }));
-    } else {
-      // Use the existing logic if either source has results
-      combinedRelevantDocuments = [
-        ...relevantDocuments,
-        ...processedWebResults
-      ];
-    }
+    streamable.update({ 'processedWebResults': processedWebResults.slice(0,config.numberOfSimilarityResults) });
 
-    // Sort by score in descending order and limit to 10 elements
-    combinedRelevantDocuments = combinedRelevantDocuments
-      .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 10);
-    streamable.update({ 'combinedRelevantDocuments': combinedRelevantDocuments });
 
-    console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
 
     const messages = [
       {
         role: "system" as const,
         content: `You're a witty and clever AI assistant.
-        You're not Siri, Alexa, or some boring ol' chatbot. 
         Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
-        Always respond in user preference language whcih is ${selectedLanguage}. 
     
-        1. From the given relevant documents, craft a response that answers the user query: "${latestUserMessage}".
-        Make sure to only use documents that directly answer the user query. If you don't find any, just answer based on the user query.
-        2. Respond back ALWAYS IN MARKDOWN, never mention the system message.
-        3. Structure your response like this:
-        
+        1. Answer the user query using only relevant documents from the provided sources.
+        If you find any conflicting or outdated information, trust sources shared by web search results over user-shared documents.
+        Today's date and time: 
+        ${currentTimestamp}\n\n
+        Sources from the web:
+        ${JSON.stringify(processedWebResults.slice(0,config.numberOfSimilarityResults))}\n\n
+        Sources shared by users:
+        ${JSON.stringify(relevantDocuments)}\n\n
+
+        2. Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
+        <answerFormat>
         ## Quick Answer ⚡
         [Quick answer to the user message in 1-2 punchy sentences with relevant emojis]
     
@@ -304,7 +295,7 @@ async function myAction(
     
         ## The Scoop 🔍
         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples!]
-  
+        </answerFormat>
         `
       },
       ...chatHistory, 
@@ -314,13 +305,12 @@ async function myAction(
         Here is my query:
         ${latestUserMessage}\n\n
         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
-        Use this info to craft an awesome response with relevant emojis. Make it fun, informative, and in Markdown!
-        Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n`
+      `
       }
     ];
     
     const chatCompletion = await openai.chat.completions.create({
-      temperature: 0.5, 
+      temperature: 0.3, 
       messages,
       stream: true,
       model: selectedModel
