@@ -489,13 +489,7 @@ export default function Page() {
     handleFormSubmit={handleFormSubmit}
     onAddLink={handleAddLink}
   />
-        <div className="absolute bottom-40 left-0 right-0 text-center p-2 sm:pb-20">
-        {/* <div className="absolute bottom-0 left-0 right-0 text-center p-2 bg-background/80 backdrop-blur-sm"> */}
-          <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-400">
-            💬 • 🔗 • 🔍 • 🔄
-          </p>
-        </div>
-        {/* </div> */}
+
       </div>
       <UserSharedLinks 
         onAddLink={handleAddLink} 
