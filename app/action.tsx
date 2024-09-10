@@ -82,9 +82,9 @@ async function getUserSharedDocument(latestUserMessage: string, embeddings: Olla
       result.metadata.link
     )
     .map((result) => ({
-      title: result.metadata.title,
-      pageContent: result.metadata.content,
-      url: result.metadata.link,
+      title: result.metadata.title as string,
+      pageContent: result.metadata.content as string,
+      url: result.metadata.link as string,
       score: result.score
     }));
 }
@@ -227,7 +227,19 @@ const relevantQuestions = async (sources: SearchResult[], userMessage: String, s
 };
 
 
-// 6. Main action function that orchestrates the entire process
+// URL 중복 제거 함수 수정
+function removeDuplicatesForStreamable(relevantDocs: SearchResult[], processedResults: SearchResult[]): SearchResult[] {
+  const relevantUrls = new Set(relevantDocs.map(doc => doc.url));
+  return processedResults.filter(result => !relevantUrls.has(result.url));
+}
+
+// 프롬프트용 중복 제거 함수
+function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDocs: SearchResult[]): [SearchResult[], SearchResult[]] {
+  const processedUrls = new Set(processedResults.map(result => result.url));
+  const uniqueRelevantDocs = relevantDocs.filter(doc => !processedUrls.has(doc.url));
+  return [processedResults, uniqueRelevantDocs];
+}
+// 메인 액션 함수 수정
 async function myAction(
   chatHistory: ChatMessage[],
   userMessage: string, 
@@ -250,27 +262,34 @@ async function myAction(
       getUserSharedDocument(latestUserMessage, embeddings, index)
     ]);
 
-    // console.log('length of images', images.length);
     streamable.update({'relevantDocuments': relevantDocuments});
     streamable.update({ 'searchResults': webSearchResults });
     streamable.update({ 'images': images });
     streamable.update({ 'videos': videos });
 
-    // console.log('Relevant documents:', relevantDocuments, '\n');
-    // console.log('Web search results:', webSearchResults, '\n');
-    // console.log('Images:', images, '\n');
-    // console.log('Videos:', videos, '\n');
+    console.log('Relevant documents:', relevantDocuments, '\n');
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
     let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
 
-    // processedWebResults 있으면 그대로 processedWebResults 를 사용하고, 없으면 webSearchResults 를 사용한다.
     processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
-    // console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
+    console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
 
-    streamable.update({ 'processedWebResults': processedWebResults.slice(0,config.numberOfSimilarityResults) });
+    // streamable 업데이트를 위한 중복 제거
+    const uniqueProcessedWebResults = removeDuplicatesForStreamable(
+      relevantDocuments,
+      processedWebResults.slice(0, config.numberOfSimilarityResults)
+    );
 
+    // streamable 업데이트
+    streamable.update({'relevantDocuments': relevantDocuments});
+    streamable.update({ 'processedWebResults': uniqueProcessedWebResults });
 
+    // 프롬프트를 위한 중복 제거
+    const [promptProcessedWebResults, promptRelevantDocuments] = removeDuplicatesForPrompt(
+      processedWebResults.slice(0, config.numberOfSimilarityResults),
+      relevantDocuments
+    );
 
     const messages = [
       {
@@ -284,9 +303,9 @@ async function myAction(
         Today's date and time: 
         ${currentTimestamp}\n\n
         Sources from the web:
-        ${JSON.stringify(processedWebResults.slice(0,config.numberOfSimilarityResults))}\n\n
+        ${JSON.stringify(promptProcessedWebResults)}\n\n
         Sources shared by users:
-        ${JSON.stringify(relevantDocuments)}\n\n
+        ${JSON.stringify(promptRelevantDocuments)}\n\n
 
         2. Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
         <answerFormat>

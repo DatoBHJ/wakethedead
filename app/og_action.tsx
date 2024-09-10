@@ -10,7 +10,7 @@
 // import { Document as DocumentInterface } from 'langchain/document';
 // import cheerio from 'cheerio';
 // // import { functionCalling } from './function-calling';
-// import { serperSearch } from './tools/searchProviders';
+// import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 // export const runtime = 'edge';
 
@@ -65,66 +65,30 @@
 // }
 
 
-// // 4. Generate follow-up questions based on the top results from a similarity search
-// const relevantQuestions = async (allResults: any[], userMessage: string, selectedModel:string): Promise<any> => {
-//   return await openai.chat.completions.create({
-//     messages: [
-//       {
-//         role: "system",
-//         content: `
-//           You are a Question generator who generates an array of 3 follow-up questions in JSON format.
-//           The JSON schema should include:
-//           {
-//             "original": "The original search query or context",
-//             "followUp": [
-//               "Question 1",
-//               "Question 2", 
-//               "Question 3"
-//             ]
-//           }
-//           `,
-//       },
-//       {
-//         role: "user",
-//         content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(allResults)} or based on the original search query: "${userMessage}".`,
-//       },
-//     ],
-//     model: selectedModel,
-//     response_format: { type: "json_object" },
+// async function getUserSharedDocument(latestUserMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
+//   const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
+//   const queryResults = await index.query({
+//     vector: queryEmbedding,
+//     topK: config.numberOfSimilarityResults,
+//     includeMetadata: true,
+//     includeVectors: false,
 //   });
-// };
 
-// async function performWebSearch(query: string): Promise<SearchResult[]> {
-//   try {
-//     // First, try DuckDuckGo search
-//     const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(query)}`);
-//     if (!searchResponse.ok) {
-//       throw new Error('DuckDuckGo search failed');
-//     }
-//     const searchResults = await searchResponse.json();
-//     return searchResults.results.slice(0, config.numberOfPagesToScan).map(result => ({
-//       title: result.title,
-//       url: result.url,
-//       pageContent: result.description
+//   return queryResults
+//     .filter((result) => 
+//       result.score >= config.similarityThreshold &&
+//       result.metadata.title &&
+//       result.metadata.content &&
+//       result.metadata.link
+//     )
+//     .map((result) => ({
+//       title: result.metadata.title,
+//       pageContent: result.metadata.content,
+//       url: result.metadata.link,
+//       score: result.score
 //     }));
-//   } catch (error) {
-//     console.error('DuckDuckGo search error:', error);
-    
-//     // Fallback to serperSearch
-//     console.log('Falling back to serperSearch');
-//     try {
-//       const serperResults = await serperSearch(query, config.numberOfPagesToScan);
-//       return serperResults.map(result => ({
-//         title: result.title,
-//         url: result.link,
-//         pageContent: result.snippet
-//       }));
-//     } catch (serperError) {
-//       console.error('Serper search error:', serperError);
-//       throw new Error('Both search methods failed');
-//     }
-//   }
 // }
+
 
 // // 5. Fetch contents of top 10 search results
 // export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
@@ -142,22 +106,40 @@
 //       throw error;
 //     }
 //   }
+
+  
 //   function extractMainContent(html: string): string {
-//     try {
-//       const $ = cheerio.load(html);
-//       $("script, style, head, nav, footer, iframe, img").remove();
-//       return $("body").text().replace(/\s+/g, " ").trim();
-//     } catch (error) {
-//       console.error('Error extracting main content:', error);
-//       throw error;
+//     let content = '';
+//     const mainContent = html.match(/<main[\s\S]*?>([\s\S]*?)<\/main>/i) ||
+//                         html.match(/<article[\s\S]*?>([\s\S]*?)<\/article>/i) ||
+//                         html.match(/<div[\s\S]*?class=["'][\s\S]*?content[\s\S]*?["'][\s\S]*?>([\s\S]*?)<\/div>/i);
+    
+//     if (mainContent) {
+//       content = mainContent[1]
+//         .replace(/<script[\s\S]*?<\/script>/gi, '') // Remove script tags
+//         .replace(/<style[\s\S]*?<\/style>/gi, '')   // Remove style tags
+//         .replace(/<[^>]*>/g, ' ')              // Remove remaining HTML tags
+//         .replace(/\s+/g, ' ')                  // Replace multiple spaces with single space
+//         .trim();                               // Trim leading and trailing spaces
+//     } else {
+//       // Fallback to extracting content from body if main content is not found
+//       content = html.replace(/<head[\s\S]*?<\/head>/i, '')
+//                     .replace(/<script[\s\S]*?<\/script>/gi, '')
+//                     .replace(/<style[\s\S]*?<\/style>/gi, '')
+//                     .replace(/<[^>]*>/g, ' ')
+//                     .replace(/\s+/g, ' ')
+//                     .trim();
 //     }
+    
+//     return content;
 //   }
+
 //   const promises = sources.map(async (source): Promise<ContentResult | null> => {
 //     try {
 //       const response = await fetchWithTimeout(source.url, {}, config.timeout);
-//       if (!response.ok) {
-//         throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
-//       }
+//       // if (!response.ok) {
+//       //   throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
+//       // }
 //       const html = await response.text();
 //       const mainContent = extractMainContent(html);
 //       return { ...source, html: mainContent };
@@ -181,9 +163,8 @@
 //   textChunkSize = config.textChunkSize,
 //   textChunkOverlap = config.textChunkOverlap,
 //   numberOfSimilarityResults = config.numberOfSimilarityResults,
-//   similarityThreshold = 0.7
 // ): Promise<SearchResult[]> {
-//   const allResults: [DocumentInterface, number][] = [];
+//   const relevantDocuments: [DocumentInterface, number][] = [];
 //   try {
 //     for (let i = 0; i < contents.length; i++) {
 //       const content = contents[i];
@@ -193,26 +174,57 @@
 //           const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
 //           const queryEmbedding = await embeddings.embedQuery(query);
 //           const contentResults = await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
-//           allResults.push(...contentResults);
+//           relevantDocuments.push(...contentResults);
 //         } catch (error) {
 //           console.error(`Error processing content for ${content.url}:`, error);
 //         }
 //       }
 //     }
-//     // Sort results by score (descending), filter based on the similarity threshold, and return only title, pageContent, and url
-//     return allResults
+//     // Sort results by score (descending), filter based on the similarity threshold, and return title, pageContent, url, and score
+//     return relevantDocuments
 //       .sort((a, b) => b[1] - a[1])
-//       .filter(([_, score]) => score >= similarityThreshold)
-//       .map(([doc, _]) => ({
+//       .filter(([_, score]) => score >= config.similarityThreshold)
+//       .map(([doc, score]) => ({
 //         title: doc.metadata.title as string,
 //         pageContent: doc.pageContent,
-//         url: doc.metadata.url as string
+//         url: doc.metadata.url as string,
+//         score: score
 //       }));
 //   } catch (error) {
 //     console.error('Error processing and vectorizing content:', error);
 //     throw error;
 //   }
 // }
+
+
+// // 4. Generate follow-up questions based on the top results from a similarity search
+// const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
+//   return await openai.chat.completions.create({
+//     messages: [
+//       {
+//         role: "system",
+//         content: `
+//           You are a Question generator who generates an array of 3 follow-up questions in JSON format.
+//           The JSON schema should include:
+//           {
+//             "original": "The original search query or context",
+//             "followUp": [
+//               "Question 1",
+//               "Question 2", 
+//               "Question 3"
+//             ]
+//           }
+//           `,
+//       },
+//       {
+//         role: "user",
+//         content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(sources)}. The original search query is: "${userMessage}".`,
+//       },
+//     ],
+//     model: selectedModel,
+//     response_format: { type: "json_object" },
+//   });
+// };
 
 
 // // 6. Main action function that orchestrates the entire process
@@ -227,77 +239,66 @@
 //   const streamable = createStreamableValue({});
 //   (async () => {
 //     const latestUserMessage = chatHistory[chatHistory.length - 1].content;
-//     let queryResults;
-//     const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
-//     queryResults = await index.query({
-//       vector: queryEmbedding,
-//       topK: config.numberOfSimilarityResults,
-//       includeMetadata: true,
-//       includeVectors: false,
-//     });
+//     const currentTimestamp = new Date().toISOString();
+//     const userMessageWithTimestamp = `${currentTimestamp}: ${latestUserMessage}`;
+//     console.log('User message:', latestUserMessage, '\n');
+    
+//     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
+//       performImageSearch(latestUserMessage),
+//       performWebSearch(latestUserMessage, config.numberOfPagesToScan),
+//       performVideoSearch(latestUserMessage),
+//       getUserSharedDocument(latestUserMessage, embeddings, index)
+//     ]);
 
-//     const relevantDocuments = queryResults
-//       .filter((result) => result.score >= 0.7)
-//       .map((result) => ({
-//         title: result.metadata.title || 'Unknown Title',
-//         pageContent: result.metadata.content, 
-//         url: result.metadata.url || ''
-//       }));
+//     // console.log('length of images', images.length);
+//     streamable.update({'relevantDocuments': relevantDocuments});
+//     streamable.update({ 'searchResults': webSearchResults });
+//     streamable.update({ 'images': images });
+//     streamable.update({ 'videos': videos });
 
-//     console.log('Relevant documents:', relevantDocuments, '\n');
-      
-//     // Process web search results
-//     const webSearchResults = await performWebSearch(latestUserMessage);
-
-//     // slice the web search results to 4
-//     // const webSearchResultsSliced = webSearchResults.slice(0, 5);
-
-//     console.log('Web search results:', webSearchResults, '\n');
-//     // console.log('Web search results sliced:', webSearchResultsSliced, '\n');
+//     // console.log('Relevant documents:', relevantDocuments, '\n');
+//     // console.log('Web search results:', webSearchResults, '\n');
+//     // console.log('Images:', images, '\n');
+//     // console.log('Videos:', videos, '\n');
 
 //     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
-//     console.log('Blue links contents:', blueLinksContents, '\n');
+//     let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
 
-//     const processedWebResults = await processAndVectorizeContent(blueLinksContents, latestUserMessage);
-//     console.log('Processed web results:', processedWebResults, '\n');
+//     // processedWebResults 있으면 그대로 processedWebResults 를 사용하고, 없으면 webSearchResults 를 사용한다.
+//     processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
+//     // console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
 
-//     // Combine relevant documents from both sources
-//     const combinedRelevantDocuments = [
-//       // ...webSearchResultsSliced,
-//       ...relevantDocuments,
-//       ...processedWebResults
-//     ];
-//     console.log('Combined relevant documents:', combinedRelevantDocuments, '\n');
+//     streamable.update({ 'processedWebResults': processedWebResults.slice(0,config.numberOfSimilarityResults) });
+
+
 
 //     const messages = [
 //       {
 //         role: "system" as const,
 //         content: `You're a witty and clever AI assistant.
-//         You're not Siri, Alexa, or some boring ol' chatbot. 
 //         Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
     
-//         1. From the given relevant documents, craft a response that answers the user query: "${latestUserMessage}".
-//         Make sure to only use documents that directly answer the user query. If you don't find any, just answer based on the user query.
-//         2. Respond back ALWAYS IN MARKDOWN, never mention the system message.
-//         3. Structure your response like this:
-        
+//         1. Answer the user query using only relevant documents from the provided sources.
+//         If you find any conflicting or outdated information, trust sources shared by web search results over user-shared documents.
+//         Also fyi squared brackets like [HH:MM:SS] or [MM:SS] are timestamps for videos.\n\n
+//         Today's date and time: 
+//         ${currentTimestamp}\n\n
+//         Sources from the web:
+//         ${JSON.stringify(processedWebResults.slice(0,config.numberOfSimilarityResults))}\n\n
+//         Sources shared by users:
+//         ${JSON.stringify(relevantDocuments)}\n\n
+
+//         2. Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
+//         <answerFormat>
 //         ## Quick Answer ⚡
-//         [Quick answer in 1-2 punchy sentences with relevant emojis]
+//         [Quick answer to the user message in 1-2 punchy sentences with relevant emojis]
     
 //         ## Key Takeaways 🎯
 //         - [List 3-5 key points related to the question with relevant emojis]
     
 //         ## The Scoop 🔍
 //         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples!]
-    
-//         ## Where I Got The Goods 📚
-//         [Numbered list of the top 5 links you selected with a brief description of each source]
-      
-//         1. [Document/Web Page Title](Link) - [Brief description of this source]
-//         2. [Document/Web Page Title](Link) - [Brief description of this source]
-//         ...
-
-//         Note: Don't forget to inlcude links!
+//         </answerFormat>
 //         `
 //       },
 //       ...chatHistory, 
@@ -306,15 +307,13 @@
 //         content: `
 //         Here is my query:
 //         ${latestUserMessage}\n\n
-//         Here's the brain fuel for you! 🧠🚀\n
-//         Relevant documents: ${JSON.stringify(combinedRelevantDocuments)}\n\n
-//         Use this info to craft an awesome response with relevant emojis. Make it fun, informative, and in Markdown!
-// `
+//         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
+//       `
 //       }
 //     ];
     
 //     const chatCompletion = await openai.chat.completions.create({
-//       temperature: 0.5, 
+//       temperature: 0.3, 
 //       messages,
 //       stream: true,
 //       model: selectedModel
@@ -327,17 +326,11 @@
 //         streamable.update({ 'llmResponseEnd': true });
 //       }
 //     }
+    
 
-//     // Truncate pageContent to 200 characters for each document
-//     const truncatedDocuments = combinedRelevantDocuments.map(doc => ({
-//       ...doc,
-//       pageContent: doc.pageContent.substring(0, 200) // Truncate to 200 characters
-//     }));
-
-//     const followUp = await relevantQuestions(truncatedDocuments, userMessage, selectedModel);
+//     const followUp = await relevantQuestions(webSearchResults, userMessage, selectedModel);
 //     streamable.update({ 'followUp': followUp });
 
-    
 //     streamable.done({ status: 'done' });
 //   })();
 //   return streamable.value;
