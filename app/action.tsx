@@ -241,13 +241,13 @@ async function myAction(
     const latestUserMessage = chatHistory[chatHistory.length - 1].content;
     const currentTimestamp = new Date().toISOString();
     const userMessageWithTimestamp = `${currentTimestamp}: ${latestUserMessage}`;
-    console.log('User message:', userMessageWithTimestamp, '\n');
+    console.log('User message:', latestUserMessage, '\n');
     
     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
-      performImageSearch(userMessageWithTimestamp),
-      performWebSearch(userMessageWithTimestamp, config.numberOfPagesToScan),
-      performVideoSearch(userMessageWithTimestamp),
-      getUserSharedDocument(userMessageWithTimestamp, embeddings, index)
+      performImageSearch(latestUserMessage),
+      performWebSearch(latestUserMessage, config.numberOfPagesToScan),
+      performVideoSearch(latestUserMessage),
+      getUserSharedDocument(latestUserMessage, embeddings, index)
     ]);
 
     console.log('length of images', images.length);
