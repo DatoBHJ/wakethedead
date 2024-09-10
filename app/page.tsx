@@ -454,7 +454,7 @@ export default function Page() {
                       type="text"
                       value={inputLinks}
                       onChange={(e) => setInputLinks(e.target.value)}
-                      placeholder="Beam up your article or video link ... 💭⚡"
+                      placeholder="Beam up your article or video link ... ⚡"
                       // placeholder="Link goes here, thoughts incoming... 💭⚡️"                      
                       // placeholder="Article or YouTube link goes here ... 💭⚡️"                      
                       // placeholder="Transmit article or video link ... 💭⚡️"                      
@@ -489,11 +489,13 @@ export default function Page() {
     handleFormSubmit={handleFormSubmit}
     onAddLink={handleAddLink}
   />
-        {/* <div className="absolute bottom-20 left-0 right-0 text-center p-2">
-          <p className="text-sm text-blue-300/30 dark:text-blue-400/20 transition-colors duration-200">
-            Psst! Try clicking all the blue things... 😉
+        <div className="absolute bottom-40 left-0 right-0 text-center p-2 sm:pb-20">
+        {/* <div className="absolute bottom-0 left-0 right-0 text-center p-2 bg-background/80 backdrop-blur-sm"> */}
+          <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-400">
+            💬 • 🔗 • 🔍 • 🔄
           </p>
-        </div> */}
+        </div>
+        {/* </div> */}
       </div>
       <UserSharedLinks 
         onAddLink={handleAddLink} 

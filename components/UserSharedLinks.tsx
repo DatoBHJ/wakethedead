@@ -124,6 +124,9 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
               👆 Dig these examples or transmit your own link on the home portal
               and let us cook! 🍳🛸
              </p>
+             <p className="mt-2 text-xs text-center text-blue-500 dark:text-blue-400">
+              💬 Chat about any link! 🤖🔗
+            </p>
             </motion.div>
           </motion.div>
         </>
