@@ -101,7 +101,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                 <InitialQueries
                   questions={[               
                     "Give me some memes 🤣",
-                    "When did Ye release Ye? 🎧",
+                    "When did Ye release 'Ye'? 🎧",
                     "How's NVIDIA stock doing these days? 📈",
                     // "Explain GPT like I'm 5 🤖",
                     "I need a kindle link to The Hobbit 📚",
