@@ -246,7 +246,8 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
               {renderContent()}
             </div>
             {( articleError) && (
-              <p className="text-destructive dark:text-destructive mt-3 px-4 text-sm">
+              <p className="text-foreground dark:text-foreground font-handwriting mt-3 px-4 text-sm">
+              {/* <p className="text-destructive dark:text-destructive font-handwriting mt-3 px-4 text-sm"> */}
                 {articleError}
               </p>
             )}

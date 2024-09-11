@@ -221,9 +221,22 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
         isYouTube = true;
         contentInfo = await fetchVideoInfo(videoId);
         transcript = await fetchTranscriptWithBackup(videoId);
-        if (!transcript) {
-          return NextResponse.json({ error: 'Failed to fetch video transcript' }, { status: 500 });
-        }
+        if (!transcript || ("We're sorry, YouTube is currently blocking us" in transcript)) {
+          return NextResponse.json({ 
+            error: `
+          🚧 Oops! YouTube's giving us the cold shoulder right now 🥶
+                    
+          But don't worry! Our tech wizards are on the case 🧙‍♂️💻
+          
+          In the meantime, try these alternatives:
+          🔄 Come back later (YouTube might be in a better mood)
+          🦸‍♀️ Use a VPN - it might just save the day!
+          📰 Try news articles or blog post web links instead
+          🤖 Check out our chatbot for instant answers 
+          
+          Thanks for being patient! 🌟 We'll be back in action soon! 💪
+            `
+          }, { status: 500 });        }
       } else {
         contentInfo = await fetchLinkInfo(videoUrl);
         transcript = contentInfo.content;
