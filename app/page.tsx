@@ -28,16 +28,10 @@ interface YouTubeCard {
   link: string;
 }
 
-interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-}
-
 interface RelevantLink {
   title: string;
   url: string;
 }
-
 
 interface SearchResult {
   title: string;
@@ -54,15 +48,12 @@ interface Video {
 }
 
 interface Message {
-  logo: string | undefined;
   id: number;
-  type: string;
   content: string;
   userMessage: string;
   followUp: FollowUp | null;
   isStreaming: boolean;
   status?: string;
-  isolatedView: boolean;
   relevantDocuments?: RelevantLink[];
   processedWebResults?: UserDataResult[];
   SearchResult?: SearchResult[];
@@ -71,7 +62,6 @@ interface Message {
 }
 
 interface StreamMessage {
-  isolatedView: any;
   userMessage?: string;
   llmResponse?: string;
   llmResponseEnd?: boolean;
@@ -91,7 +81,6 @@ interface FollowUp {
     };
   }[];
 }
-// Helper function to check if a string is a valid URL
 const isValidUrl = (string: string) => {
   try {
     new URL(string);
@@ -101,12 +90,9 @@ const isValidUrl = (string: string) => {
   }
 };
 
-// Main component
 export default function Page() {
-  // State declarations
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentLlmResponse, setCurrentLlmResponse] = useState('');
@@ -196,7 +182,6 @@ export default function Page() {
     const newMessageId = Date.now();
     const newMessage = {
       id: newMessageId,
-      type: 'userMessage',
       userMessage: payload.message,
       content: '',
       followUp: null,
@@ -205,14 +190,10 @@ export default function Page() {
     };
 
     setMessages(prevMessages => [...prevMessages, newMessage] as Message[]);
-    
-    const newUserMessage = { role: "user" as const, content: payload.message };
-    const updatedHistory = [...chatHistory, newUserMessage].slice(-10);
-    setChatHistory(updatedHistory);
 
     let lastAppendedResponse = "";
     try {
-      const streamableValue = await myAction(updatedHistory, payload.message, selectedModel, selectedLanguage);
+      const streamableValue = await myAction(payload.message, selectedModel, selectedLanguage);
       if (isInitialMessage) {        
         setIsInitialMessage(false);
       }
@@ -227,10 +208,6 @@ export default function Page() {
             const currentMessage = messagesCopy[messageIndex];
 
             currentMessage.status = typedMessage.status === 'rateLimitReached' ? 'rateLimitReached' : currentMessage.status;
-
-            if (typedMessage.isolatedView) {
-              currentMessage.isolatedView = true;
-            }
 
             if (typedMessage.llmResponse && typedMessage.llmResponse !== lastAppendedResponse) {
               currentMessage.content += typedMessage.llmResponse;
@@ -254,10 +231,6 @@ export default function Page() {
         }
       }
 
-      setChatHistory(prevHistory => {
-        const newAssistantMessage = { role: 'assistant' as const, content: llmResponseString };
-        return [...prevHistory, newAssistantMessage].slice(-3);
-      });
     } catch (error) {
       console.error("Error streaming data for user message:", error);
     }
@@ -338,15 +311,12 @@ export default function Page() {
     });
   }, []);
   useEffect(() => {
-    // UFO를 표시할지 결정하는 로직
     if (youtubeLinks.length === 0) {
-      // 유튜브 링크가 없을 때만 UFO를 표시
       const timer = setTimeout(() => {
         setShowUFO(true);
       }, 1000);
       return () => clearTimeout(timer);
     } else {
-      // 유튜브 링크가 있으면 UFO를 숨김
       setShowUFO(false);
     }
   }, [youtubeLinks]);

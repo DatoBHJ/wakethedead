@@ -33,6 +33,26 @@
 //   content: string;
 // }
 
+// interface RelevantLink {
+//   title: string;
+//   url: string;
+// }
+
+
+// interface SearchResult {
+//   title: string;
+//   url: string;
+//   pageContent: string;
+// }
+
+// interface Image {
+//   link: string;
+// }
+// interface Video {
+//   link: string;
+//   imageUrl: string;
+// }
+
 // interface Message {
 //   logo: string | undefined;
 //   id: number;
@@ -41,19 +61,27 @@
 //   userMessage: string;
 //   followUp: FollowUp | null;
 //   isStreaming: boolean;
-//   userDataResults? : UserDataResult[];
 //   status?: string;
 //   isolatedView: boolean;
+//   relevantDocuments?: RelevantLink[];
+//   processedWebResults?: UserDataResult[];
+//   SearchResult?: SearchResult[];
+//   images?: Image[];
+//   videos?: Video[];
 // }
 
 // interface StreamMessage {
 //   isolatedView: any;
-//   userDataResults?: any;
 //   userMessage?: string;
 //   llmResponse?: string;
 //   llmResponseEnd?: boolean;
 //   followUp?: any;
 //   status?: string;
+//   relevantDocuments?: RelevantLink[];
+//   processedWebResults?: UserDataResult[];
+//   SearchResult?: SearchResult[];
+//   images?: Image[];
+//   videos?: Video[];
 // }
 
 // interface FollowUp {
@@ -173,7 +201,6 @@
 //       content: '',
 //       followUp: null,
 //       isStreaming: true,
-//       userDataResults: [] as UserDataResult[],
 //       status: '',
 //     };
 
@@ -211,8 +238,12 @@
 //             }
 
 //             currentMessage.isStreaming = typedMessage.llmResponseEnd ? false : currentMessage.isStreaming;
-//             currentMessage.userDataResults = typedMessage.userDataResults || currentMessage.userDataResults;
 //             currentMessage.followUp = typedMessage.followUp || currentMessage.followUp;
+//             currentMessage.relevantDocuments = typedMessage.relevantDocuments || currentMessage.relevantDocuments;
+//             currentMessage.processedWebResults = typedMessage.processedWebResults || currentMessage.processedWebResults;
+//             currentMessage.SearchResult = typedMessage.SearchResult || currentMessage.SearchResult;
+//             currentMessage.images = typedMessage.images || currentMessage.images;
+//             currentMessage.videos = typedMessage.videos || currentMessage.videos;
 //           }
 //           return messagesCopy;
 //         });
@@ -344,7 +375,7 @@
 //           {/* <Button variant="outline" asChild> */}
 //           <a
 //             href="/"
-//             className="text-foreground/70 font-semibold px-4"
+//             className="text-foreground/70 z-50 font-semibold px-4"
 //           >
 //             WTD
 //             {/* <IconGitHub /> */}
@@ -377,10 +408,10 @@
 //                     selectedModel={selectedModel}
 //                     setSelectedModel={setSelectedModel}
 //                   />
-//                   {/* <LanguageSelector
+//                   <LanguageSelector
 //                     selectedLanguage={selectedLanguage}
 //                     setSelectedLanguage={setSelectedLanguage}
-//                   /> */}
+//                   />
 //                 </div>
 //               </DialogContent>
 //             </Dialog>
@@ -423,7 +454,7 @@
 //                       type="text"
 //                       value={inputLinks}
 //                       onChange={(e) => setInputLinks(e.target.value)}
-//                       placeholder="Beam up your article or video link ... 💭⚡"
+//                       placeholder="Beam up your article or video link ... ⚡"
 //                       // placeholder="Link goes here, thoughts incoming... 💭⚡️"                      
 //                       // placeholder="Article or YouTube link goes here ... 💭⚡️"                      
 //                       // placeholder="Transmit article or video link ... 💭⚡️"                      
@@ -448,21 +479,17 @@
 //           )}
 //         </main>
 //         <BottomChatBar 
-//           isOpen={isChatOpen} 
-//           setIsOpen={setIsChatOpen}
-//           messages={messages}
-//           currentLlmResponse={currentLlmResponse}
-//           handleFollowUpClick={handleFollowUpClick}
-//           inputValue={inputValue}
-//           setInputValue={setInputValue}
-//           handleFormSubmit={handleFormSubmit}
-//           onAddLink={handleAddLink}
-//         />
-//         {/* <div className="absolute bottom-20 left-0 right-0 text-center p-2">
-//           <p className="text-sm text-blue-300/30 dark:text-blue-400/20 transition-colors duration-200">
-//             Psst! Try clicking all the blue things... 😉
-//           </p>
-//         </div> */}
+//     isOpen={isChatOpen} 
+//     setIsOpen={setIsChatOpen}
+//     messages={messages}
+//     currentLlmResponse={currentLlmResponse}
+//     handleFollowUpClick={handleFollowUpClick}
+//     inputValue={inputValue}
+//     setInputValue={setInputValue}
+//     handleFormSubmit={handleFormSubmit}
+//     onAddLink={handleAddLink}
+//   />
+
 //       </div>
 //       <UserSharedLinks 
 //         onAddLink={handleAddLink} 

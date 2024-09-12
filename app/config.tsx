@@ -7,6 +7,7 @@ export const config = {
     textChunkOverlap: 200, 
     nonOllamaBaseURL: 'https://api.groq.com/openai/v1', 
     useSemanticCache: true, 
+    startIndexOfPagesToScan: 0,
     numberOfPagesToScan: 10,
     timeout: 800, 
     similarityThreshold: 0.6,

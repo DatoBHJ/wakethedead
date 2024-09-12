@@ -19,7 +19,7 @@ interface ImageResult {
 }
 
 
-export async function duckDuckGoSearch(message: string, numberOfPagesToScan): Promise<SearchResult[]> {
+export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(message)}`;
     
     try {
@@ -36,14 +36,14 @@ export async function duckDuckGoSearch(message: string, numberOfPagesToScan): Pr
             pageContent: result.description,
             url: result.url
         }));
-        return final.slice(0, numberOfPagesToScan);
+        return final
     } catch (error) {
         console.error('Error fetching DuckDuckGo search results:', error);
         throw error;
     }
 }
 
-export async function serperSearch(message: string, numberOfPagesToScan): Promise<SearchResult[]> {
+export async function serperSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = 'https://google.serper.dev/search';
     const data = JSON.stringify({
         "q": message
@@ -70,7 +70,7 @@ export async function serperSearch(message: string, numberOfPagesToScan): Promis
             pageContent: result.snippet,
             url: result.link
         }));
-        return final.slice(0, numberOfPagesToScan);
+        return final;
     } catch (error) {
         console.error('Error fetching search results:', error);
         throw error;
@@ -78,10 +78,10 @@ export async function serperSearch(message: string, numberOfPagesToScan): Promis
 }
 
 
-export async function performWebSearch(query: string, numberOfPagesToScan: number): Promise<SearchResult[]> {
+export async function performWebSearch(query: string, startIndexOfPagesToScan, numberOfPagesToScan: number): Promise<SearchResult[]> {
     try {
       // First, try DuckDuckGo search
-      const duckDuckGoResults = await duckDuckGoSearch(query, numberOfPagesToScan);
+      const duckDuckGoResults = await duckDuckGoSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
       return duckDuckGoResults
     } catch (error) {
       console.error('DuckDuckGo search error:', error);
@@ -89,7 +89,7 @@ export async function performWebSearch(query: string, numberOfPagesToScan: numbe
       // Fallback to serperSearch
       console.log('Falling back to serperSearch');
       try {
-        const serperResults = await serperSearch(query, numberOfPagesToScan);
+        const serperResults = await serperSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
         return serperResults
       } catch (serperError) {
         console.error('Serper search error:', serperError);

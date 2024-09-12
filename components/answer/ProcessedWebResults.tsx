@@ -47,14 +47,10 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
     <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
-          {/* <LinkIcon className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" /> */}
           <h2 className="text-2xl font-bold font-handwriting">
             Web search results 🌐
           </h2>
         </div>
-        {/* <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 ml-9 italic">
-          Click on a link to beam it up! ⚡🚀
-        </p> */}
       </div>
       <ul className="space-y-3">
         {uniqueLinks.map((link, index) => (
@@ -62,15 +58,12 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
             key={link.url}
             className="flex items-center group"
           >
-            {/* <IconExternalLink 
-              className="h-5 w-5 mb-1 min-w-[1.25rem] text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 mr-3 transition-colors duration-200" 
-            /> */}
             <span className="relative inline-block">
               <button
                 onClick={() => handleLinkClick(link.url)}
                 className={`font-handwriting underline text-left text-base text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 ${addedLinks.has(link.url) ? 'opacity-70' : ''}`}
               >
-                {link.title}
+                {link.title.includes('Something went wrong!') ? link.url : link.title}
               </button>
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                 {addedLinks.has(link.url) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
