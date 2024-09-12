@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
-import { Check, Link as LinkIcon, ExternalLink } from "lucide-react";
-import { IconPlus, IconExternalLink } from '@/components/ui/icons';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { Check } from "lucide-react";
 
 interface RelevantLink {
   title: string;
@@ -19,7 +18,9 @@ const decodeHtmlEntities = (text: string): string => {
 };
 
 const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> = ({ processedWebResults, onAddLink }) => {
-  const [addedLinks, setAddedLinks] = React.useState<Set<string>>(new Set());
+  const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
+  const [isInitialResults, setIsInitialResults] = useState(true);
+  const prevResultsRef = useRef<RelevantLink[]>([]);
 
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
@@ -32,6 +33,14 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
       }
     });
     return Array.from(linkMap.values());
+  }, [processedWebResults]);
+
+  useEffect(() => {
+    if (prevResultsRef.current.length > 0 && 
+        JSON.stringify(prevResultsRef.current) !== JSON.stringify(processedWebResults)) {
+      setIsInitialResults(false);
+    }
+    prevResultsRef.current = processedWebResults;
   }, [processedWebResults]);
 
   const handleLinkClick = (url: string) => {
@@ -47,8 +56,8 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
     <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
-          <h2 className="text-2xl font-bold font-handwriting">
-            Web search results 🌐
+          <h2 className="text-2xl font-bold font-handwriting transition-all duration-300">
+          {isInitialResults ? "Gathering initial insights 🧠" : "Curated web discoveries 🔎"}
           </h2>
         </div>
       </div>
@@ -56,7 +65,7 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
         {uniqueLinks.map((link, index) => (
           <li
             key={link.url}
-            className="flex items-center group"
+            className={`flex items-center group ${isInitialResults ? 'animate-pulse' : ''}`}
           >
             <span className="relative inline-block">
               <button
@@ -75,6 +84,11 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
           </li>
         ))}
       </ul>
+      {isInitialResults && (
+        <div className="mt-3 text-2xl text-blue-500 dark:text-blue-400">
+          <span className="inline-block animate-pulse">...</span>
+        </div>
+      )}
     </div>
   );
 };
