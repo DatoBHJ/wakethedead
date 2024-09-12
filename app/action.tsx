@@ -217,13 +217,15 @@ function removeDuplicatesForStreamable(relevantDocs: SearchResult[], processedRe
 
 function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDocs: SearchResult[]): [SearchResult[], SearchResult[]] {
   const processedUrls = new Set(processedResults.map(result => result.url));
-  const uniqueRelevantDocs = relevantDocs.filter(doc => !processedUrls.has(doc.url));
+  const uniqueRelevantDocs = relevantDocs ? relevantDocs.filter(doc => !processedUrls.has(doc.url)) : [];
   return [processedResults, uniqueRelevantDocs];
 }
+
 async function myAction(
   userMessage: string, 
   selectedModel: string,
   selectedLanguage: string,
+  isRefresh: boolean = false,
 ): Promise<any> {
   "use server";
 
@@ -233,20 +235,31 @@ async function myAction(
     const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
     console.log('User message:', userMessage, '\n');
     
-    const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
-      performImageSearch(userMessage),
-      performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan), 
-      // 현재 performWebSearch 코드는 결과를 numberOfPagesToScan개로 자르지 않고 대신 결과 반환 후 밑에서 자르는 것으로 실행됨
-      performVideoSearch(userMessage),
-      getUserSharedDocument(userMessage, embeddings, index)
-    ]);
+    let webSearchResults, images, videos, relevantDocuments;
 
-    webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
+    if (isRefresh) {
+      // Only perform web search for refresh
+      webSearchResults = await performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan);
+      webSearchResults = webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
+      console.log('Web search results:', webSearchResults, '\n');
+      console.log('relevantDocuments:', relevantDocuments, '\n');
+      // relevantDocuments = undefined; // Set to undefined for refresh
+    } else {
+      // Perform all searches for initial request
+      [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
+        performImageSearch(userMessage),
+        performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan),
+        performVideoSearch(userMessage),
+        getUserSharedDocument(userMessage, embeddings, index)
+      ]);
+      webSearchResults = webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
+    }
 
-    streamable.update({'relevantDocuments': relevantDocuments});
-    streamable.update({ 'searchResults': webSearchResults });
-    streamable.update({ 'images': images });
-    streamable.update({ 'videos': videos });
+    if (!isRefresh) {
+      streamable.update({'relevantDocuments': relevantDocuments});
+      streamable.update({ 'images': images });
+      streamable.update({ 'videos': videos });
+    }
 
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
     let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
@@ -254,7 +267,7 @@ async function myAction(
     processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
 
     const uniqueProcessedWebResults = removeDuplicatesForStreamable(
-      relevantDocuments,
+      relevantDocuments ,
       processedWebResults.slice(0, config.numberOfSimilarityResults)
     );
 
@@ -264,6 +277,7 @@ async function myAction(
       processedWebResults.slice(0, config.numberOfSimilarityResults),
       relevantDocuments
     );
+
 
     const messages = [
       {

@@ -16,6 +16,7 @@ interface LLMResponseComponentProps {
     isolatedView: boolean;
     logo?: string;
     onAddLink: (link: string) => void;
+    onRefresh: (index: number) => void;  // Add this line
 }
 
 enum LoadingStage {
@@ -59,7 +60,7 @@ const SkeletonLoader = () => {
     );
 };
 
-const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolatedView, logo, onAddLink }: LLMResponseComponentProps) => {
+const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolatedView, logo, onAddLink, onRefresh }: LLMResponseComponentProps) => {
     const [copied, setCopied] = useState(false);
     const [loadingStage, setLoadingStage] = useState<LoadingStage>(LoadingStage.Idle);
     const hasLlmResponse = llmResponse && llmResponse.trim().length > 0;
@@ -81,6 +82,11 @@ const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolated
         }
     }, [hasLlmResponse, hasCurrentLlmResponse]);
 
+    const handleRefresh = () => {
+        onRefresh(index);
+        setLoadingStage(LoadingStage.SearchingSource);
+    };
+
     return (
         <div className={isolatedView ? 'flex flex-col max-w-[800px] mx-auto' : ''}>
             {hasLlmResponse || hasCurrentLlmResponse ? (
@@ -98,6 +104,12 @@ const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolated
                                     {copied ? <Check size={18} /> : <Copy size={18} />}
                                 </button>
                             </CopyToClipboard>
+                            <button 
+                                onClick={handleRefresh}
+                                className="text-black dark:text-white focus:outline-none transition-colors duration-200 hover:text-gray-600 dark:hover:text-gray-300"
+                            >
+                                <ArrowsCounterClockwise size={18} />
+                            </button>
                         </div>
                         {!isolatedView && (
                             <div className="flex items-center justify-end">

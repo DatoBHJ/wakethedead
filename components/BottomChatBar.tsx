@@ -23,6 +23,8 @@ interface BottomChatBarProps {
   setInputValue: (value: string) => void;
   handleFormSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onAddLink: (link: string) => void;
+  onRefresh: (index: number) => void;  // Add this line
+
 }
 
 const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -35,6 +37,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   setInputValue,
   handleFormSubmit,
   onAddLink,
+  onRefresh, 
 }) => {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -72,14 +75,14 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     onAddLink={onAddLink}
                   />
                 )}
-                <LLMResponseComponent
-                  llmResponse={message.content}
-                  currentLlmResponse={currentLlmResponse}
-                  index={index}
-                  isolatedView={false}
-                  onAddLink={onAddLink}
-                />
-             
+    <LLMResponseComponent
+      llmResponse={message.content}
+      currentLlmResponse={currentLlmResponse}
+      index={index}
+      isolatedView={false}
+      onAddLink={onAddLink}
+      onRefresh={onRefresh}  // Add this line
+    />
                 {message.followUp && (
                   <FollowUpComponent
                     followUp={message.followUp}
