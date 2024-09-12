@@ -8,20 +8,16 @@
 // import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 // import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 // import { Document as DocumentInterface } from 'langchain/document';
-// import cheerio from 'cheerio';
-// // import { functionCalling } from './function-calling';
 // import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 // export const runtime = 'edge';
 
-// // 1. Set up the OpenAI API based on the config.tsx
 // let openai: OpenAI;
 // openai = new OpenAI({
 //   baseURL: config.nonOllamaBaseURL,
 //   apiKey: config.inferenceAPIKey
 // });
 
-// // 2. Set up the embeddings model based on the config.tsx
 // let embeddings: OllamaEmbeddings | OpenAIEmbeddings;
 
 // if (config.useOllamaEmbeddings) {
@@ -35,7 +31,6 @@
 //   });
 // }
 
-// // 3. Set up the Upstash vector index
 // const UPSTASH_VECTOR_REST_URL = process.env.UPSTASH_REDIS_REST_URL_2;
 // const UPSTASH_VECTOR_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN_2;
 
@@ -49,10 +44,6 @@
 //   token: UPSTASH_VECTOR_REST_TOKEN,
 // });
 
-// interface ChatMessage {
-//   role: 'user' | 'assistant' | 'system';
-//   content: string;
-// }
 
 // interface SearchResult {
 //   title: string;
@@ -65,8 +56,8 @@
 // }
 
 
-// async function getUserSharedDocument(latestUserMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
-//   const queryEmbedding = await embeddings.embedQuery(latestUserMessage);
+// async function getUserSharedDocument(userMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
+//   const queryEmbedding = await embeddings.embedQuery(userMessage);
 //   const queryResults = await index.query({
 //     vector: queryEmbedding,
 //     topK: config.numberOfSimilarityResults,
@@ -90,7 +81,6 @@
 // }
 
 
-// // 5. Fetch contents of top 10 search results
 // export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
 //   async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = config.timeout): Promise<Response> {
 //     try {
@@ -116,13 +106,12 @@
     
 //     if (mainContent) {
 //       content = mainContent[1]
-//         .replace(/<script[\s\S]*?<\/script>/gi, '') // Remove script tags
-//         .replace(/<style[\s\S]*?<\/style>/gi, '')   // Remove style tags
-//         .replace(/<[^>]*>/g, ' ')              // Remove remaining HTML tags
-//         .replace(/\s+/g, ' ')                  // Replace multiple spaces with single space
-//         .trim();                               // Trim leading and trailing spaces
+//         .replace(/<script[\s\S]*?<\/script>/gi, '') 
+//         .replace(/<style[\s\S]*?<\/style>/gi, '')   
+//         .replace(/<[^>]*>/g, ' ')              
+//         .replace(/\s+/g, ' ')                 
+//         .trim();                              
 //     } else {
-//       // Fallback to extracting content from body if main content is not found
 //       content = html.replace(/<head[\s\S]*?<\/head>/i, '')
 //                     .replace(/<script[\s\S]*?<\/script>/gi, '')
 //                     .replace(/<style[\s\S]*?<\/style>/gi, '')
@@ -137,9 +126,6 @@
 //   const promises = sources.map(async (source): Promise<ContentResult | null> => {
 //     try {
 //       const response = await fetchWithTimeout(source.url, {}, config.timeout);
-//       // if (!response.ok) {
-//       //   throw new Error(`Failed to fetch ${source.url}. Status: ${response.status}`);
-//       // }
 //       const html = await response.text();
 //       const mainContent = extractMainContent(html);
 //       return { ...source, html: mainContent };
@@ -156,7 +142,6 @@
 //     throw error;
 //   }
 // }
-// // 6. Process and vectorize content using LangChain
 // async function processAndVectorizeContent(
 //   contents: ContentResult[],
 //   query: string,
@@ -180,7 +165,6 @@
 //         }
 //       }
 //     }
-//     // Sort results by score (descending), filter based on the similarity threshold, and return title, pageContent, url, and score
 //     return relevantDocuments
 //       .sort((a, b) => b[1] - a[1])
 //       .filter(([_, score]) => score >= config.similarityThreshold)
@@ -197,7 +181,6 @@
 // }
 
 
-// // 4. Generate follow-up questions based on the top results from a similarity search
 // const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
 //   return await openai.chat.completions.create({
 //     messages: [
@@ -227,21 +210,17 @@
 // };
 
 
-// // URL 중복 제거 함수 수정
 // function removeDuplicatesForStreamable(relevantDocs: SearchResult[], processedResults: SearchResult[]): SearchResult[] {
 //   const relevantUrls = new Set(relevantDocs.map(doc => doc.url));
 //   return processedResults.filter(result => !relevantUrls.has(result.url));
 // }
 
-// // 프롬프트용 중복 제거 함수
 // function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDocs: SearchResult[]): [SearchResult[], SearchResult[]] {
 //   const processedUrls = new Set(processedResults.map(result => result.url));
 //   const uniqueRelevantDocs = relevantDocs.filter(doc => !processedUrls.has(doc.url));
 //   return [processedResults, uniqueRelevantDocs];
 // }
-// // 메인 액션 함수 수정
 // async function myAction(
-//   chatHistory: ChatMessage[],
 //   userMessage: string, 
 //   selectedModel: string,
 //   selectedLanguage: string,
@@ -250,32 +229,30 @@
 
 //   const streamable = createStreamableValue({});
 //   (async () => {
-//     const latestUserMessage = chatHistory[chatHistory.length - 1].content;
 //     const currentTimestamp = new Date().toISOString();
-//     const userMessageWithTimestamp = `${currentTimestamp}: ${latestUserMessage}`;
-//     console.log('User message:', latestUserMessage, '\n');
+//     const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
+//     console.log('User message:', userMessage, '\n');
     
 //     const [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
-//       performImageSearch(latestUserMessage),
-//       performWebSearch(latestUserMessage, config.numberOfPagesToScan),
-//       performVideoSearch(latestUserMessage),
-//       getUserSharedDocument(latestUserMessage, embeddings, index)
+//       performImageSearch(userMessage),
+//       performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan), 
+//       // 현재 performWebSearch 코드는 결과를 numberOfPagesToScan개로 자르지 않고 대신 결과 반환 후 밑에서 자르는 것으로 실행됨
+//       performVideoSearch(userMessage),
+//       getUserSharedDocument(userMessage, embeddings, index)
 //     ]);
+
+//     webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan); // 이 부분이 numberOfPagesToScan개로 자르는 부분, 재생성시 여기서 자르는 구간을 다음 구간으로 옮겨야 함
 
 //     streamable.update({'relevantDocuments': relevantDocuments});
 //     streamable.update({ 'searchResults': webSearchResults });
 //     streamable.update({ 'images': images });
 //     streamable.update({ 'videos': videos });
 
-//     // console.log('Relevant documents:', relevantDocuments, '\n');
-
 //     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
 //     let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
 
 //     processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
-//     // console.log('Processed web results:', processedWebResults.slice(0,config.numberOfSimilarityResults), '\n');    
 
-//     // streamable 업데이트를 위한 중복 제거
 //     const uniqueProcessedWebResults = removeDuplicatesForStreamable(
 //       relevantDocuments,
 //       processedWebResults.slice(0, config.numberOfSimilarityResults)
@@ -283,13 +260,10 @@
 
 //     streamable.update({ 'processedWebResults': uniqueProcessedWebResults });
 
-//     // 프롬프트를 위한 중복 제거
 //     const [promptProcessedWebResults, promptRelevantDocuments] = removeDuplicatesForPrompt(
 //       processedWebResults.slice(0, config.numberOfSimilarityResults),
 //       relevantDocuments
 //     );
-
-//     console.log('Chat history:', chatHistory, '\n');
 
 //     const messages = [
 //       {
@@ -320,12 +294,11 @@
 //         </answerFormat>
 //         `
 //       },
-//       ...chatHistory, 
 //       {
 //         role: "user" as const,
 //         content: `
 //         Here is my query:
-//         ${latestUserMessage}\n\n
+//         ${userMessage}\n\n
 //         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
 //       `
 //       }
@@ -360,7 +333,6 @@
 //   return streamable.value;
 // }
 
-// // 7. Define initial AI and UI states
 // const initialAIState: {
 //   role: 'user' | 'assistant' | 'system' | 'function';
 //   content: string;
@@ -373,7 +345,6 @@
 //   display: React.ReactNode;
 // }[] = [];
 
-// // 8. Export the AI instance
 // export const AI = createAI({
 //   actions: {
 //     myAction  },

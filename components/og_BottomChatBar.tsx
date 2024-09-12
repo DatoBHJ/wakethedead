@@ -8,6 +8,10 @@
 // import FollowUpComponent from '@/components/answer/FollowUpComponent';
 // import InitialQueries from '@/components/answer/InitialQueries';
 // import { motion } from 'framer-motion';
+// import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
+// import ProcessedWebResults from '@/components/answer/ProcessedWebResults';
+// import VideosComponent from '@/components/answer/VideosComponent';
+// import ImagesComponent from '@/components/answer/ImagesComponent';
 
 // interface BottomChatBarProps {
 //   isOpen: boolean;
@@ -49,13 +53,25 @@
 //             {messages.length === 0 && !inputValue && (
 //               <div className="flex-grow flex items-center justify-center mb-72">
 //                 <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-//                   💬 Ask • 🔗 Click Links • 📚 Learn • 🔄 Repeat
+//                   💬 Chat • 🔗 Click Links • 🔍 Explore • 🔄 Repeat
 //                 </div>
 //               </div>
 //             )}
 //             {messages.map((message, index) => (
 //               <div key={index}>
 //                 <UserMessageComponent message={message.userMessage} />
+//                 {message.relevantDocuments && (
+//                   <RelevantLinksComponent
+//                   relevantDocuments={message.relevantDocuments}
+//                     onAddLink={onAddLink}
+//                   />
+//                 )}
+//                 {message.processedWebResults && (
+//                   <ProcessedWebResults
+//                   processedWebResults={message.processedWebResults}
+//                     onAddLink={onAddLink}
+//                   />
+//                 )}
 //                 <LLMResponseComponent
 //                   llmResponse={message.content}
 //                   currentLlmResponse={currentLlmResponse}
@@ -63,12 +79,19 @@
 //                   isolatedView={false}
 //                   onAddLink={onAddLink}
 //                 />
+             
 //                 {message.followUp && (
 //                   <FollowUpComponent
 //                     followUp={message.followUp}
 //                     handleFollowUpClick={handleFollowUpClick}
 //                   />
 //                 )}
+//                 {message.videos && (
+//                   <VideosComponent videos={message.videos} onAddLink={onAddLink} />                )}
+//                 {message.images && (
+//                   <ImagesComponent images={message.images} />
+//                 )}
+                
 //               </div>
 //             ))}
 //           </div>
@@ -77,11 +100,15 @@
 //               {messages.length === 0 && !inputValue && (
 //                 <InitialQueries
 //                   questions={[               
-//                     "But what is a GPT? 🤖",
-//                     "When did Ye drop Ye? 🎵",
-//                     "How's NVIDIA stock doing? 📈",
-//                     "Explain black holes like I'm 5 🕳️",
-//                     "BRAT 🟩 vs Charlie XCX's old stuff? 🎧",
+//                     "Give me some memes 🤣",
+//                     "When did Ye release 'Ye'? 🎧",
+//                     "How's NVIDIA stock doing these days? 📈",
+//                     // "Explain GPT like I'm 5 🤖",
+//                     "I need a kindle link to The Hobbit 📚",
+//                     "How many people did Pieter mute on Twitter? I need timestamps for proof 🤐",
+//                     // "Tell me today's headlines 📰",
+//                     // "I need a timestamp of Pieter saying he's drinking 4 cups of strong coffee ☕ in the lex Fridman podcast",
+
 //                   ]}
 //                   handleFollowUpClick={handleFollowUpClick}
 //                 />
@@ -92,7 +119,7 @@
 //                     ref={inputRef}
 //                     tabIndex={0}
 //                     onKeyDown={onKeyDown}
-//                     placeholder="Ask away! Let's learn together 🚀"
+//                     placeholder="Help me Obi-Wan Kenobi"
 //                     className="w-full rounded-none pb-2 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
 //                     spellCheck={false}
 //                     autoComplete="off"
