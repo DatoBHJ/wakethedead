@@ -35,6 +35,14 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
     return Array.from(linkMap.values());
   }, [processedWebResults]);
 
+  const displayedLinks = useMemo(() => {
+    if (isInitialResults) {
+      const shuffled = [...uniqueLinks].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 5);
+    }
+    return uniqueLinks;
+  }, [uniqueLinks, isInitialResults]);
+
   useEffect(() => {
     if (prevResultsRef.current.length > 0 && 
         JSON.stringify(prevResultsRef.current) !== JSON.stringify(processedWebResults)) {
@@ -62,7 +70,7 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
         </div>
       </div>
       <ul className="space-y-3">
-        {uniqueLinks.map((link, index) => (
+        {displayedLinks.map((link, index) => (
           <li
             key={link.url}
             className={`flex items-center group ${isInitialResults ? 'animate-pulse' : ''}`}
