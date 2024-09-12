@@ -16,7 +16,7 @@ interface LLMResponseComponentProps {
     isolatedView: boolean;
     logo?: string;
     onAddLink: (link: string) => void;
-    onRefresh: (index: number) => void;  // Add this line
+    onRefresh: (index: number) => void;
 }
 
 enum LoadingStage {
@@ -48,7 +48,6 @@ const SkeletonLoader = () => {
     return (
         <div className="transition-all duration-300 pt-4">
             <div className="flex items-center mb-4">
-                {/* <div className="h-6 w-6 bg-gray-300 rounded-full dark:bg-gray-700 animate-pulse mr-3"></div> */}
                 <div className="h-5 bg-gray-300 rounded-lg dark:bg-gray-700/70 w-32 animate-pulse"></div>
             </div>
             <div className="flex flex-col space-y-3">
@@ -63,33 +62,51 @@ const SkeletonLoader = () => {
 const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolatedView, logo, onAddLink, onRefresh }: LLMResponseComponentProps) => {
     const [copied, setCopied] = useState(false);
     const [loadingStage, setLoadingStage] = useState<LoadingStage>(LoadingStage.Idle);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const hasLlmResponse = llmResponse && llmResponse.trim().length > 0;
     const hasCurrentLlmResponse = currentLlmResponse && currentLlmResponse.trim().length > 0;
 
     useEffect(() => {
         if (!hasLlmResponse && !hasCurrentLlmResponse) {
-            const stages = [
-                LoadingStage.SearchingSource,
-                LoadingStage.WebSearching,
-                LoadingStage.DataFound,
-                LoadingStage.AIStarting,
-                LoadingStage.Responding
-            ];
-            
-            stages.forEach((stage, index) => {
-                setTimeout(() => setLoadingStage(stage), index * 2000);
-            });
+            startLoadingAnimation();
         }
     }, [hasLlmResponse, hasCurrentLlmResponse]);
 
+    useEffect(() => {
+        if (isRefreshing) {
+            startLoadingAnimation();
+        }
+    }, [isRefreshing]);
+
+    useEffect(() => {
+        if (hasLlmResponse) {
+            setIsRefreshing(false);
+        }
+    }, [hasLlmResponse]);
+
+    const startLoadingAnimation = () => {
+        const stages = [
+            LoadingStage.SearchingSource,
+            LoadingStage.WebSearching,
+            LoadingStage.DataFound,
+            LoadingStage.AIStarting,
+            LoadingStage.Responding
+        ];
+        
+        stages.forEach((stage, index) => {
+            setTimeout(() => setLoadingStage(stage), index * 2000);
+        });
+    };
+
     const handleRefresh = () => {
+        setCopied(false);
+        setIsRefreshing(true);
         onRefresh(index);
-        setLoadingStage(LoadingStage.SearchingSource);
     };
 
     return (
         <div className={isolatedView ? 'flex flex-col max-w-[800px] mx-auto' : ''}>
-            {hasLlmResponse || hasCurrentLlmResponse ? (
+            {(hasLlmResponse || hasCurrentLlmResponse) && !isRefreshing ? (
                 <div className="mt-4 backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6 pb-6 transition-all duration-300">
                     <div className="text-card-foreground dark:text-card-foreground leading-relaxed">
                         <ChatView 
