@@ -215,7 +215,7 @@ function removeDuplicatesForStreamable(relevantDocs: SearchResult[], processedRe
   return processedResults.filter(result => !relevantUrls.has(result.url));
 }
 
-function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDocs: SearchResult[]): [SearchResult[], SearchResult[]] {
+function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDocs: SearchResult[] | undefined): [SearchResult[], SearchResult[]] {
   const processedUrls = new Set(processedResults.map(result => result.url));
   const uniqueRelevantDocs = relevantDocs ? relevantDocs.filter(doc => !processedUrls.has(doc.url)) : [];
   return [processedResults, uniqueRelevantDocs];
@@ -226,6 +226,7 @@ async function myAction(
   selectedModel: string,
   selectedLanguage: string,
   isRefresh: boolean = false,
+  previousRelevantDocuments?: SearchResult[] // Add this parameter
 ): Promise<any> {
   "use server";
 
@@ -241,9 +242,7 @@ async function myAction(
       // Only perform web search for refresh
       webSearchResults = await performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan);
       webSearchResults = webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
-      console.log('Web search results:', webSearchResults, '\n');
-      console.log('relevantDocuments:', relevantDocuments, '\n');
-      // relevantDocuments = undefined; // Set to undefined for refresh
+      relevantDocuments = previousRelevantDocuments; // Use the previous relevantDocuments
     } else {
       // Perform all searches for initial request
       [images, webSearchResults, videos, relevantDocuments] = await Promise.all([
@@ -261,13 +260,14 @@ async function myAction(
       streamable.update({ 'videos': videos });
     }
 
+
     const blueLinksContents = await get10BlueLinksContents(webSearchResults);
     let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
 
     processedWebResults = processedWebResults.length > 0 ? processedWebResults : webSearchResults;
 
     const uniqueProcessedWebResults = removeDuplicatesForStreamable(
-      relevantDocuments ,
+      relevantDocuments || [], // Pass an empty array if relevantDocuments is undefined
       processedWebResults.slice(0, config.numberOfSimilarityResults)
     );
 
