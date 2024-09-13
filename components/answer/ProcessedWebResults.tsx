@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Check } from "lucide-react";
 
 interface RelevantLink {
@@ -19,8 +19,6 @@ const decodeHtmlEntities = (text: string): string => {
 
 const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> = ({ processedWebResults, onAddLink }) => {
   const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
-  const [isInitialResults, setIsInitialResults] = useState(true);
-  const prevResultsRef = useRef<RelevantLink[]>([]);
 
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
@@ -33,22 +31,6 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
       }
     });
     return Array.from(linkMap.values());
-  }, [processedWebResults]);
-
-  const displayedLinks = useMemo(() => {
-    if (isInitialResults) {
-      const shuffled = [...uniqueLinks].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, 5);
-    }
-    return uniqueLinks;
-  }, [uniqueLinks, isInitialResults]);
-
-  useEffect(() => {
-    if (prevResultsRef.current.length > 0 && 
-        JSON.stringify(prevResultsRef.current) !== JSON.stringify(processedWebResults)) {
-      setIsInitialResults(false);
-    }
-    prevResultsRef.current = processedWebResults;
   }, [processedWebResults]);
 
   const handleLinkClick = (url: string) => {
@@ -65,12 +47,12 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
           <h2 className="text-2xl font-bold font-handwriting">
-            {isInitialResults ? "Gathering initial insights 🧠" : "Curated web discoveries 🔎"}
+            Curated web discoveries 🔎
           </h2>
         </div>
       </div>
       <ul className="space-y-3">
-        {displayedLinks.map((link) => (
+        {uniqueLinks.map((link) => (
           <li key={link.url} className="flex items-center group">
             <span className="relative inline-block">
               <button
