@@ -61,20 +61,17 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
   }
 
   return (
-    <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
+    <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4">
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
-          <h2 className="text-2xl font-bold font-handwriting transition-all duration-300">
-          {isInitialResults ? "Gathering initial insights 🧠" : "Curated web discoveries 🔎"}
+          <h2 className="text-2xl font-bold font-handwriting">
+            {isInitialResults ? "Gathering initial insights 🧠" : "Curated web discoveries 🔎"}
           </h2>
         </div>
       </div>
       <ul className="space-y-3">
-        {displayedLinks.map((link, index) => (
-          <li
-            key={link.url}
-            className={`flex items-center group ${isInitialResults ? 'animate-pulse' : ''}`}
-          >
+        {displayedLinks.map((link) => (
+          <li key={link.url} className="flex items-center group">
             <span className="relative inline-block">
               <button
                 onClick={() => handleLinkClick(link.url)}
@@ -92,11 +89,6 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
           </li>
         ))}
       </ul>
-      {isInitialResults && (
-        <div className="mt-3 text-2xl text-blue-500 dark:text-blue-400">
-          <span className="inline-block animate-pulse">...</span>
-        </div>
-      )}
     </div>
   );
 };
