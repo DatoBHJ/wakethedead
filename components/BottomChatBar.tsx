@@ -105,8 +105,8 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   questions={[               
                     "Give me some memes 🤣",
                     // "When did Ye release 'Ye'? 🎧",
-                    "OpenAI o1 🤖",
-                    "Info on iPhone 16 📱",
+                    "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
+                    "iPhone 16 📱",
                     // "How's NVIDIA stock doing these days? 📈",
                     // "Explain GPT like I'm 5 🤖",
                     "I need a kindle link to The Hobbit 📚",
