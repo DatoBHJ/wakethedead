@@ -173,9 +173,15 @@ async function fetchTranscriptWithBackup(videoId: string, lang: string = 'en'): 
       try {
         const tertiaryTranscript = await fetchTranscriptTertiary(videoId);
         console.log('Extracted transcript using tertiary method', tertiaryTranscript, '\n');
+        
+        // 특정 메시지가 포함된 경우 에러로 처리
+        if (tertiaryTranscript.includes("We're sorry, YouTube is currently blocking us from fetching subtitles")) {
+          throw new Error("YouTube is blocking subtitle fetching");
+        }
+        
         return tertiaryTranscript;
       } catch (tertiaryError) {
-        console.warn('Tertiary method failed, trying SearchAPI method as last resort:', tertiaryError);
+        console.warn('Tertiary method failed or blocked, trying SearchAPI method as last resort:', tertiaryError);
         try {
           const searchAPITranscript = await fetchTranscriptSearchAPI(videoId, lang);
           console.log('Extracted transcript using SearchAPI', searchAPITranscript, '\n');
