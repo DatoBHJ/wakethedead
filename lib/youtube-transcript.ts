@@ -3,6 +3,7 @@ import { getSubtitles } from 'youtube-captions-scraper';
 import { YoutubeTranscript } from 'youtube-transcript';
 import crypto from 'crypto';
 export const runtime = 'edge';
+import axios from 'axios';
 
 class YoutubeTranscriptError extends Error {
   constructor(message: string) {
@@ -119,35 +120,75 @@ async function fetchTranscriptTertiary(videoId: string): Promise<string> {
   }
 }
 
+async function fetchTranscriptSearchAPI(videoId: string, lang: string = 'en'): Promise<string> {
+  const API_KEY = process.env.SEARCH_API_KEY; // SearchAPI 키를 환경 변수에서 가져옵니다.
+  if (!API_KEY) {
+    throw new Error('SearchAPI key is not set');
+  }
 
-async function fetchTranscriptWithBackup(videoId: string): Promise<string> {
   try {
-    const primaryTranscript = await fetchTranscriptPrimary(videoId);
-    console.log('extracting transcript from primary method', primaryTranscript, '\n');
-    // console.log(primaryTranscript,'\n\n');
+    const response = await axios.get('https://www.searchapi.io/api/v1/search', {
+      params: {
+        engine: 'youtube_transcripts',
+        video_id: videoId,
+        lang: lang,
+        api_key: API_KEY
+      }
+    });
+
+    const data = response.data;
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    if (!data.transcripts || data.transcripts.length === 0) {
+      throw new Error('No transcripts found');
+    }
+
+    const formattedTranscript = data.transcripts.map((item: any) => ({
+      text: cleanTranscriptText(item.text),
+      start: item.start
+    }));
+
+    return groupTranscriptByApprox10Seconds(formattedTranscript);
+  } catch (error) {
+    console.error('Error fetching transcript with SearchAPI:', error);
+    throw error;
+  }
+}
+
+async function fetchTranscriptWithBackup(videoId: string, lang: string = 'en'): Promise<string> {
+  try {
+    const primaryTranscript = await fetchTranscriptPrimary(videoId, lang);
+    console.log('Extracted transcript using primary method', primaryTranscript, '\n');
     return primaryTranscript;
-  } catch (secondaryError) {
-    console.warn('primary method failed, trying Secondary method:', secondaryError);
+  } catch (primaryError) {
+    console.warn('Primary method failed, trying secondary method:', primaryError);
     try {
       const secondaryTranscript = await fetchTranscriptSecondary(videoId);
-      console.log('extracting transcript from Secondary method', secondaryTranscript, '\n');
-      // console.log(secondaryTranscript,'\n\n');
+      console.log('Extracted transcript using secondary method', secondaryTranscript, '\n');
       return secondaryTranscript;
-    } catch (primaryError) {
-      console.warn('secondary method failed, trying tertiary method:', primaryError);
+    } catch (secondaryError) {
+      console.warn('Secondary method failed, trying tertiary method:', secondaryError);
       try {
         const tertiaryTranscript = await fetchTranscriptTertiary(videoId);
-        console.log('extracting transcript from tertiary method', tertiaryTranscript, '\n');
-        // console.log(tertiaryTranscript,'\n\n');
+        console.log('Extracted transcript using tertiary method', tertiaryTranscript, '\n');
         return tertiaryTranscript;
       } catch (tertiaryError) {
-        console.error('All methods failed:', tertiaryError);
-        throw new YoutubeTranscriptError(tertiaryError as string);
+        console.warn('Tertiary method failed, trying SearchAPI method as last resort:', tertiaryError);
+        try {
+          const searchAPITranscript = await fetchTranscriptSearchAPI(videoId, lang);
+          console.log('Extracted transcript using SearchAPI', searchAPITranscript, '\n');
+          return searchAPITranscript;
+        } catch (searchAPIError) {
+          console.error('All methods failed:', searchAPIError);
+          throw new YoutubeTranscriptError('Failed to fetch transcript using all available methods');
+        }
       }
     }
   }
 }
-
 
 const getYouTubeVideoId = (url: string): string => {
   if (!url || url.trim() === '') {
