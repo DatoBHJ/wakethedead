@@ -1,7 +1,6 @@
 import TranscriptAPI from 'youtube-transcript-api';
 import { getSubtitles } from 'youtube-captions-scraper';
 import { YoutubeTranscript } from 'youtube-transcript';
-import crypto from 'crypto';
 export const runtime = 'edge';
 import axios from 'axios';
 
