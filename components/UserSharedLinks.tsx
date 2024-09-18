@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { ArrowRight } from "@phosphor-icons/react";
 import { url } from 'inspector';
+import { IconMessage } from '@/components/ui/icons';
 
 const exampleLinks = [
   { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14 min read", category: "Article" },
@@ -124,9 +125,19 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
               👆 Dig these examples or transmit your own link on the home portal
               and let us cook! 🍳🛸
              </p>
-             <p className="mt-2 text-xs text-center text-blue-500 dark:text-blue-400">
+             {/* <p className="mt-2 text-xs text-center text-blue-500 dark:text-blue-400">
               💬 Chat about any link! 🤖🔗
-            </p>
+            </p> */}
+                     <div className="mt-4 text-xs text-center text-blue-500 dark:text-blue-400">
+                <p className="mb-2">Dive deeper with our Knowledge buddy! 🤖</p>
+                <p className="flex items-center justify-center">
+                  Click 
+                  <IconMessage className="w-4 h-4 mx-1 inline-block" /> 
+                  on the home screen to explore more.
+                </p>
+              </div>
+
+
             </motion.div>
           </motion.div>
         </>
