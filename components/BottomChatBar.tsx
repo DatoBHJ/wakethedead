@@ -12,6 +12,7 @@ import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
 import ProcessedWebResults from '@/components/answer/ProcessedWebResults';
 import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -23,8 +24,7 @@ interface BottomChatBarProps {
   setInputValue: (value: string) => void;
   handleFormSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onAddLink: (link: string) => void;
-  onRefresh: (index: number) => void;  // Add this line
-
+  onRefresh: (index: number) => void;
 }
 
 const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -41,20 +41,23 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
 }) => {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   return (
-    <div className={`absolute bottom-0 left-0 right-0 backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isOpen ? 'h-full z-30' : 'h-1'} transition-all duration-100 overflow-hidden flex flex-col`}>
-      {isOpen && (
+    <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
+      {(isDesktop || isOpen) && (
         <>
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="w-full h-14 bg-transparent flex items-center justify-center"
-          >
-            <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
-          </button>
-          <div className="flex-1 overflow-y-auto px-4 sm:px-40 pb-32 flex flex-col">
+          {!isDesktop && (
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="w-full h-14 bg-transparent flex items-center justify-center"
+            >
+              <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+            </button>
+          )}
+          <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'pb-4' : 'pb-32'} flex flex-col`}>
             {messages.length === 0 && !inputValue && (
-              <div className="flex-grow flex items-center justify-center mb-72">
+              <div className="flex-grow flex items-center justify-center sm:mb-0 mb-72">
                 <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   💬 Chat • 🔗 Click Links • 🔍 Explore • 🔄 Repeat
                 </div>
@@ -65,24 +68,24 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                 <UserMessageComponent message={message.userMessage} />
                 {message.relevantDocuments && (
                   <RelevantLinksComponent
-                  relevantDocuments={message.relevantDocuments}
+                    relevantDocuments={message.relevantDocuments}
                     onAddLink={onAddLink}
                   />
                 )}
                 {message.processedWebResults && (
                   <ProcessedWebResults
-                  processedWebResults={message.processedWebResults}
+                    processedWebResults={message.processedWebResults}
                     onAddLink={onAddLink}
                   />
                 )}
-    <LLMResponseComponent
-      llmResponse={message.content}
-      currentLlmResponse={currentLlmResponse}
-      index={index}
-      isolatedView={false}
-      onAddLink={onAddLink}
-      onRefresh={onRefresh}  // Add this line
-    />
+   <LLMResponseComponent
+                  llmResponse={message.content}
+                  currentLlmResponse={currentLlmResponse}
+                  index={index}
+                  isolatedView={false}
+                  onAddLink={onAddLink}
+                  onRefresh={onRefresh}
+                />
                 {message.followUp && (
                   <FollowUpComponent
                     followUp={message.followUp}
@@ -90,30 +93,24 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   />
                 )}
                 {message.videos && (
-                  <VideosComponent videos={message.videos} onAddLink={onAddLink} />                )}
+                  <VideosComponent videos={message.videos} onAddLink={onAddLink} />
+                )}
                 {message.images && (
                   <ImagesComponent images={message.images} />
                 )}
-                
               </div>
             ))}
           </div>
-          <div className="absolute bottom-0 left-0 right-0 px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2">
+          <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2`}>
             <div className="mx-auto max-w-xl">
               {messages.length === 0 && !inputValue && (
                 <InitialQueries
                   questions={[               
                     "Give me some memes 🤣",
-                    // "When did Ye release 'Ye'? 🎧",
                     "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
                     "iPhone 16 📱",
-                    // "How's NVIDIA stock doing these days? 📈",
-                    // "Explain GPT like I'm 5 🤖",
                     "I need a kindle link to The Hobbit 📚",
                     "How many people did Pieter mute on Twitter? 🤐",
-                    // "Tell me today's headlines 📰",
-                    // "I need a timestamp of Pieter saying he's drinking 4 cups of strong coffee ☕ in the lex Fridman podcast",
-
                   ]}
                   handleFollowUpClick={handleFollowUpClick}
                 />

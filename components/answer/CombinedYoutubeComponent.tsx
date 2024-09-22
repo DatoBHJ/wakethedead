@@ -234,29 +234,42 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {showVideo && (
-          <div className="w-full lg:w-1/2 relative pt-[56.25%] lg:pt-0 bg-black">
-            {renderMediaContent()}
+          // <div className="w-full max-w-4xl mx-auto">
+          //   <div className="relative pb-[56.25%] h-0 overflow-hidden">
+          //     <div className="absolute top-0 left-0 w-full h-full">
+          //       {renderMediaContent()}
+          //     </div>
+          //   </div>
+          // </div>
+          <div className="w-full px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl">
+              <div className="absolute top-0 left-0 w-full h-full">
+                {renderMediaContent()}
+              </div>
+            </div>
           </div>
+        </div>
         )}
-        <div className={`flex-1 overflow-y-auto ${showVideo ? 'lg:w-1/2' : 'w-full lg:flex lg:justify-center'}`}>
-          <div className={`py-4 px-1 ${!showVideo && 'lg:max-w-2xl'}`}>
+        <div className="flex-1 overflow-y-auto">
+          <div className="py-4 px-2 max-w-4xl mx-auto">
             <div className="bg-card dark:bg-card text-card-foreground dark:text-card-foreground rounded-lg px-4">
               {renderContent()}
             </div>
-            {( articleError) && (
-            <p className="text-foreground dark:text-foreground font-handwriting mt-3 px-4 text-sm">
-              🚧 Oops! YouTube's giving us the cold shoulder right now 🥶<br /><br />
-              But don't worry! Our tech wizards are on the case 🧙‍♂️💻<br /><br />
-              In the meantime, try these alternatives:<br />
-              🔄 Come back later (YouTube might be in a better mood)<br />
-              🦸‍♀️ Use a VPN - it might just save the day!<br />
-              📰 Try news articles or blog post web links instead<br />
-              🤖 Check out our chatbot for instant answers<br /><br />
-              Thanks for being patient! 🌟 We'll be back in action soon! 💪
-            </p>
-          )}
+            {articleError && (
+              <p className="text-foreground dark:text-foreground font-handwriting mt-3 px-4 text-sm">
+                🚧 Oops! YouTube's giving us the cold shoulder right now 🥶<br /><br />
+                But don't worry! Our tech wizards are on the case 🧙‍♂️💻<br /><br />
+                In the meantime, try these alternatives:<br />
+                🔄 Come back later (YouTube might be in a better mood)<br />
+                🦸‍♀️ Use a VPN - it might just save the day!<br />
+                📰 Try news articles or blog post web links instead<br />
+                🤖 Check out our chatbot for instant answers<br /><br />
+                Thanks for being patient! 🌟 We'll be back in action soon! 💪
+              </p>
+            )}
           </div>
         </div>
       </div>

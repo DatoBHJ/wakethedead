@@ -14,6 +14,7 @@ import ModelSelector from '@/components/ModelSelector';
 import LanguageSelector from '@/components/LanguageSelector';
 import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
 import UserSharedLinks from '@/components/UserSharedLinks';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface UserDataResult {
   title: string;
@@ -108,6 +109,7 @@ export default function Page() {
   const [cards, setCards] = useState<YouTubeCard[]>([]);
   const [showUFO, setShowUFO] = useState(false);
   const mainContentRef = useRef(null);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   // Ref declarations
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -372,9 +374,190 @@ export default function Page() {
       console.error("Error streaming data for refreshed message:", error);
     }
   }, [messages, myAction, selectedModel, selectedLanguage]);
-
+  
   return (
-    <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
+      <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
+        <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
+          <div className={`${isDesktop ? 'w-1/3' : 'w-full'} flex flex-col overflow-hidden`}>
+            <header className="flex justify-start items-center p-4">
+              <button 
+                onClick={toggleSidebar}
+                className="sidebar-toggle-button text-foreground/70 z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
+              >
+                <List size={24} />
+              </button>
+              <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
+                WTD
+              </a>
+              {!isDesktop && (
+                <div className="flex items-center space-x-4 ml-auto">
+                  <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                    <DialogTrigger asChild>
+                      <button 
+                        ref={settingsButtonRef}
+                        className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                      >
+                        <Gear size={24} />
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent 
+                      className="absolute right-0 top-[calc(100%+0.5rem)] w-60 sm:w-96"
+                      style={{
+                        transform: 'none',
+                        top: settingsButtonRef.current ? `${settingsButtonRef.current.offsetTop + settingsButtonRef.current.offsetHeight + 8}px` : 'auto',
+                        right: '3rem',
+                        left: 'auto',
+                      }}
+                    >
+                    <DialogHeader>
+                      <DialogTitle>Settings</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2">
+                      <ModelSelector
+                        selectedModel={selectedModel}
+                        setSelectedModel={setSelectedModel}
+                      />
+                      <LanguageSelector
+                        selectedLanguage={selectedLanguage}
+                        setSelectedLanguage={setSelectedLanguage}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <button 
+                  onClick={() => setIsChatOpen(!isChatOpen)}
+                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
+                >
+                  <IconMessage className="w-6 h-6" />
+                </button>
+              </div>
+            )}
+          </header>
+          <main 
+            ref={mainContentRef}
+            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
+          >
+            {showLinkInput ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-xl sm:px-20 px-5 flex flex-col items-center"
+              >
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
+                >
+                  <ThemeBasedVideo />
+                </motion.div>
+                <div className="w-full flex flex-col items-start">
+                  <motion.form 
+                    onSubmit={handleLinksSubmit} 
+                    className="w-full"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6, duration: 0.5 }}
+                  >
+                    <div className="relative pl-1 flex items-center">
+                      <input
+                        type="text"
+                        value={inputLinks}
+                        onChange={(e) => setInputLinks(e.target.value)}
+                        placeholder="Beam up your article or video link ... ⚡"
+                        className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
+                      />
+                      <motion.button 
+                        type="submit" 
+                        className="absolute right-1 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <ArrowRight size={24} weight="bold" />
+                      </motion.button>
+                    </div>
+                  </motion.form>
+                </div>
+              </motion.div>
+            ) : (
+              <div className="h-full w-full">
+                {memoizedCombinedYoutubeComponent}
+              </div>
+            )}
+          </main>
+        </div>
+        {isDesktop && (
+          <>
+            <div className="w-px bg-gray-200 dark:bg-gray-700 opacity-50 my-20"></div>
+            <div className="w-2/3 flex flex-col overflow-hidden">
+              <header className="flex justify-end items-center p-4">
+                <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                  <DialogTrigger asChild>
+                    <button 
+                      ref={settingsButtonRef}
+                      className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                    >
+                      <Gear size={24} />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent 
+                    className="absolute right-0 top-[calc(100%+0.5rem)] w-96"
+                    style={{
+                      transform: 'none',
+                      top: settingsButtonRef.current ? `${settingsButtonRef.current.offsetTop + settingsButtonRef.current.offsetHeight + 8}px` : 'auto',
+                      right: '3rem',
+                      left: 'auto',
+                    }}
+                  >
+                    <DialogHeader>
+                      <DialogTitle>Settings</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2">
+                      <ModelSelector
+                        selectedModel={selectedModel}
+                        setSelectedModel={setSelectedModel}
+                      />
+                      <LanguageSelector
+                        selectedLanguage={selectedLanguage}
+                        setSelectedLanguage={setSelectedLanguage}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </header>
+              <div className="flex-1 overflow-y-auto">
+                <BottomChatBar 
+                  isOpen={true}
+                  setIsOpen={() => {}}
+                  messages={messages}
+                  currentLlmResponse={currentLlmResponse}
+                  handleFollowUpClick={handleFollowUpClick}
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                  handleFormSubmit={handleFormSubmit}
+                  onAddLink={handleAddLink}
+                  onRefresh={handleRefresh}
+                />
+              </div>
+            </div>
+          </>
+        )}
+        {!isDesktop && (
+          <BottomChatBar 
+            isOpen={isChatOpen} 
+            setIsOpen={setIsChatOpen}
+            messages={messages}
+            currentLlmResponse={currentLlmResponse}
+            handleFollowUpClick={handleFollowUpClick}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleFormSubmit={handleFormSubmit}
+            onAddLink={handleAddLink}
+            onRefresh={handleRefresh}
+          />
+        )}
+      </div>
       <LeftSidebar 
         ref={sidebarRef}
         isOpen={isSidebarOpen} 
@@ -385,138 +568,11 @@ export default function Page() {
         currentIndex={currentYoutubeIndex}
         onCardsUpdate={handleCardsUpdate}
       />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex justify-start items-center p-4">
-          <button 
-            onClick={toggleSidebar}
-            className="sidebar-toggle-button text-foreground/70 z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
-          >
-            <List size={24} />
-          </button>
-          {/* <Button variant="outline" asChild> */}
-          <a
-            href="/"
-            className="text-foreground/70 z-50 font-semibold px-4"
-          >
-            WTD
-            {/* <IconGitHub /> */}
-          </a>
-          {/* </Button> */}
-          <div className="flex items-center space-x-4 ml-auto">
-            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-              <DialogTrigger asChild>
-                <button 
-                  ref={settingsButtonRef}
-                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
-                >
-                  <Gear size={24} />
-                </button>
-              </DialogTrigger>
-              <DialogContent 
-                className="absolute right-0 top-[calc(100%+0.5rem)] w-60 sm:w-96"
-                style={{
-                  transform: 'none',
-                  top: settingsButtonRef.current ? `${settingsButtonRef.current.offsetTop + settingsButtonRef.current.offsetHeight + 8}px` : 'auto',
-                  right: '3rem',
-                  left: 'auto',
-                }}
-              >
-                <DialogHeader>
-                  <DialogTitle>Settings</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-2">
-                  <ModelSelector
-                    selectedModel={selectedModel}
-                    setSelectedModel={setSelectedModel}
-                  />
-                  <LanguageSelector
-                    selectedLanguage={selectedLanguage}
-                    setSelectedLanguage={setSelectedLanguage}
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
-            <button 
-              onClick={() => setIsChatOpen(!isChatOpen)}
-              className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
-            >
-              <IconMessage className="w-6 h-6" />
-            </button>
-          </div>
-        </header>
-        <main 
-          ref={mainContentRef}
-          className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
-        >           {showLinkInput ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-xl px-5 flex flex-col items-center"
-        >
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
-          >
-            <ThemeBasedVideo />
-          </motion.div>
-              <div className="w-full flex flex-col items-start">
-                <motion.form 
-                  onSubmit={handleLinksSubmit} 
-                  className="w-full"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
-                >
-                  <div className="relative pl-1 flex items-center">
-                    <input
-                      type="text"
-                      value={inputLinks}
-                      onChange={(e) => setInputLinks(e.target.value)}
-                      placeholder="Beam up your article or video link ... ⚡"
-                      // placeholder="Link goes here, thoughts incoming... 💭⚡️"                      
-                      // placeholder="Article or YouTube link goes here ... 💭⚡️"                      
-                      // placeholder="Transmit article or video link ... 💭⚡️"                      
-                      className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
-                    />
-                    <motion.button 
-                      type="submit" 
-                      className="absolute right-1 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <ArrowRight size={24} weight="bold" />
-                    </motion.button>
-                  </div>
-                </motion.form>
-              </div>
-            </motion.div>
-          ) : (
-            <div className="h-full w-full">
-              {memoizedCombinedYoutubeComponent}
-            </div>
-          )}
-        </main>
-        <BottomChatBar 
-      isOpen={isChatOpen} 
-      setIsOpen={setIsChatOpen}
-      messages={messages}
-      currentLlmResponse={currentLlmResponse}
-      handleFollowUpClick={handleFollowUpClick}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      handleFormSubmit={handleFormSubmit}
-      onAddLink={handleAddLink}
-      onRefresh={handleRefresh}  // Add this line
-    />
-      </div>
       <UserSharedLinks 
         onAddLink={handleAddLink} 
         showUFO={showUFO}
         mainContentRef={mainContentRef}
       />
-          </div>
+    </div>
   );
 }

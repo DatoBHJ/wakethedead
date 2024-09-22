@@ -23,6 +23,8 @@
 //   setInputValue: (value: string) => void;
 //   handleFormSubmit: (e: FormEvent<HTMLFormElement>) => void;
 //   onAddLink: (link: string) => void;
+//   onRefresh: (index: number) => void;  // Add this line
+
 // }
 
 // const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -35,6 +37,7 @@
 //   setInputValue,
 //   handleFormSubmit,
 //   onAddLink,
+//   onRefresh, 
 // }) => {
 //   const { formRef, onKeyDown } = useEnterSubmit();
 //   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -72,14 +75,14 @@
 //                     onAddLink={onAddLink}
 //                   />
 //                 )}
-//                 <LLMResponseComponent
-//                   llmResponse={message.content}
-//                   currentLlmResponse={currentLlmResponse}
-//                   index={index}
-//                   isolatedView={false}
-//                   onAddLink={onAddLink}
-//                 />
-             
+//     <LLMResponseComponent
+//       llmResponse={message.content}
+//       currentLlmResponse={currentLlmResponse}
+//       index={index}
+//       isolatedView={false}
+//       onAddLink={onAddLink}
+//       onRefresh={onRefresh}  // Add this line
+//     />
 //                 {message.followUp && (
 //                   <FollowUpComponent
 //                     followUp={message.followUp}
@@ -101,11 +104,13 @@
 //                 <InitialQueries
 //                   questions={[               
 //                     "Give me some memes 🤣",
-//                     "When did Ye release 'Ye'? 🎧",
-//                     "How's NVIDIA stock doing these days? 📈",
+//                     // "When did Ye release 'Ye'? 🎧",
+//                     "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
+//                     "iPhone 16 📱",
+//                     // "How's NVIDIA stock doing these days? 📈",
 //                     // "Explain GPT like I'm 5 🤖",
 //                     "I need a kindle link to The Hobbit 📚",
-//                     "How many people did Pieter mute on Twitter? I need timestamps for proof 🤐",
+//                     "How many people did Pieter mute on Twitter? 🤐",
 //                     // "Tell me today's headlines 📰",
 //                     // "I need a timestamp of Pieter saying he's drinking 4 cups of strong coffee ☕ in the lex Fridman podcast",
 

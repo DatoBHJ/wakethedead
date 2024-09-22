@@ -321,6 +321,57 @@
 //     }
 //   }, [youtubeLinks]);
 
+//   const handleRefresh = useCallback(async (index: number) => {
+//     const messageToRefresh = messages[index];
+//     if (!messageToRefresh) return;
+
+//     setMessages(prevMessages => {
+//       const newMessages = [...prevMessages];
+//       newMessages[index] = {
+//         ...newMessages[index],
+//         content: '',
+//         followUp: null,
+//         isStreaming: true,
+//         status: '',
+//         processedWebResults: undefined,
+//       };
+//       return newMessages;
+//     });
+
+//     let lastAppendedResponse = "";
+//     try {
+//       const streamableValue = await myAction(messageToRefresh.userMessage, selectedModel, selectedLanguage, true);
+      
+//       let llmResponseString = "";
+//       for await (const message of readStreamableValue(streamableValue)) {
+//         const typedMessage = message as StreamMessage;
+//         setMessages((prevMessages) => {
+//           const messagesCopy = [...prevMessages];
+//           const messageIndex = messagesCopy.findIndex(msg => msg.id === messageToRefresh.id);
+//           if (messageIndex !== -1) { 
+//             const currentMessage = messagesCopy[messageIndex];
+
+//             if (typedMessage.llmResponse && typedMessage.llmResponse !== lastAppendedResponse) {
+//               currentMessage.content += typedMessage.llmResponse;
+//               lastAppendedResponse = typedMessage.llmResponse;
+//             }
+
+//             currentMessage.isStreaming = typedMessage.llmResponseEnd ? false : currentMessage.isStreaming;
+//             currentMessage.followUp = typedMessage.followUp || currentMessage.followUp;
+//             currentMessage.processedWebResults = typedMessage.processedWebResults || currentMessage.processedWebResults;
+//           }
+//           return messagesCopy;
+//         });
+
+//         if (typedMessage.llmResponse) {
+//           llmResponseString += typedMessage.llmResponse;
+//           setCurrentLlmResponse(llmResponseString);
+//         }
+//       }
+//     } catch (error) {
+//       console.error("Error streaming data for refreshed message:", error);
+//     }
+//   }, [messages, myAction, selectedModel, selectedLanguage]);
 
 //   return (
 //     <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
@@ -449,17 +500,17 @@
 //           )}
 //         </main>
 //         <BottomChatBar 
-//     isOpen={isChatOpen} 
-//     setIsOpen={setIsChatOpen}
-//     messages={messages}
-//     currentLlmResponse={currentLlmResponse}
-//     handleFollowUpClick={handleFollowUpClick}
-//     inputValue={inputValue}
-//     setInputValue={setInputValue}
-//     handleFormSubmit={handleFormSubmit}
-//     onAddLink={handleAddLink}
-//   />
-
+//       isOpen={isChatOpen} 
+//       setIsOpen={setIsChatOpen}
+//       messages={messages}
+//       currentLlmResponse={currentLlmResponse}
+//       handleFollowUpClick={handleFollowUpClick}
+//       inputValue={inputValue}
+//       setInputValue={setInputValue}
+//       handleFormSubmit={handleFormSubmit}
+//       onAddLink={handleAddLink}
+//       onRefresh={handleRefresh}  // Add this line
+//     />
 //       </div>
 //       <UserSharedLinks 
 //         onAddLink={handleAddLink} 

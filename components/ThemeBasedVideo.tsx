@@ -12,13 +12,13 @@ const ThemeBasedVideo = () => {
   return (
     <div className='flex relative justify-center sm:block'>
       <div 
-        className="w-80 h-80 p-2 sm:w-96 sm:h-96 max-w-96 max-h-96 border-none relative"
+        className="border-none relative"
         // onClick={handleClick}
       >
         <video 
           preload="none"
           autoPlay 
-          loop 
+          loop  
           muted 
           playsInline
           className="w-full h-full object-cover rounded-full non-selectable"
