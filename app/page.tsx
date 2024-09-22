@@ -7,7 +7,7 @@ import CombinedYoutubeComponent from '@/components/answer/CombinedYoutubeCompone
 import LeftSidebar from '@/components/LeftSidebar';
 import BottomChatBar from '@/components/BottomChatBar';
 import { List, ArrowRight, Gear } from "@phosphor-icons/react";
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { IconMessage } from '@/components/ui/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ModelSelector from '@/components/ModelSelector';
@@ -376,39 +376,39 @@ export default function Page() {
   }, [messages, myAction, selectedModel, selectedLanguage]);
   
   return (
-      <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
-        <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
-          <div className={`${isDesktop ? 'w-1/3' : 'w-full'} flex flex-col overflow-hidden`}>
-            <header className="flex justify-start items-center p-4">
-              <button 
-                onClick={toggleSidebar}
-                className="sidebar-toggle-button text-foreground/70 z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
-              >
-                <List size={24} />
-              </button>
-              <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
-                WTD
-              </a>
-              {!isDesktop && (
-                <div className="flex items-center space-x-4 ml-auto">
-                  <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-                    <DialogTrigger asChild>
-                      <button 
-                        ref={settingsButtonRef}
-                        className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
-                      >
-                        <Gear size={24} />
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent 
-                      className="absolute right-0 top-[calc(100%+0.5rem)] w-60 sm:w-96"
-                      style={{
-                        transform: 'none',
-                        top: settingsButtonRef.current ? `${settingsButtonRef.current.offsetTop + settingsButtonRef.current.offsetHeight + 8}px` : 'auto',
-                        right: '3rem',
-                        left: 'auto',
-                      }}
+    <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
+      <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
+        <div className={`${isDesktop ? 'w-1/3' : 'w-full'} flex flex-col overflow-hidden`}>
+          <header className="flex justify-start items-center p-4">
+            <button 
+              onClick={toggleSidebar}
+              className="sidebar-toggle-button text-foreground/70 z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
+            >
+              <List size={24} />
+            </button>
+            <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
+              WTD
+            </a>
+            {!isDesktop && (
+              <div className="flex items-center space-x-4 ml-auto">
+                <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                  <DialogTrigger asChild>
+                    <button 
+                      ref={settingsButtonRef}
+                      className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
                     >
+                      <Gear size={24} />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent 
+                    className="absolute right-0 top-[calc(100%+0.5rem)] w-60 sm:w-96"
+                    style={{
+                      transform: 'none',
+                      top: settingsButtonRef.current ? `${settingsButtonRef.current.offsetTop + settingsButtonRef.current.offsetHeight + 8}px` : 'auto',
+                      right: '3rem',
+                      left: 'auto',
+                    }}
+                  >
                     <DialogHeader>
                       <DialogTitle>Settings</DialogTitle>
                     </DialogHeader>
@@ -439,8 +439,8 @@ export default function Page() {
           >
             {showLinkInput ? (
               <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-xl sm:px-20 px-5 flex flex-col items-center"
               >
@@ -489,8 +489,18 @@ export default function Page() {
         </div>
         {isDesktop && (
           <>
-            <div className="w-px bg-gray-200 dark:bg-gray-700 opacity-50 my-20"></div>
-            <div className="w-2/3 flex flex-col overflow-hidden">
+            <motion.div
+              className="w-px bg-gray-200 dark:bg-gray-700 opacity-50 my-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            />
+            <motion.div
+              className="w-2/3 flex flex-col overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
               <header className="flex justify-end items-center p-4">
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                   <DialogTrigger asChild>
@@ -540,7 +550,7 @@ export default function Page() {
                   onRefresh={handleRefresh}
                 />
               </div>
-            </div>
+            </motion.div>
           </>
         )}
         {!isDesktop && (
