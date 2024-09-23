@@ -435,7 +435,7 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 overflow-y-auto pb-2 pl-48 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
+            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
           >
             {showLinkInput ? (
               <motion.div 
