@@ -378,7 +378,7 @@ export default function Page() {
   return (
     <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
-        <div className={`${isDesktop ? 'w-1/3' : 'w-full'} flex flex-col overflow-hidden`}>
+        <div className={`${isDesktop ? 'w-1/2' : 'w-full'} flex flex-col overflow-hidden`}>
           <header className="flex justify-start items-center p-4">
             <button 
               onClick={toggleSidebar}
@@ -435,7 +435,7 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
+            className={`flex-1 overflow-y-auto pb-2 pl-48 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
           >
             {showLinkInput ? (
               <motion.div 
@@ -496,7 +496,7 @@ export default function Page() {
               transition={{ duration: 0.5, delay: 0.5 }}
             />
             <motion.div
-              className="w-2/3 flex flex-col overflow-hidden"
+              className="w-1/2 flex flex-col overflow-hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
