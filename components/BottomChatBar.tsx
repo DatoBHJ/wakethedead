@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef } from 'react';
+import React, { FormEvent, useRef, useMemo } from 'react';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import Textarea from 'react-textarea-autosize';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -25,6 +25,7 @@ interface BottomChatBarProps {
   handleFormSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onAddLink: (link: string) => void;
   onRefresh: (index: number) => void;
+  extractedQuestions: string[];
 }
 
 const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -37,11 +38,27 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   setInputValue,
   handleFormSubmit,
   onAddLink,
-  onRefresh, 
+  onRefresh,
+  extractedQuestions,
 }) => {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  const initialQuestions = [
+    "Give me some memes 🤣",
+    "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
+    "iPhone 16 📱",
+    "I need a kindle link to The Hobbit 📚",
+    "How many people did Pieter mute on Twitter? 🤐",
+  ];
+
+  const combinedQuestions = useMemo(() => {
+    if (extractedQuestions.length > 0) {
+      return extractedQuestions;
+    }
+    return initialQuestions;
+  }, [extractedQuestions, initialQuestions]);
 
   return (
     <div className={`${isDesktop ? 'relative xl:py-10 xl:pr-48 xl:pl-10' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
@@ -105,13 +122,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             <div className="mx-auto max-w-xl">
               {messages.length === 0 && !inputValue && (
                 <InitialQueries
-                  questions={[               
-                    "Give me some memes 🤣",
-                    "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
-                    "iPhone 16 📱",
-                    "I need a kindle link to The Hobbit 📚",
-                    "How many people did Pieter mute on Twitter? 🤐",
-                  ]}
+                  questions={combinedQuestions}
                   handleFollowUpClick={handleFollowUpClick}
                 />
               )}

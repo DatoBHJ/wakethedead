@@ -24,6 +24,8 @@ interface CombinedYoutubeComponentProps {
   selectedLanguage: string;
   cards: YouTubeCard[];
   onLinkClick: (link: string) => void;
+  onExtractQuestions: (questions: string[]) => void;
+
 }
 
 const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.memo(({
@@ -34,6 +36,8 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   selectedLanguage,
   cards,
   onLinkClick,
+  onExtractQuestions,
+
 }) => {
   const { toast } = useToast();
 
@@ -53,6 +57,42 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
+
+  const extractQuestionsFromContent = useCallback((content: string) => {
+    const lines = content.split('\n');
+    const questions: string[] = [];
+
+    lines.forEach(line => {
+      // Extract explicit questions (ending with '?')
+      const explicitQuestions = line.match(/[^.!?]+\?/g);
+      if (explicitQuestions) {
+        questions.push(...explicitQuestions.map(q => q.trim()));
+      }
+
+      // Extract "Question/Thought" lines
+      if (line.toLowerCase().includes('question') || line.toLowerCase().includes('thought')) {
+        questions.push(line.trim());
+      }
+
+      // Extract lines starting with 'Q:'
+      if (line.trim().toLowerCase().startsWith('q:')) {
+        questions.push(line.trim());
+      }
+    });
+
+    // Remove duplicates but don't limit the number of questions
+    return [...new Set(questions)];
+  }, []);
+
+  useEffect(() => {
+    const currentVideoId = videoIds[currentIndex];
+    const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
+    
+    if (contentToAnalyze) {
+      const extractedQuestions = extractQuestionsFromContent(contentToAnalyze);
+      onExtractQuestions(extractedQuestions);
+    }
+  }, [currentIndex, videoIds, editedArticles, articles, streamingContent, extractQuestionsFromContent, onExtractQuestions]);
 
 
   const handleEdit = useCallback(async (videoId: string, editedContent: string) => {

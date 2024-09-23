@@ -119,8 +119,12 @@ export default function Page() {
   // Custom hooks
   const { myAction } = useActions<typeof AI>();
 
-  // Effects
-
+  // question extraction from video/article
+  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
+  const handleExtractQuestions = useCallback((questions: string[]) => {
+    setExtractedQuestions(questions);
+  }, []);
+  
   // Effect to update currentYoutubeIndex when youtubeLinks change
   useEffect(() => {
     if (youtubeLinks.length > 0) {
@@ -301,6 +305,8 @@ export default function Page() {
       selectedLanguage={selectedLanguage}
       cards={cards}
       onLinkClick={handleLinkClick}
+      onExtractQuestions={handleExtractQuestions}
+
     />
   ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick]);
 
@@ -548,6 +554,8 @@ export default function Page() {
                   handleFormSubmit={handleFormSubmit}
                   onAddLink={handleAddLink}
                   onRefresh={handleRefresh}
+                  extractedQuestions={extractedQuestions}
+
                 />
               </div>
             </motion.div>
@@ -565,6 +573,8 @@ export default function Page() {
             handleFormSubmit={handleFormSubmit}
             onAddLink={handleAddLink}
             onRefresh={handleRefresh}
+            extractedQuestions={extractedQuestions}
+
           />
         )}
       </div>
