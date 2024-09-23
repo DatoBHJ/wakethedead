@@ -121,6 +121,82 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
     });
   }
   
+
+
+  // async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
+  //   const formattedChunk = convertTimestamps(chunk);
+  //   console.log('formattedChunk:', formattedChunk);
+  //   const response = await openai.chat.completions.create({
+  //     model: selectedModel,
+  //     messages: [
+  //       {
+  //         role: "system",
+  //         content: `You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions.
+  //                 Always respond in user preference language whcih is ${selectedLanguage}. `
+  //       },
+  //       {
+  //         role: "user",
+  //         content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+  //         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
+  //         Use many relevant emojis !! Include:
+  //         - A super brief "what's this part about" line
+  //         - A few key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets)
+  //         - Maybe 1 question/thought or reaction
+  
+  //         Base your notes on this transcript chunk:
+  //         ${formattedChunk}
+  
+  //         Format your response like someone quickly jotting notes. Use dashes, arrows, emojis. Be brief and casual! Start with "Part ${chunkNumber}/${totalChunks}:" to indicate which part of the video these notes cover. Remember, always use square brackets for timestamps!`
+  //       }
+  //     ],
+  //     temperature: 0.7,
+  //     stream: true,
+  //     max_tokens: 500,
+  //   });
+  
+  //   return response;
+  // }
+  
+  // async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
+  //   const response = await openai.chat.completions.create({
+  //     model: selectedModel,
+  //     messages: [
+  //       {
+  //         role: "system",
+  //         content: `You're quickly skimming through an article and taking brief, informal notes. Use everyday language, and include short personal reactions or questions.
+  //                     Always respond in user preference language whcih is ${selectedLanguage}. `
+  //       },
+  //       {
+  //         role: "user",
+  //         content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
+  //         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
+  //         Use many relevant emojis !! Include:
+  //         - A very brief "what's this part about" line
+  //         - A few key points or interesting facts 
+  //         - Maybe 1 question/thought or reaction
+  
+  //         Base your notes on this content chunk:
+  //         ${chunk}
+  
+  //         Format your response like someone quickly jotting notes. Use dashes, arrows, emojis. Be brief and casual! Start with "Part ${chunkNumber}/${totalChunks}:" to indicate which part of the article these notes cover.
+  //         If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated stuff..." or "📢 Looks like an ad?" and move on. 
+  //         `
+  //       }
+  //     ],
+  //     temperature: 0.7,
+  //     stream: true,
+  //     max_tokens: 500,
+  //   });
+  
+  //   return response;
+  // }
+
+
+
+
+
+
+
   async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
     const formattedChunk = convertTimestamps(chunk);
     console.log('formattedChunk:', formattedChunk);
