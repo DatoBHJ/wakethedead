@@ -23,7 +23,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
             <span role="img" aria-label="link" className="mr-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300">
               <IconPlus className='flex h-5 w-5 pb-1' />
             </span>
-            <p className="text-sm sm:text-md font-handwriting dark:text-white text-black">{question}</p>
+            <p className="text-sm sm:text-base font-handwriting dark:text-white text-black">{question}</p>
           </li>
         ))}
       </ul>

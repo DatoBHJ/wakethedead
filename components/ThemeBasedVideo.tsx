@@ -12,7 +12,8 @@ const ThemeBasedVideo = () => {
   return (
     <div className='flex relative justify-center sm:block'>
       <div 
-        className="border-none relative"
+        className="w-80 h-80 p-2 sm:w-60 sm:h-60 md:w-80 md:h-80 max-w-80 max-h-80 border-none relative"
+        // className="border-none relative"
         // onClick={handleClick}
       >
         <video 

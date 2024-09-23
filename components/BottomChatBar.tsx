@@ -61,7 +61,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   }, [extractedQuestions, initialQuestions]);
 
   return (
-    <div className={`${isDesktop ? 'relative xl:py-10 xl:pr-48 xl:pl-10' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
+    <div className={`${isDesktop ? 'relative py-10 pr-48 pl-10' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
       {(isDesktop || isOpen) && (
         <>
           {!isDesktop && (
@@ -73,13 +73,13 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             </button>
           )}
           <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'pb-4' : 'pb-32'} flex flex-col`}>
-            {messages.length === 0 && !inputValue && (
+            {/* {messages.length === 0 && !inputValue && (
               <div className="flex-grow flex items-center justify-center sm:mb-0 mb-72">
                 <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   💬 Chat • 🔗 Click Links • 🔍 Explore • 🔄 Repeat
                 </div>
               </div>
-            )}
+            )} */}
             {messages.map((message, index) => (
               <div key={index}>
                 <UserMessageComponent message={message.userMessage} />
@@ -133,7 +133,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     tabIndex={0}
                     onKeyDown={onKeyDown}
                     placeholder="Help me Obi-Wan Kenobi"
-                    className="w-full rounded-none pb-2 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
+                    className="w-full placeholder:text-md rounded-none pb-2 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
                     spellCheck={false}
                     autoComplete="off"
                     autoCorrect="off"

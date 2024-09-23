@@ -441,23 +441,23 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''} ${isDesktop ? 'xl:pl-48 xl:py-10 xl:pr-10' : ''}`}
+            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-52 md:mt-64' : ''} ${isDesktop ? 'pl-48 py-10 pr-10' : ''}`}
           >
             {showLinkInput ? (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-xl sm:px-14 px-5 flex flex-col items-center"
+                className="w-full max-w-xl sm:px-8 px-5 flex flex-col items-center"
               >
-                <motion.div 
+                {/* <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.5 }}
                   className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
                 >
                   <ThemeBasedVideo />
-                </motion.div>
+                </motion.div> */}
                 <div className="w-full flex flex-col items-start">
                   <motion.form 
                     onSubmit={handleLinksSubmit} 
@@ -471,7 +471,7 @@ export default function Page() {
                         type="text"
                         value={inputLinks}
                         onChange={(e) => setInputLinks(e.target.value)}
-                        placeholder="Beam up your article or video link ... ⚡"
+                        placeholder="Beam up your article or video link ⚡"
                         className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
                       />
                       <motion.button 

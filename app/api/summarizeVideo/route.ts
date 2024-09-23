@@ -129,22 +129,39 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
       messages: [
         {
           role: "system",
-          content: `You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions.
-                  Always respond in user preference language whcih is ${selectedLanguage}. `
+          content: `You're casually watching a YouTube video and jotting down quick, brief, informal notes in Markdown format. Use everyday language, include brief personal reactions, and formulate concise, thought-provoking questions.
+                  Always respond in user preference language which is ${selectedLanguage}.`
         },
         {
           role: "user",
-          content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+          content: `Create casual, quick Markdown notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
           I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
           Use many relevant emojis !! Include:
-          - A super brief "what's this part about" line
-          - A few key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets)
-          - Maybe 1 question/thought or reaction
+          - A level 2 heading (##) "🔍 What's this part about:", immediately followed by a very brief (1-2 sentences) summary of the main topic or focus of this part.
+          - 5-8 key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets) as a bulleted list. Each point should be very concise, ideally not more than 10 words.
+          - One short, thought-provoking question as a blockquote (>). This should be:
+            * Concise (no more than 15 words)
+            * Challenging assumptions or highlighting implications
+            * Encouraging critical thinking about the subject matter
   
           Base your notes on this transcript chunk:
           ${formattedChunk}
   
-          Format your response like someone quickly jotting notes. Use dashes, arrows, emojis. Be brief and casual! Start with "Part ${chunkNumber}/${totalChunks}:" to indicate which part of the video these notes cover. Remember, always use square brackets for timestamps!`
+          Format your response like someone quickly jotting notes in Markdown. Use Markdown syntax for headings, lists, and blockquotes. Be brief and casual! Start with "# Part ${chunkNumber}/${totalChunks}" as a level 1 heading to indicate which part of the video these notes cover. Remember, always use square brackets for timestamps!
+  
+          Example format:
+          # Part X/Y
+          ## 🔍 What's this part about:
+          This section discusses [brief 1-2 sentence summary of the main topic]. 🎯
+  
+          - [MM:SS] Key point 1 (very concise, ~5-10 words) 💡
+          - [MM:SS] Another key point (again, very brief) 🤔
+          - [MM:SS] Third key point (keep it short!) 😮
+          - [MM:SS] Fourth key point (crisp and clear) 🔑
+          - [MM:SS] Fifth key point (to the point) 📌
+          ... (up to 8 points total)
+          
+          > 🧠 [Short, thought-provoking question about the content, max 15 words]`
         }
       ],
       temperature: 0.7,
@@ -161,24 +178,40 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
       messages: [
         {
           role: "system",
-          content: `You're quickly skimming through an article and taking brief, informal notes. Use everyday language, and include short personal reactions or questions.
-                      Always respond in user preference language whcih is ${selectedLanguage}. `
+          content: `You're quickly skimming through an article and taking brief, informal notes in Markdown format. Use everyday language, include short personal reactions, and formulate concise, thought-provoking questions.
+                  Always respond in user preference language which is ${selectedLanguage}.`
         },
         {
           role: "user",
-          content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
+          content: `Create casual, quick Markdown notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
           I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
           Use many relevant emojis !! Include:
-          - A very brief "what's this part about" line
-          - A few key points or interesting facts 
-          - Maybe 1 question/thought or reaction
+          - A level 2 heading (##) "🔍 What's this part about:", immediately followed by a very brief (1-2 sentences) summary of the main topic or focus of this part.
+          - 5-8 key points or interesting facts as a bulleted list. Each point should be very concise, ideally not more than 10 words.
+          - One short, thought-provoking question as a blockquote (>). This should be:
+            * Concise (no more than 15 words)
+            * Challenging assumptions or highlighting implications
+            * Encouraging critical thinking about the subject matter
   
           Base your notes on this content chunk:
           ${chunk}
   
-          Format your response like someone quickly jotting notes. Use dashes, arrows, emojis. Be brief and casual! Start with "Part ${chunkNumber}/${totalChunks}:" to indicate which part of the article these notes cover.
-          If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated stuff..." or "📢 Looks like an ad?" and move on. 
-          `
+          Format your response like someone quickly jotting notes in Markdown. Use Markdown syntax for headings, lists, and blockquotes. Be brief and casual! Start with "# Part ${chunkNumber}/${totalChunks}" as a level 1 heading to indicate which part of the article these notes cover.
+          If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated stuff..." or "📢 Looks like an ad?" and move on.
+  
+          Example format:
+          # Part X/Y
+          ## 🔍 What's this part about:
+          This section discusses [brief 1-2 sentence summary of the main topic]. 📰
+  
+          - Key point 1 (very concise, ~5-10 words) 💡
+          - Another key point (again, very brief) 🤔
+          - Third key point (keep it short!) 😮
+          - Fourth key point (crisp and clear) 🔑
+          - Fifth key point (to the point) 📌
+          ... (up to 8 points total)
+          
+          > 🧠 [Short, thought-provoking question about the content, max 15 words]`
         }
       ],
       temperature: 0.7,

@@ -59,92 +59,24 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
 
 
-  const extractQuestionsFromContent = useCallback((content: string) => {
-    const lines = content.split('\n');
-    const questions: string[] = [];
-
-    lines.forEach(line => {
-      // Extract explicit questions (ending with '?')
-      const explicitQuestions = line.match(/[^.!?]+\?/g);
-      if (explicitQuestions) {
-        questions.push(...explicitQuestions.map(q => q.trim()));
-      }
-
-      // Extract "Question/Thought" lines
-      if (line.toLowerCase().includes('question') || line.toLowerCase().includes('thought')) {
-        questions.push(line.trim());
-      }
-
-      // Extract lines starting with 'Q:'
-      if (line.trim().toLowerCase().startsWith('q:')) {
-        questions.push(line.trim());
-      }
-    });
-
-    return removeDuplicateQuestions(questions);
-  }, []);
-
-  const removeDuplicateQuestions = (questions: string[]): string[] => {
-    const uniqueQuestions: string[] = [];
-    const seenQuestions = new Set<string>();
-
-    questions.forEach(question => {
-      const normalizedQuestion = normalizeQuestion(question);
-      
-      if (!isQuestionDuplicate(normalizedQuestion, seenQuestions)) {
-        uniqueQuestions.push(question);
-        seenQuestions.add(normalizedQuestion);
-      }
-    });
-
-    return uniqueQuestions;
-  };
-
-  const normalizeQuestion = (question: string): string => {
-    // Remove punctuation, convert to lowercase, and remove common filler words
-    return question
-      .replace(/[^\w\s]/gi, '')
-      .toLowerCase()
-      .replace(/\b(why|how|what|when|where|who|do|does|is|are|can|could|should|would)\b/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
-
-  const isQuestionDuplicate = (normalizedQuestion: string, seenQuestions: Set<string>): boolean => {
-    for (const seenQuestion of seenQuestions) {
-      if (calculateSimilarity(normalizedQuestion, seenQuestion) > 0.8) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const calculateSimilarity = (str1: string, str2: string): number => {
-    const longer = str1.length > str2.length ? str1 : str2;
-    const shorter = str1.length > str2.length ? str2 : str1;
-    const longerLength = longer.length;
-    if (longerLength === 0) {
-      return 1.0;
-    }
-    return (longerLength - editDistance(longer, shorter)) / longerLength;
-  };
-
-  const editDistance = (str1: string, str2: string): number => {
-    const m = str1.length;
-    const n = str2.length;
-    const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-
-    for (let i = 0; i <= m; i++) {
-      for (let j = 0; j <= n; j++) {
-        if (i === 0) dp[i][j] = j;
-        else if (j === 0) dp[i][j] = i;
-        else if (str1[i - 1] === str2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
-        else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-      }
-    }
-
-    return dp[m][n];
-  };
+  const extractQuestionsFromContent = (content: string): string[] => {
+      const parts = content.split(/# Part \d+\/\d+/);
+      const extractedContent: string[] = [];
+    
+      parts.forEach(part => {
+        const summaryMatch = part.match(/## 🔍 What's this part about:\s*([^\n]+)/);
+        if (summaryMatch) {
+          extractedContent.push(summaryMatch[1].trim());
+        }
+    
+        const questionMatch = part.match(/> ([^\n]+)/);
+        if (questionMatch) {
+          extractedContent.push(questionMatch[1].trim()); // '>' 이후의 텍스트만 추가
+        }
+      });
+    
+      return extractedContent;
+    };
 
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
