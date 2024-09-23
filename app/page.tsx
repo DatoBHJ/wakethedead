@@ -435,14 +435,14 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''}`}
+            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-28 md:mt-40' : ''} ${isDesktop ? 'xl:pl-48 xl:py-10 xl:pr-10' : ''}`}
           >
             {showLinkInput ? (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-xl sm:px-20 px-5 flex flex-col items-center"
+                className="w-full max-w-xl sm:px-14 px-5 flex flex-col items-center"
               >
                 <motion.div 
                   initial={{ opacity: 0 }}

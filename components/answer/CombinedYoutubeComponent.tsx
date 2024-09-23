@@ -233,7 +233,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   }, [cards, currentIndex, youtubeLinks, handleThumbnailClick, videoRef]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
+    <div className="flex flex-col pb-6 h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       <div className="flex-1 flex flex-col overflow-hidden">
         {showVideo && (
           // <div className="w-full max-w-4xl mx-auto">
@@ -273,7 +273,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between py-3 pt-2 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
+      <div className="flex items-center justify-between xl:py-5 py-3 xl:pt-7 pt-2 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 
@@ -325,7 +325,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           >
             <ArrowsCounterClockwise size={20} />
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             size="icon"
             onClick={() => setIsEditing(!isEditing)}
@@ -333,7 +333,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             disabled={isGenerating[currentVideoId]}
           >
             {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

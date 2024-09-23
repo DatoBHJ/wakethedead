@@ -44,7 +44,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   return (
-    <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
+    <div className={`${isDesktop ? 'relative xl:py-10 xl:pr-48 xl:pl-10' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
       {(isDesktop || isOpen) && (
         <>
           {!isDesktop && (
