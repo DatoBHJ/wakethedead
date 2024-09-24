@@ -392,9 +392,12 @@ export default function Page() {
             >
               <List size={24} />
             </button>
-            <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
-              WTD
+            <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4">
+              {isDesktop ? 'Wake The Dead' : 'WTD'}
             </a>
+            {/* <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
+              WTD
+            </a> */}
             {!isDesktop && (
               <div className="flex items-center space-x-4 ml-auto">
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
@@ -452,6 +455,14 @@ export default function Page() {
                   className="w-full max-w-xl lg:pl-10 md:pl-16 pl-5 pr-5 flex flex-col items-center"
                 >
                   <div className="w-full flex flex-col items-start lg:pb-48 pb-20">
+                    {/* <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5, duration: 0.5 }}
+                      className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
+                    >
+                      <ThemeBasedVideo />
+                    </motion.div> */}
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
                       className="w-full"
