@@ -441,7 +441,7 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-52 md:mt-64' : ''} ${isDesktop ? 'pl-48 py-10 pr-10' : ''}`}
+            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-56 md:mt-72' : ''} ${isDesktop ? 'pl-48 py-10 pr-10' : ''}`}
           >
             {showLinkInput ? (
               <motion.div 
