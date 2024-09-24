@@ -60,24 +60,25 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
 
   const extractQuestionsFromContent = (content: string): string[] => {
-      const parts = content.split(/# Part \d+\/\d+/);
-      const extractedContent: string[] = [];
-    
-      parts.forEach(part => {
-        const summaryMatch = part.match(/## 🔍 What's this part about:\s*([^\n]+)/);
-        if (summaryMatch) {
-          extractedContent.push(summaryMatch[1].trim());
-        }
-    
-        const questionMatch = part.match(/> ([^\n]+)/);
-        if (questionMatch) {
-          extractedContent.push(questionMatch[1].trim()); // '>' 이후의 텍스트만 추가
-        }
-      });
-    
-      return extractedContent;
-    };
-
+    const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
+    const totalParts = parts.length;
+    const extractedContent: string[] = [];
+  
+    parts.forEach((part, index) => {
+      const summaryMatch = part.match(/What's this part about:?\s*([\s\S]+?)(?=\n\n|\n-|\n>|$)/i);
+      if (summaryMatch) {
+        const summary = summaryMatch[1].trim().replace(/\n/g, ' ');
+        extractedContent.push(`**Part ${index + 1}/${totalParts}: ${summary}`);
+      }
+  
+      const questionMatch = part.match(/>\s*([^\n]+)/);
+      if (questionMatch) {
+        extractedContent.push(questionMatch[1].trim());
+      }
+    });
+  
+    return extractedContent;
+  };
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
     const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
