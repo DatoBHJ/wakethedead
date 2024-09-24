@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { ArrowRight } from "@phosphor-icons/react";
-import { url } from 'inspector';
 import { IconMessage } from '@/components/ui/icons';
 
 const exampleLinks = [
   { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14 min read", category: "Article" },
   {url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "📱 Marques is checking out the world's largest fake iPhone lol", duration: "55s", category: "Short YouTube Video"},
   { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review - Charli XCX's BRAT", duration: "14 mins", category: "Medium YouTube Video" },
-  // { url: "https://www.youtube.com/watch?v=9-Jl0dxWQs8", label: "📚 3Blue1Brown - How LLMs store facts | Deep Learning", duration: "22m 42s", category: "Medium YouTube Video" },
   { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", label: "🎙️ Lex Fridman Podcast - Pieter Levels: AI & Digital Nomad Life", duration: "3h 43m", category: "Long YouTube Video" },
 ];
 
@@ -16,6 +14,8 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState(null);
   const dragControls = useDragControls();
+  const dragStartTime = useRef(0);
+  const isDragging = useRef(false);
 
   useEffect(() => {
     if (showUFO && mainContentRef.current) {
@@ -45,6 +45,29 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
     setIsOpen(false);
   };
 
+  const handleDragStart = () => {
+    isDragging.current = true;
+    dragStartTime.current = Date.now();
+  };
+
+  const handleDragEnd = (event, info) => {
+    setPosition({ x: info.point.x, y: info.point.y });
+    const dragDuration = Date.now() - dragStartTime.current;
+    
+    // 짧은 드래그는 클릭으로 간주
+    if (dragDuration < 200 && !isDragging.current) {
+      setIsOpen(!isOpen);
+    }
+    
+    isDragging.current = false;
+  };
+
+  const handleClick = () => {
+    if (!isDragging.current) {
+      setIsOpen(!isOpen);
+    }
+  };
+
   if (!showUFO || !position) return null;
 
   return (
@@ -54,9 +77,8 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
         dragControls={dragControls}
         dragMomentum={false}
         dragElastic={0}
-        onDragEnd={(event, info) => {
-          setPosition({ x: info.point.x, y: info.point.y });
-        }}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
         initial={position}
         animate={position}
         className="fixed z-0"
@@ -64,8 +86,8 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
       >
         <button
           onPointerDown={(e) => dragControls.start(e)}
-          onClick={() => setIsOpen(!isOpen)}
-          className="text-4xl sm:text-5xl hover:scale-110 transition-transform duration-200 cursor-move "
+          onClick={handleClick}
+          className="text-4xl sm:text-5xl hover:scale-110 transition-transform duration-200 cursor-move"
           aria-label="Activate interstellar communication portal"
         >
           🛸
@@ -125,18 +147,6 @@ const UserSharedLinks = ({ onAddLink, showUFO, mainContentRef }) => {
               👆 Dig these examples or transmit your own link on the home portal
               and let us cook! 🍳🛸
              </p>
-             {/* <p className="mt-2 text-xs text-center text-blue-500 dark:text-blue-400">
-              💬 Chat about any link! 🤖🔗
-            </p> */}
-                     <div className="mt-4 text-xs text-center text-blue-500 dark:text-blue-400">
-                <p className="mb-2">Dive deeper with our Knowledge buddy! 🤖</p>
-                <p className="flex items-center justify-center">
-                  Click 
-                  <IconMessage className="w-4 h-4 mx-1 inline-block" /> 
-                  on the home screen to explore more.
-                </p>
-              </div>
-
 
             </motion.div>
           </motion.div>
