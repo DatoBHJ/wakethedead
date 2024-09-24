@@ -70,7 +70,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
       {(isDesktop || isOpen) && (
         <motion.div
           className={`${
-            isDesktop ? 'relative py-10 pr-48 pl-10' : 'fixed inset-0'
+            isDesktop ? 'relative py-10 pr-48 pl-10 md:pr-32' : 'fixed inset-0'
           } backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${
             isDesktop ? 'h-full' : ''
           } ${isDesktop ? '' : 'z-30'} overflow-hidden flex flex-col`}

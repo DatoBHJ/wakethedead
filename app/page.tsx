@@ -384,7 +384,7 @@ export default function Page() {
   return (
     <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
-        <div className={`${isDesktop ? 'w-1/2' : 'w-full'} flex flex-col overflow-hidden`}>
+        <div className={`${isDesktop ? 'w-1/2' : 'w-full h-full'} flex flex-col overflow-hidden`}>
           <header className="flex justify-start items-center p-4">
             <button 
               onClick={toggleSidebar}
@@ -441,51 +441,45 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 overflow-y-auto pb-2 flex flex-col ${showLinkInput ? 'items-center mt-56 md:mt-72' : ''} ${isDesktop ? 'pl-48 py-10 pr-10' : ''}`}
+            className={`flex-1 flex flex-col overflow-y-auto ${isDesktop ? 'pl-48 md:pl-32 py-10 pr-10' : ''}`}
           >
             {showLinkInput ? (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-xl sm:px-8 px-5 flex flex-col items-center"
-              >
-                {/* <motion.div 
+              <div className="flex-grow flex items-center justify-center w-full">
+                <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
-                  className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
+                  transition={{ duration: 0.5 }}
+                  className="w-full max-w-xl lg:pl-10 md:pl-16 pl-5 pr-5 flex flex-col items-center"
                 >
-                  <ThemeBasedVideo />
-                </motion.div> */}
-                <div className="w-full flex flex-col items-start">
-                  <motion.form 
-                    onSubmit={handleLinksSubmit} 
-                    className="w-full"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                  >
-                    <div className="relative pl-1 flex items-center">
-                      <input
-                        type="text"
-                        value={inputLinks}
-                        onChange={(e) => setInputLinks(e.target.value)}
-                        placeholder="Beam up your article or video link ⚡"
-                        className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
-                      />
-                      <motion.button 
-                        type="submit" 
-                        className="absolute right-1 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <ArrowRight size={24} weight="bold" />
-                      </motion.button>
-                    </div>
-                  </motion.form>
-                </div>
-              </motion.div>
+                  <div className="w-full flex flex-col items-start lg:pb-48 pb-20">
+                    <motion.form 
+                      onSubmit={handleLinksSubmit} 
+                      className="w-full"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6, duration: 0.5 }}
+                    >
+                      <div className="relative pl-1 flex items-center">
+                        <input
+                          type="text"
+                          value={inputLinks}
+                          onChange={(e) => setInputLinks(e.target.value)}
+                          placeholder="Beam up your article or video link ⚡"
+                          className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
+                        />
+                        <motion.button 
+                          type="submit" 
+                          className="absolute right-1 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <ArrowRight size={24} weight="bold" />
+                        </motion.button>
+                      </div>
+                    </motion.form>
+                  </div>
+                </motion.div>
+              </div>
             ) : (
               <div className="h-full w-full">
                 {memoizedCombinedYoutubeComponent}
