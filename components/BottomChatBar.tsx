@@ -88,7 +88,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
             </button>
           )}
-          <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'pb-20' : 'pb-20'} flex flex-col`}>
+          <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'py-10' : 'pb-20'} flex flex-col`}>
             {messages.length === 0 && !inputValue && (
               <div className="flex-grow flex items-center justify-center">
                 <InitialQueries
@@ -144,7 +144,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     tabIndex={0}
                     onKeyDown={onKeyDown}
                     placeholder="Help me Obi-Wan Kenobi"
-                    className="w-full placeholder:text-md rounded-none pb-2 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
+                    className="w-full placeholder:text-md rounded-none  bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
                     spellCheck={false}
                     autoComplete="off"
                     autoCorrect="off"
@@ -157,7 +157,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     <TooltipTrigger asChild>
                       <motion.button 
                         type="submit" 
-                        className="absolute right-3 bottom-8 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent"
+                        className="absolute right-3 bottom-6 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         disabled={inputValue === ''}

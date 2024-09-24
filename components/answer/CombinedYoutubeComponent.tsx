@@ -267,7 +267,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   }, [cards, currentIndex, youtubeLinks, handleThumbnailClick, videoRef]);
 
   return (
-    <div className="flex flex-col pb-3 h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
+    <div className="flex flex-col pb-8 mt-2 md:py-10 py-0 h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       <div className="flex-1 flex flex-col overflow-hidden">
         {showVideo && (
           // <div className="w-full max-w-4xl mx-auto">
@@ -307,7 +307,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between xl:pb-16 py-2 xl:pt-7 pt-2 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
+      <div className="flex items-center justify-between py-1 pt-2 md:pt-16 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 

@@ -37,8 +37,8 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
 
   const renderSeparator = (index: number) => (
     <li key={`separator-${index}`} className="my-2">
-      <hr className="w-full h-px bg-gray-200 dark:bg-gray-700 opacity-50" />
-    </li>
+      <div className="w-full h-px bg-gray-200 dark:bg-gray-700 opacity-50"></div>
+      </li>
   );
 
   const groupedItems = questions.reduce((acc, item, index) => {
