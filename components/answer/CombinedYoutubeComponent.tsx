@@ -266,7 +266,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   }, [cards, currentIndex, youtubeLinks, handleThumbnailClick, videoRef]);
 
   return (
-    <div className="flex flex-col pb-6 h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
+    <div className="flex flex-col pb-3 h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       <div className="flex-1 flex flex-col overflow-hidden">
         {showVideo && (
           // <div className="w-full max-w-4xl mx-auto">
@@ -288,7 +288,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         )}
         <div className="flex-1 overflow-y-auto">
           <div className="py-4 px-2 max-w-4xl mx-auto">
-            <div className="bg-card dark:bg-card text-card-foreground dark:text-card-foreground rounded-lg px-4">
+            <div className="bg-card dark:bg-card text-card-foreground dark:text-card-foreground px-4">
               {renderContent()}
             </div>
             {articleError && (
@@ -306,7 +306,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between xl:py-5 py-3 xl:pt-7 pt-2 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
+      <div className="flex items-center justify-between xl:pb-16 py-2 xl:pt-7 pt-2 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 

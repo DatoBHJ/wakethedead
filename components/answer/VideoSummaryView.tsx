@@ -126,7 +126,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
   };
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden px-2">
       {isEditing ? (
         <textarea
           value={editedContent}

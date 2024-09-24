@@ -7,7 +7,7 @@ import LLMResponseComponent from '@/components/answer/LLMResponseComponent';
 import UserMessageComponent from '@/components/answer/UserMessageComponent';
 import FollowUpComponent from '@/components/answer/FollowUpComponent';
 import InitialQueries from '@/components/answer/InitialQueries';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
 import ProcessedWebResults from '@/components/answer/ProcessedWebResults';
 import VideosComponent from '@/components/answer/VideosComponent';
@@ -60,10 +60,26 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
     return initialQuestions;
   }, [extractedQuestions, initialQuestions]);
 
+  const mobileVariants = {
+    hidden: { y: "100%" },
+    visible: { y: 0 },
+  };
+
   return (
-    <div className={`${isDesktop ? 'relative py-10 pr-48 pl-10' : 'absolute bottom-0 left-0 right-0'} backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${isDesktop || isOpen ? 'h-full' : 'h-1'} ${isDesktop ? '' : 'z-30'} transition-all duration-100 overflow-hidden flex flex-col`}>
+    <AnimatePresence>
       {(isDesktop || isOpen) && (
-        <>
+        <motion.div
+          className={`${
+            isDesktop ? 'relative py-10 pr-48 pl-10' : 'fixed inset-0'
+          } backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${
+            isDesktop ? 'h-full' : ''
+          } ${isDesktop ? '' : 'z-30'} overflow-hidden flex flex-col`}
+          initial={isDesktop ? false : "hidden"}
+          animate={isDesktop ? false : "visible"}
+          // exit={isDesktop ? false : "hidden"}
+          variants={isDesktop ? {} : mobileVariants}
+          transition={{ type: "tween", duration: 0.15 }}
+                  >
           {!isDesktop && (
             <button 
               onClick={() => setIsOpen(!isOpen)} 
@@ -72,14 +88,15 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
             </button>
           )}
-          <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'pb-4' : 'pb-32'} flex flex-col`}>
-            {/* {messages.length === 0 && !inputValue && (
-              <div className="flex-grow flex items-center justify-center sm:mb-0 mb-72">
-                <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                  💬 Chat • 🔗 Click Links • 🔍 Explore • 🔄 Repeat
-                </div>
+          <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'pb-20' : 'pb-20'} flex flex-col`}>
+            {messages.length === 0 && !inputValue && (
+              <div className="flex-grow flex items-center justify-center">
+                <InitialQueries
+                  questions={combinedQuestions}
+                  handleFollowUpClick={handleFollowUpClick}
+                />
               </div>
-            )} */}
+            )}
             {messages.map((message, index) => (
               <div key={index}>
                 <UserMessageComponent message={message.userMessage} />
@@ -120,12 +137,6 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
           </div>
           <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2`}>
             <div className="mx-auto max-w-xl">
-              {messages.length === 0 && !inputValue && (
-                <InitialQueries
-                  questions={combinedQuestions}
-                  handleFollowUpClick={handleFollowUpClick}
-                />
-              )}
               <form ref={formRef} onSubmit={handleFormSubmit}>
                 <div className="relative px-3 py-4 pt-5">
                   <Textarea
@@ -151,7 +162,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                         whileTap={{ scale: 0.95 }}
                         disabled={inputValue === ''}
                       >
-                        <ArrowUp size={20} weight="bold" />
+                        <ArrowUp size={24} weight="bold" />
                       </motion.button>
                     </TooltipTrigger>
                     <TooltipContent>Send message</TooltipContent>
@@ -160,9 +171,9 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               </form>
             </div>
           </div>
-        </>
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 };
 
