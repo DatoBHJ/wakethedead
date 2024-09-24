@@ -191,7 +191,13 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
   //   return response;
   // }
 
-  async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
+
+
+
+
+
+
+  async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
     const formattedChunk = convertTimestamps(chunk);
     console.log('formattedChunk:', formattedChunk);
     const response = await openai.chat.completions.create({
@@ -207,7 +213,8 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
           content: `Create casual, quick Markdown notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
           I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
           Use many relevant emojis !! Include:
-          - A level 2 heading (##) "🔍 What's this part about:", immediately followed by a very brief (1-2 sentences) summary of the main topic or focus of this part.
+          - A level 1 heading (#) "Part X/Y", where X is the current chunk number and Y is the total number of chunks.
+          - Immediately followed by a level 2 heading (##) with a very brief (1-2 sentences) summary of the main topic or focus of this part, along with a relevant emoji.
           - 5-8 key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets) as a bulleted list. Each point should be very concise, ideally not more than 10 words.
           - One short, thought-provoking question as a blockquote (>). This should be:
             * Concise (no more than 15 words)
@@ -217,12 +224,11 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
           Base your notes on this transcript chunk:
           ${formattedChunk}
   
-          Format your response like someone quickly jotting notes in Markdown. Use Markdown syntax for headings, lists, and blockquotes. Be brief and casual! Start with "# Part ${chunkNumber}/${totalChunks}" as a level 1 heading to indicate which part of the video these notes cover. Remember, always use square brackets for timestamps!
+          Format your response like someone quickly jotting notes in Markdown. Use Markdown syntax for headings, lists, and blockquotes. Be brief and casual! Remember, always use square brackets for timestamps!
   
           Example format:
           # Part X/Y
-          ## 🔍 What's this part about:
-          This section discusses [brief 1-2 sentence summary of the main topic]. 🎯
+          ## Brief summary of the main topic (1-2 sentences). 🎯
   
           - [MM:SS] Key point 1 (very concise, ~5-10 words) 💡
           - [MM:SS] Another key point (again, very brief) 🤔
@@ -256,7 +262,8 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
           content: `Create casual, quick Markdown notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
           I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
           Use many relevant emojis !! Include:
-          - A level 2 heading (##) "🔍 What's this part about:", immediately followed by a very brief (1-2 sentences) summary of the main topic or focus of this part.
+          - A level 1 heading (#) "Part X/Y", where X is the current chunk number and Y is the total number of chunks.
+          - Immediately followed by a level 2 heading (##) with a very brief (1-2 sentences) summary of the main topic or focus of this part, along with a relevant emoji.
           - 5-8 key points or interesting facts as a bulleted list. Each point should be very concise, ideally not more than 10 words.
           - One short, thought-provoking question as a blockquote (>). This should be:
             * Concise (no more than 15 words)
@@ -266,13 +273,12 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
           Base your notes on this content chunk:
           ${chunk}
   
-          Format your response like someone quickly jotting notes in Markdown. Use Markdown syntax for headings, lists, and blockquotes. Be brief and casual! Start with "# Part ${chunkNumber}/${totalChunks}" as a level 1 heading to indicate which part of the article these notes cover.
+          Format your response like someone quickly jotting notes in Markdown. Use Markdown syntax for headings, lists, and blockquotes. Be brief and casual!
           If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated stuff..." or "📢 Looks like an ad?" and move on.
   
           Example format:
           # Part X/Y
-          ## 🔍 What's this part about:
-          This section discusses [brief 1-2 sentence summary of the main topic]. 📰
+          ## Brief summary of the main topic (1-2 sentences). 📰
   
           - Key point 1 (very concise, ~5-10 words) 💡
           - Another key point (again, very brief) 🤔

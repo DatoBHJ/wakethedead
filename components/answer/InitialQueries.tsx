@@ -22,13 +22,13 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
     return (
       <li
         key={index}
-        className="flex items-center cursor-pointer bg-transparent p-3 my-1"
+        className="flex items-center cursor-pointer bg-transparent p-3 my-1 md:my-5"
         onClick={() => handleQuestionClick(item)}
       >
         <span role="img" aria-label="link" className="mr-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300">
           <IconPlus className='flex h-5 w-5 pb-1' />
         </span>
-        <p className={` text-base md:text-base ${isSummary ? 'font-handwriting font-bold' : 'font-handwriting'} dark:text-gray-400 text-black`}>
+        <p className={`${isSummary ? 'font-handwriting font-bold text-base md:text-lg' : 'font-handwriting text-base md:text-sm '} dark:text-gray-200 text-black`}>
           {formattedItem}
         </p>
       </li>

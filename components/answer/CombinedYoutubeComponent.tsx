@@ -61,14 +61,16 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
-    const totalParts = parts.length;
     const extractedContent: string[] = [];
   
     parts.forEach((part, index) => {
-      const summaryMatch = part.match(/What's this part about:?\s*([\s\S]+?)(?=\n\n|\n-|\n>|$)/i);
+      const partMatch = content.match(new RegExp(`# Part (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
+      const partNumber = partMatch ? partMatch[1] : `${index + 1}/?`;
+  
+      const summaryMatch = part.match(/##\s*(.+?)(?=\n|$)/);
       if (summaryMatch) {
-        const summary = summaryMatch[1].trim().replace(/\n/g, ' ');
-        extractedContent.push(`**Part ${index + 1}/${totalParts}: ${summary}`);
+        const summary = summaryMatch[1].trim();
+        extractedContent.push(`**Part ${partNumber}: ${summary}`);
       }
   
       const questionMatch = part.match(/>\s*([^\n]+)/);
@@ -87,7 +89,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       const extractedQuestions = extractQuestionsFromContent(contentToAnalyze);
       onExtractQuestions(extractedQuestions);
     }
-  }, [currentIndex, videoIds, editedArticles, articles, streamingContent, extractQuestionsFromContent, onExtractQuestions]);
+  }, [currentIndex, videoIds, editedArticles, articles, streamingContent, onExtractQuestions]);
 
   const handleEdit = useCallback(async (videoId: string, editedContent: string) => {
     const originalContent = articles[videoId] || streamingContent[videoId];
@@ -289,7 +291,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         )}
         <div className="flex-1 overflow-y-auto">
           <div className="py-4 px-2 max-w-4xl mx-auto">
-            <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-400 px-4">
+            <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-200 px-4">
               {renderContent()}
             </div>
             {articleError && (
