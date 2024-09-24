@@ -76,7 +76,6 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
           } ${isDesktop ? '' : 'z-30'} overflow-hidden flex flex-col`}
           initial={isDesktop ? false : "hidden"}
           animate={isDesktop ? false : "visible"}
-          // exit={isDesktop ? false : "hidden"}
           variants={isDesktop ? {} : mobileVariants}
           transition={{ type: "tween", duration: 0.15 }}
                   >

@@ -289,7 +289,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         )}
         <div className="flex-1 overflow-y-auto">
           <div className="py-4 px-2 max-w-4xl mx-auto">
-            <div className="bg-card dark:bg-card text-card-foreground dark:text-card-foreground px-4">
+            <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-400 px-4">
               {renderContent()}
             </div>
             {articleError && (
@@ -359,7 +359,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           >
             <ArrowsCounterClockwise size={20} />
           </Button>
-          {/* <Button
+          <Button
             variant="outline"
             size="icon"
             onClick={() => setIsEditing(!isEditing)}
@@ -367,7 +367,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             disabled={isGenerating[currentVideoId]}
           >
             {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
-          </Button> */}
+          </Button>
         </div>
       </div>
     </div>

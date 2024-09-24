@@ -191,12 +191,6 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
   //   return response;
   // }
 
-
-
-
-
-
-
   async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
     const formattedChunk = convertTimestamps(chunk);
     console.log('formattedChunk:', formattedChunk);
