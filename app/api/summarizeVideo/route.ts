@@ -65,7 +65,7 @@ if (config.useSemanticCache) {
 
   semanticCache = new SemanticCache({ index, minProximity: 0.99 });
 }
-async function embedTranscripts(transcript: string, videoId: string, videoInfo: any, videoUrl: string, cacheKey: string): Promise<void> {
+async function embedTranscripts(transcript: string, videoId: string, contentInfo: any, videoUrl: string, cacheKey: string): Promise<void> {
   const textSplitter = new RecursiveCharacterTextSplitter({ 
     chunkSize: config.textChunkSize,
     chunkOverlap: config.textChunkOverlap
@@ -73,8 +73,8 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
 
   try {
     const metadata = {
-      title: videoInfo.title || '',
-      author: videoInfo.author || '',
+      title: contentInfo.title || '',
+      author: contentInfo.author || '',
       link: videoUrl,
     };
 
@@ -287,13 +287,29 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
   
     if (!forceRegenerate && exists && article) {
       console.log('Returning cached summary');
-      return new NextResponse(article, {
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-Cache-Exists': 'true',
-          'X-Stream-Response': 'false',
-        },
-      });
+      try {
+        const parsedArticle = JSON.parse(article);
+        return new NextResponse(parsedArticle.content, {
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-Cache-Exists': 'true',
+            'X-Stream-Response': 'false',
+            'X-Article-Title': parsedArticle.title || '',
+            'X-Article-Link': parsedArticle.link || '',
+            'X-Article-Timestamp': parsedArticle.timestamp?.toString() || '',
+          },
+        });
+      } catch (error) {
+        console.error('Error parsing cached article:', error);
+        // 파싱 에러 발생 시 캐시된 데이터를 그대로 반환
+        return new NextResponse(article, {
+          headers: {
+            'Content-Type': 'text/plain',
+            'X-Cache-Exists': 'true',
+            'X-Stream-Response': 'false',
+          },
+        });
+      }
     }
     
     try {
@@ -351,13 +367,18 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
               accumulatedResponse += '\n\n---\n\n';
             }
           }
-          // Cache the complete generated summary
-          await semanticCache.set(cacheKey, accumulatedResponse);
+  
+          // Cache the complete generated summary with title, link, and timestamp
+          const cacheData = {
+            content: accumulatedResponse,
+            title: contentInfo.title || '',
+            link: videoUrl,
+            timestamp: Date.now()
+          };
+          await semanticCache.set(cacheKey, JSON.stringify(cacheData));
           console.log('Summary cached with key:', cacheKey);
           
           controller.close();
-  
-
         },
       });
   
@@ -367,6 +388,9 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
           'X-Stream-Response': 'true',
+          'X-Article-Title': contentInfo.title || '',
+          'X-Article-Link': videoUrl,
+          'X-Article-Timestamp': Date.now().toString(),
         },
       });
     }
@@ -376,26 +400,31 @@ async function embedTranscripts(transcript: string, videoId: string, videoInfo: 
     }
   }
   
-
-export async function PUT(request: Request) {
-  const { videoId, editedContent, selectedModel, selectedLanguage } = await request.json();
-
-  console.log('PUT request:', { videoId, selectedModel, selectedLanguage });
+  export async function PUT(request: Request) {
+    const { videoId, editedContent, selectedModel, selectedLanguage, title, link } = await request.json();
   
-  const cacheKey = await generateUniqueKey(videoId, selectedModel, selectedLanguage);
-
-  try {
-    if (config.useSemanticCache && semanticCache) {
-      await semanticCache.set(cacheKey, editedContent);
-      console.log('Edited summary cached with key:', cacheKey);
+    console.log('PUT request:', { videoId, selectedModel, selectedLanguage });
+    
+    const cacheKey = await generateUniqueKey(videoId, selectedModel, selectedLanguage);
+  
+    try {
+      if (config.useSemanticCache && semanticCache) {
+        const cacheData = {
+          content: editedContent,
+          title: title || '',
+          link: link,
+          timestamp: Date.now()
+        };
+        await semanticCache.set(cacheKey, JSON.stringify(cacheData));
+        console.log('Edited summary cached with key:', cacheKey);
+      }
+  
+      return new NextResponse(JSON.stringify({ success: true }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 200,
+      });
+    } catch (error) {
+      console.error('Error updating cached summary:', error);
+      return NextResponse.json({ error: 'Failed to update cached summary' }, { status: 500 });
     }
-
-    return new NextResponse(JSON.stringify({ success: true }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
-    });
-  } catch (error) {
-    console.error('Error updating cached summary:', error);
-    return NextResponse.json({ error: 'Failed to update cached summary' }, { status: 500 });
   }
-}
