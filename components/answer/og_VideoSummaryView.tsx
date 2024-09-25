@@ -68,9 +68,6 @@
 //     h2: ({ children }) => <h2 className="text-2xl font-handwriting font-bold mt-6 mb-3 break-words">{renderWithClickableTimestamps(children)}</h2>,
 //     h3: ({ children }) => <h3 className="text-xl font-handwriting font-semibold mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
 //     p: ({ children }) => {
-//       if (typeof children === 'string' && children.match(/^={3,}$/)) {
-//         return <hr className="border-t border-gray-300 dark:border-gray-700 mt-2 mb-4 px-2" />;
-//       }
 //       return <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">{renderWithClickableTimestamps(children)}</p>;
 //     },
 //     ul: ({ children }) => <ul className="list-none my-4 space-y-2 font-handwriting text-base">{children}</ul>,
@@ -124,10 +121,12 @@
 //         {children}
 //       </a>
 //     ),
+//     hr: () => <hr className="my-4 border-0 h-px bg-gray-200 dark:bg-gray-700 opacity-50" />,
+
 //   };
 
 //   return (
-//     <div className="w-full overflow-hidden">
+//     <div className="w-full overflow-hidden px-2">
 //       {isEditing ? (
 //         <textarea
 //           value={editedContent}
