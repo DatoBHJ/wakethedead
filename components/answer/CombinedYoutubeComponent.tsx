@@ -70,17 +70,20 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       const summaryMatch = part.match(/##\s*(.+?)(?=\n|$)/);
       if (summaryMatch) {
         const summary = summaryMatch[1].trim();
-        extractedContent.push(`**Part ${partNumber}: ${summary}`);
+        extractedContent.push(`**Part ${partNumber}: ${summary}**`);
       }
   
-      const questionMatch = part.match(/>\s*([^\n]+)/);
-      if (questionMatch) {
-        extractedContent.push(questionMatch[1].trim());
+      const questionMatches = part.match(/>\s*([^\n]+)/g);
+      if (questionMatches) {
+        questionMatches.forEach(match => {
+          extractedContent.push(match.replace(/^>\s*/, '').trim());
+        });
       }
     });
   
     return extractedContent;
   };
+
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
     const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];

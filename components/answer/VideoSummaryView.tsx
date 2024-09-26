@@ -96,6 +96,19 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
     h5: ({ children }) => <h5 className="text-base font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h5>,
     h6: ({ children }) => <h6 className="text-sm font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h6>,
     p: ({ children }) => {
+      if (typeof children === 'string') {
+        const lines = children.split('\n');
+        return (
+          <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
+            {lines.map((line, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && <br />}
+                {renderWithClickableTimestamps(line)}
+              </React.Fragment>
+            ))}
+          </p>
+        );
+      }
       return (
         <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
           {renderWithClickableTimestamps(children)}
