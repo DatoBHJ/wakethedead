@@ -294,9 +294,9 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
             'Content-Type': 'text/plain',
             'X-Cache-Exists': 'true',
             'X-Stream-Response': 'false',
-            'X-Article-Title': parsedArticle.title || '',
-            'X-Article-Link': parsedArticle.link || '',
-            'X-Article-Timestamp': parsedArticle.timestamp?.toString() || '',
+            // 'X-Article-Title': parsedArticle.title || '',
+            // 'X-Article-Link': parsedArticle.link || '',
+            // 'X-Article-Timestamp': parsedArticle.timestamp?.toString() || '',
           },
         });
       } catch (error) {
@@ -388,9 +388,9 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
           'X-Stream-Response': 'true',
-          'X-Article-Title': contentInfo.title || '',
-          'X-Article-Link': videoUrl,
-          'X-Article-Timestamp': Date.now().toString(),
+          // 'X-Article-Title': contentInfo.title || '',
+          // 'X-Article-Link': videoUrl,
+          // 'X-Article-Timestamp': Date.now().toString(),
         },
       });
     }
