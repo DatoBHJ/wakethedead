@@ -267,7 +267,9 @@ async function myAction(
       relevantDocuments
     );
 
-
+    console.log('Processed web results:', promptProcessedWebResults, '\n');
+    console.log('Relevant documents:', promptRelevantDocuments, '\n');
+    
     const messages = [
       {
         role: "system" as const,

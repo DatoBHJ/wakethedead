@@ -22,13 +22,20 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
     return (
       <li
         key={index}
-        className="flex items-center cursor-pointer bg-transparent p-3 my-1 md:my-5"
-        onClick={() => handleQuestionClick(item)}
+        className={`flex items-center p-3 my-1 md:my-5 ${isSummary ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6' : 'bg-transparent'}`}
       >
-        <span role="img" aria-label="link" className="mr-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300">
-          <IconPlus className='flex h-5 w-5 pb-1' />
-        </span>
-        <p className={`${isSummary ? 'font-handwriting font-bold text-lg' : 'font-handwriting text-base'} dark:text-gray-200 text-black`}>
+        {!isSummary && (
+          <span
+            role="img"
+            aria-label="link"
+            className="mr-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 cursor-pointer"
+            onClick={() => handleQuestionClick(item)}
+          >
+            <IconPlus className='flex h-5 w-5 pb-1' />
+          </span>
+        )}
+        <p className={`${isSummary ? 'font-bold text-lg text-gray-700 dark:text-gray-300' : 'text-base text-black dark:text-gray-200 cursor-pointer'} font-handwriting`}
+           onClick={() => !isSummary && handleQuestionClick(item)}>
           {formattedItem}
         </p>
       </li>
@@ -38,7 +45,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
   const renderSeparator = (index: number) => (
     <li key={`separator-${index}`} className="my-2">
       <div className="w-full h-px bg-gray-200 dark:bg-gray-700 opacity-50"></div>
-      </li>
+    </li>
   );
 
   const groupedItems = questions.reduce((acc, item, index) => {
