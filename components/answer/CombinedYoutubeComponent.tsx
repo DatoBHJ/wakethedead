@@ -294,18 +294,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-200 px-4">
               {renderContent()}
             </div>
-            {articleError && (
-              <p className="text-foreground dark:text-foreground font-handwriting mt-3 px-4 text-sm">
-                🚧 Oops! YouTube's giving us the cold shoulder right now 🥶<br /><br />
-                But don't worry! Our tech wizards are on the case 🧙‍♂️💻<br /><br />
-                In the meantime, try these alternatives:<br />
-                🔄 Come back later (YouTube might be in a better mood)<br />
-                🦸‍♀️ Use a VPN - it might just save the day!<br />
-                📰 Try news articles or blog post web links instead<br />
-                🤖 Check out our chatbot for instant answers<br /><br />
-                Thanks for being patient! 🌟 We'll be back in action soon! 💪
-              </p>
-            )}
+            {articleError}
           </div>
         </div>
       </div>
