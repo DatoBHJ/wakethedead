@@ -37,7 +37,7 @@ export async function generateUniqueKey(videoId: string, selectedModel: string, 
   const modelHashHex = Array.from(new Uint8Array(modelHash)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 8);
   const languageHashHex = Array.from(new Uint8Array(languageHash)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 8);
 
-  return `yt_${videoIdHashHex}_${modelHashHex}_${languageHashHex}`;
+  return `${videoIdHashHex}_${modelHashHex}_${languageHashHex}`;
 }
 
 export async function checkCachedArticle(cacheKey: string) {
