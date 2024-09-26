@@ -306,126 +306,139 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
     return response;
 }
   
-  export async function POST(request: Request) {
-    const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
+export async function POST(request: Request) {
+  const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
+
+  const language = selectedLanguage || 'en';
+  console.log('selectedLanguage:', language);
+  console.log('selectedModel:', selectedModel);
+
+  const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
+  console.log('cachekey', cacheKey)
   
-    const language = selectedLanguage || 'en';
-    console.log('selectedLanguage:', language);
-    console.log('selectedModel:', selectedModel);
+  const { exists, article } = await checkCachedArticle(cacheKey);
+
+  if (!forceRegenerate && exists && article) {
+    console.log('Returning cached summary');
+    try {
+      const parsedArticle = JSON.parse(article);
+      return new NextResponse(parsedArticle.content, {
+        headers: {
+          'Content-Type': 'text/plain',
+          'X-Cache-Exists': 'true',
+          'X-Stream-Response': 'false',
+        },
+      });
+    } catch (error) {
+      console.error('Error parsing cached article:', error);
+      return new NextResponse(article, {
+        headers: {
+          'Content-Type': 'text/plain',
+          'X-Cache-Exists': 'true',
+          'X-Stream-Response': 'false',
+        },
+      });
+    }
+  }
   
-    const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
-    console.log('cachekey', cacheKey)
-    
-    const { exists, article } = await checkCachedArticle(cacheKey);
-  
-    if (!forceRegenerate && exists && article) {
-      console.log('Returning cached summary');
-      try {
-        const parsedArticle = JSON.parse(article);
-        return new NextResponse(parsedArticle.content, {
-          headers: {
-            'Content-Type': 'text/plain',
-            'X-Cache-Exists': 'true',
-            'X-Stream-Response': 'false',
-          },
-        });
-      } catch (error) {
-        console.error('Error parsing cached article:', error);
-        // 파싱 에러 발생 시 캐시된 데이터를 그대로 반환
-        return new NextResponse(article, {
-          headers: {
-            'Content-Type': 'text/plain',
-            'X-Cache-Exists': 'true',
-            'X-Stream-Response': 'false',
-          },
-        });
+  try {
+    let contentInfo;
+    let transcript;
+    let isYouTube = false;
+
+    if (videoUrl.includes('youtube') || videoUrl.includes('youtu.be')) {
+      isYouTube = true;
+      contentInfo = await fetchVideoInfo(videoId);
+      transcript = await fetchTranscriptWithBackup(videoId);
+      if (!transcript) {
+        return NextResponse.json({ error: 'Failed to fetch video link content' }, { status: 500 });
+      }
+    } else {
+      contentInfo = await fetchLinkInfo(videoUrl);
+      transcript = contentInfo.content;
+      if (!transcript) {
+        return NextResponse.json({ error: 'Failed to fetch link content' }, { status: 500 });
       }
     }
-    
-    try {
-      let contentInfo;
-      let transcript;
-      let isYouTube = false;
+
+    console.log('app/api/summarizeContent contentInfo:', { contentInfo });
+
+    if (!forceRegenerate && !exists) {
+      embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
+    }
   
-      if (videoUrl.includes('youtube') || videoUrl.includes('youtu.be')) {
-        isYouTube = true;
-        contentInfo = await fetchVideoInfo(videoId);
-        transcript = await fetchTranscriptWithBackup(videoId);
-        if (!transcript) {
-          return NextResponse.json({ error: 'Failed to fetch video link content' }, { status: 500 });
-        }
-      } else {
-        contentInfo = await fetchLinkInfo(videoUrl);
-        transcript = contentInfo.content;
-        if (!transcript) {
-          return NextResponse.json({ error: 'Failed to fetch link content' }, { status: 500 });
-        }
-      }
-  
-      console.log('app/api/summarizeContent contentInfo:', { contentInfo });
-  
-      if (!forceRegenerate && !exists) {
-        embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
-      }
-    
-      const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 6000,
-        chunkOverlap: 0,
-      });
-      const chunks = await textSplitter.splitText(transcript);
-      const encoder = new TextEncoder();
-  
-      const customStream = new ReadableStream({
-        async start(controller) {
-          let accumulatedResponse = "";
-  
-          for (let i = 0; i < chunks.length; i++) {
-            console.log(`Processing chunk ${i + 1} of ${chunks.length}`);
-            const chunk = chunks[i];
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 6000,
+      chunkOverlap: 0,
+    });
+    const chunks = await textSplitter.splitText(transcript);
+    const encoder = new TextEncoder();
+
+    const customStream = new ReadableStream({
+      async start(controller) {
+        let accumulatedResponse = "";
+
+        for (let i = 0; i < chunks.length; i++) {
+          console.log(`Processing chunk ${i + 1} of ${chunks.length}`);
+          const chunk = chunks[i];
+          try {
             const summaryStream = isYouTube
               ? await generateCasualSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language)
               : await generateArticleSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language);
-  
+
             for await (const part of summaryStream) {
               const content = part.choices[0]?.delta?.content || '';
               controller.enqueue(encoder.encode(content));
               accumulatedResponse += content;
             }
-  
+
             if (i < chunks.length - 1) {
               controller.enqueue(encoder.encode('\n\n---\n\n'));
               accumulatedResponse += '\n\n---\n\n';
             }
+          } catch (error) {
+            console.error('Error processing chunk:', error);
+            if (error.status === 429) {
+              controller.enqueue(encoder.encode(`Error: ${error.error.message}`));
+              controller.close();
+              return;
+            } else {
+              throw error;
+            }
           }
-  
-          // Cache the complete generated summary with title, link, and timestamp
-          const cacheData = {
-            content: accumulatedResponse,
-            title: contentInfo.title || '',
-            link: videoUrl,
-            timestamp: Date.now()
-          };
-          await semanticCache.set(cacheKey, JSON.stringify(cacheData));
-          console.log('Summary cached with key:', cacheKey);
-          
-          controller.close();
-        },
-      });
-  
-      return new NextResponse(customStream, {
-        headers: {
-          'Content-Type': 'text/plain',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-          'X-Stream-Response': 'true',
-        },
-      });
-    }
-    catch (error) {
-      console.error('Error generating summary:', error);
-      return NextResponse.json({ error: 'Failed to generate summary' }, { status: 500 });
-    }
+        }
+
+        // Cache the complete generated summary with title, link, and timestamp
+        const cacheData = {
+          content: accumulatedResponse,
+          title: contentInfo.title || '',
+          link: videoUrl,
+          timestamp: Date.now()
+        };
+        await semanticCache.set(cacheKey, JSON.stringify(cacheData));
+        console.log('Summary cached with key:', cacheKey);
+        
+        controller.close();
+      },
+    });
+
+    return new NextResponse(customStream, {
+      headers: {
+        'Content-Type': 'text/plain',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'X-Stream-Response': 'true',
+      },
+    });
   }
+  catch (error) {
+    console.error('Error generating summary:', error);
+    if (error.status === 429) {
+      return NextResponse.json({ error: error.error.message }, { status: 429 });
+    }
+    return NextResponse.json({ error: 'Failed to generate summary' }, { status: 500 });
+  }
+}
   
   export async function PUT(request: Request) {
     const { videoId, editedContent, selectedModel, selectedLanguage, title, link } = await request.json();
