@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Check, Link as LinkIcon, ExternalLink } from "lucide-react";
-import { IconPlus, IconExternalLink } from '@/components/ui/icons';
+import { Check } from "lucide-react";
+import { IconPlus } from '@/components/ui/icons';
 
 interface RelevantLink {
   title: string;
@@ -53,25 +53,28 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevan
         </div>
       </div>
       <ul className="space-y-3">
-        {uniqueLinks.map((link, index) => (
+        {uniqueLinks.map((link) => (
           <li
             key={link.url}
-            className="flex items-center group"
+            className="group relative"
           >
-            <span className="relative inline-block">
-              <button
-                onClick={() => handleLinkClick(link.url)}
-                className={`font-handwriting underline text-left text-base text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 ${addedLinks.has(link.url) ? 'opacity-70' : ''}`}
-              >
+            <div 
+              className={`flex items-center cursor-pointer transition-all duration-200 
+                          text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300
+                          ${addedLinks.has(link.url) ? 'opacity-70' : ''}`}
+              onClick={() => handleLinkClick(link.url)}
+            >
+              <IconPlus className="flex-shrink-0 h-5 w-5 mr-2" />
+              <span className="font-handwriting underline text-left text-base">
                 {link.title.includes('Something went wrong!') ? link.url : link.title}
-              </button>
-              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                {addedLinks.has(link.url) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
               </span>
+              {addedLinks.has(link.url) && (
+                <Check size={16} className="ml-2 text-green-500 flex-shrink-0" />
+              )}
+            </div>
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+              {addedLinks.has(link.url) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
             </span>
-            {addedLinks.has(link.url) && (
-              <Check size={16} className="ml-2 text-green-500" />
-            )}
           </li>
         ))}
       </ul>
