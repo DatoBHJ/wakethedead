@@ -46,11 +46,12 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const initialQuestions = [
+    "latest AI news 📰",
     "Give me some memes 🤣",
     "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
     "iPhone 16 📱",
     "I need a kindle link to The Hobbit 📚",
-    "How many people did Pieter mute on Twitter? 🤐",
+    // "How many people did Pieter Levels mute on Twitter? 🤐",
   ];
 
   const combinedQuestions = useMemo(() => {

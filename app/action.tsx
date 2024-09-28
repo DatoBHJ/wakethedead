@@ -221,6 +221,14 @@ function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDoc
   return [processedResults, uniqueRelevantDocs];
 }
 
+interface NewsResult {
+  title: string;
+  link: string;
+  snippet: string;
+  date: string;
+  source: string;
+}
+
 async function myAction(
   userMessage: string, 
   selectedModel: string,
@@ -235,18 +243,38 @@ async function myAction(
     const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
     console.log('User message:', userMessage, '\n');
     
+    // 뉴스 관련 쿼리인지 확인하는 함수
+    const isNewsQuery = (query: string): boolean => {
+      const newsKeywords = ['news', 'headline', 'breaking', 'latest', '뉴스', '헤드라인', '속보', '최신'];
+      return newsKeywords.some(keyword => query.toLowerCase().includes(keyword));
+    };
+
+    const isNewsSearch = isNewsQuery(userMessage);
+
     const [webSearchResults, relevantDocuments, images, videos] = await Promise.all([
-      performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan),
+      performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan, isNewsSearch),
       getUserSharedDocument(userMessage, embeddings, index),
       isRefresh ? null : performImageSearch(userMessage),
       isRefresh ? null : performVideoSearch(userMessage)
     ]);
 
-    const slicedWebSearchResults = webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
+    // 뉴스 검색 결과를 SearchResult 형식으로 변환
+    let processedResults: SearchResult[];
+    if (isNewsSearch) {
+      processedResults = (webSearchResults as NewsResult[]).map((result): SearchResult => ({
+        title: result.title,
+        pageContent: `${result.snippet} (Source: ${result.source}, Date: ${result.date})`,
+        url: result.link
+      }));
+    } else {
+      processedResults = webSearchResults as SearchResult[];
+    }
+
+    const slicedWebSearchResults = processedResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
 
     streamable.update({
       relevantDocuments,
-      // processedWebResults: slicedWebSearchResults,
+      processedWebResults: slicedWebSearchResults,
       ...(isRefresh ? {} : { images, videos })
     });
 

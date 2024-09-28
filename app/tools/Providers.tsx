@@ -18,6 +18,14 @@ interface ImageResult {
   link: string;
 }
 
+interface NewsResult {
+    title: string;
+    link: string;
+    snippet: string;
+    date: string;
+    source: string;
+}
+
 
 export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(message)}`;
@@ -78,25 +86,72 @@ export async function serperSearch(message: string, startIndexOfPagesToScan, num
 }
 
 
-export async function performWebSearch(query: string, startIndexOfPagesToScan, numberOfPagesToScan: number): Promise<SearchResult[]> {
+export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
+    const url = 'https://google.serper.dev/news';
+    const data = JSON.stringify({
+        "q": message
+    });
+    const requestOptions: RequestInit = {
+        method: 'POST',
+        headers: {
+            'X-API-KEY': process.env.SERPER_API as string,
+            'Content-Type': 'application/json'
+        },
+        body: data
+    };
     try {
-      // First, try DuckDuckGo search
-      const duckDuckGoResults = await duckDuckGoSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
-      return duckDuckGoResults
+        const response = await fetch(url, requestOptions);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.news) {
+            throw new Error('Invalid API response format');
+        }
+        const newsResults = responseData.news.map((result: any): NewsResult => ({
+            title: result.title,
+            link: result.link,
+            snippet: result.snippet,
+            date: result.date,
+            source: result.source
+        }));
+        return newsResults;
     } catch (error) {
-      console.error('DuckDuckGo search error:', error);
-      
-      // Fallback to serperSearch
-      console.log('Falling back to serperSearch');
-      try {
-        const serperResults = await serperSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
-        return serperResults
-      } catch (serperError) {
-        console.error('Serper search error:', serperError);
-        throw new Error('Both search methods failed');
-      }
+        console.error('Error fetching news results:', error);
+        throw error;
     }
-  }
+}
+
+export async function performWebSearch(query: string, startIndexOfPagesToScan: number, numberOfPagesToScan: number, isNewsQuery: boolean = false): Promise<SearchResult[] | NewsResult[]> {
+    if (isNewsQuery) {
+        try {
+            const newsResults = await serperNewsSearch(query);
+            console.log('News results:', newsResults);
+            return newsResults;
+        } catch (error) {
+            console.error('News search error:', error);
+            throw new Error('News search failed');
+        }
+    } else {
+        try {
+            // First, try DuckDuckGo search
+            const duckDuckGoResults = await duckDuckGoSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
+            return duckDuckGoResults;
+        } catch (error) {
+            console.error('DuckDuckGo search error:', error);
+            
+            // Fallback to serperSearch
+            console.log('Falling back to serperSearch');
+            try {
+                const serperResults = await serperSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
+                return serperResults;
+            } catch (serperError) {
+                console.error('Serper search error:', serperError);
+                throw new Error('Both search methods failed');
+            }
+        }
+    }
+}
 
   export async function duckDuckGoVideo(message: string): Promise<VideoResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/video-search?query=${encodeURIComponent(message)}`;
