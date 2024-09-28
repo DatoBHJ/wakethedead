@@ -58,7 +58,6 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
 
-
   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
     const extractedContent: string[] = [];
@@ -73,17 +72,22 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         extractedContent.push(`**Part ${partNumber}: ${summary}**`);
       }
   
-      const questionMatches = part.match(/>\s*([^\n]+)/g);
+      // Improved question extraction
+      const questionMatches = part.match(/^>\s*(.+?)(?:\n|$)/gm);
       if (questionMatches) {
         questionMatches.forEach(match => {
-          extractedContent.push(match.replace(/^>\s*/, '').trim());
+          const question = match.replace(/^>\s*/, '').trim();
+          // Check if it's a question or ends with emojis
+          if (question.endsWith('?') || /[\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]$/u.test(question)) {
+            extractedContent.push(question);
+          }
         });
       }
     });
   
     return extractedContent;
   };
-
+  
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
     const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];

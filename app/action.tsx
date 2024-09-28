@@ -266,9 +266,6 @@ async function myAction(
       processedWebResults.slice(0, config.numberOfSimilarityResults),
       relevantDocuments
     );
-
-    console.log('Processed web results:', promptProcessedWebResults, '\n');
-    console.log('Relevant documents:', promptRelevantDocuments, '\n');
     
     const messages = [
       {
@@ -308,8 +305,6 @@ async function myAction(
       `
       }
     ];
-
-    console.log('messages:', messages, '\n');
     
     const chatCompletion = await openai.chat.completions.create({
       temperature: 0.3, 

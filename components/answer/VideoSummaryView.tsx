@@ -9,7 +9,6 @@ interface EditableArticleViewProps {
   isEditing: boolean;
 }
 
-// 커스텀 컴포넌트 프롭스 정의
 interface CustomLiProps extends React.LiHTMLAttributes<HTMLLIElement> {
   depth?: number;
   index?: number;
@@ -52,10 +51,10 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
 
   const renderWithClickableTimestamps = (children: ReactNode): ReactNode => {
     if (typeof children === 'string') {
-      const regex = /(\[\d{2}:\d{2}(?::\d{2})?\])([^\[]+)/g;
+      const regex = /(\[\d{2}:\d{2}(?::\d{2})?\])/g;
       const parts = children.split(regex);
       return parts.map((part, index) => {
-        if (index % 3 === 1) {  // 타임스탬프
+        if (part.match(regex)) {
           const timestamp = part.slice(1, -1);
           const seconds = parseTimestamp(timestamp);
           return (
@@ -66,18 +65,20 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
               >
                 {part}
               </span>
-              {' '}  {/* 타임스탬프 뒤에 공백 추가 */}
-            </React.Fragment>
-          );
-        } else if (index % 3 === 2) {  // 타임스탬프 다음의 텍스트
-          return (
-            <React.Fragment key={index}>
-              <span>{part.trim()}</span>
-              <br />
+              {' '}
             </React.Fragment>
           );
         }
-        return part;  // 타임스탬프와 관련 텍스트 사이의 다른 텍스트
+        return (
+          <React.Fragment key={index}>
+            {part.split('\n').map((line, lineIndex) => (
+              <React.Fragment key={lineIndex}>
+                {/* {lineIndex > 0 && <br />} */}
+                {line}
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        );
       });
     } else if (Array.isArray(children)) {
       return children.map((child, index) => 
@@ -99,7 +100,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       if (typeof children === 'string') {
         const lines = children.split('\n');
         return (
-          <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
+          <p className="mt-2 mb- leading-relaxed px-2 break-words font-handwriting text-base">
             {lines.map((line, index) => (
               <React.Fragment key={index}>
                 {index > 0 && <br />}
@@ -155,6 +156,9 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
         } else if (firstChild.startsWith('→ ')) {
           bulletPoint = '→';
           childrenArray[0] = firstChild.slice(2);
+        } else if (firstChild.startsWith('* ')) {
+          bulletPoint = '•';
+          childrenArray[0] = firstChild.slice(2);
         } else if (index !== undefined) {
           bulletPoint = `${index}.`;
         }
@@ -163,14 +167,16 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       const indentClass = `ml-${depth * 4}`;
 
       return (
-        <li className={`${indentClass} ${extraClasses} break-words font-handwriting flex items-start`}>
+        <li className={`${indentClass} ${extraClasses} break-words font-handwriting flex items-center`}>
           <span className="mr-2 inline-block min-w-[1em] text-center flex-shrink-0">{bulletPoint}</span>
           <span className={`${contentClasses} flex-grow`}>{renderWithClickableTimestamps(childrenArray)}</span>
         </li>
       );
     },
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 my-4 italic break-words font-handwriting text-base">{renderWithClickableTimestamps(children)}</blockquote>
+      <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 my-4 italic break-words font-handwriting text-base">
+        {renderWithClickableTimestamps(children)}
+      </blockquote>
     ),
     code: ({ className, children, ...props }: CustomCodeProps) => {
       const match = /language-(\w+)/.exec(className || '')
