@@ -56,18 +56,18 @@ export async function fetchVideoInfo(videoId: string) {
   }
   
   export async function fetchLinkInfo(link: string): Promise<{ title: string; content: string; publishedTime: string }> {
-    // try {
-    //   // First, attempt standard scraping
-    //   console.log('Attempting standard scraping method');
-    //   const scrapingResult = await fallbackScraping(link);
+    try {
+      // First, attempt standard scraping
+      console.log('Attempting standard scraping method');
+      const scrapingResult = await fallbackScraping(link);
       
-    //   // If scraping is successful, return the result
-    //   if (scrapingResult.title && scrapingResult.content) {
-    //     return scrapingResult;
-    //   }
+      // If scraping is successful, return the result
+      if (scrapingResult.title && scrapingResult.content && scrapingResult.content.length > 100) {
+        return scrapingResult;
+      }
   
-    //   // If scraping fails or returns incomplete data, try Jina
-    //   console.log('Standard scraping failed or incomplete, attempting Jina.ai');
+      // If scraping fails or returns incomplete data, try Jina
+      console.log('Standard scraping failed or incomplete, attempting Jina.ai');
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000); // 15초 타임아웃
@@ -98,16 +98,16 @@ export async function fetchVideoInfo(videoId: string) {
         // Jina.ai 요청 실패 시 로깅만 하고 계속 진행
       }
   
-    //   // If both methods fail, return the result from standard scraping
-    //   console.log('Both scraping methods failed, returning best available data');
-    //   return scrapingResult;
+      // If both methods fail, return the result from standard scraping
+      console.log('Both scraping methods failed, returning best available data');
+      return scrapingResult;
   
-    // } catch (error) {
-    //   console.error('Error fetching link info:', error);
-    //   // If an error occurs, attempt standard scraping as a last resort
-    //   console.log('Error occurred, falling back to standard scraping method');
-    //   return await fallbackScraping(link);
-    // }
+    } catch (error) {
+      console.error('Error fetching link info:', error);
+      // If an error occurs, attempt standard scraping as a last resort
+      console.log('Error occurred, falling back to standard scraping method');
+      return await fallbackScraping(link);
+    }
   }
   
   // The fallbackScraping and extractMetadata functions remain unchanged
