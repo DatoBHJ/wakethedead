@@ -392,7 +392,8 @@ export default function Page() {
             >
               <List size={24} />
             </button>
-            <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4">
+            <a href="/" className=" text-muted-foreground hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4">
+              {/* Wake The Dead */}
               {isDesktop ? 'Wake The Dead' : 'WTD'}
             </a>
             {/* <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
@@ -452,7 +453,7 @@ export default function Page() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full max-w-xl lg:pl-10 md:pl-16 pl-5 pr-5 flex flex-col items-center"
+                  className="w-full max-w-xl pl-10 sm:pl-20 md:pl-10 xl:pl-32 pr-5 flex flex-col items-center"
                 >
                   <div className="w-full flex flex-col items-start lg:pb-48 pb-20">
                     {/* <motion.div 
@@ -470,7 +471,7 @@ export default function Page() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6, duration: 0.5 }}
                     >
-                      <div className="relative pl-1 flex items-center">
+                      {/* <div className="relative pl-1 flex items-center">
                         <input
                           type="text"
                           value={inputLinks}
@@ -486,6 +487,23 @@ export default function Page() {
                         >
                           <ArrowRight size={24} weight="bold" />
                         </motion.button>
+                      </div> */}
+                      <div className="relative flex items-center">
+                        <motion.button 
+                          type="submit" 
+                          className="absolute left-0 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          ⚡
+                        </motion.button>
+                        <input
+                          type="text"
+                          value={inputLinks}
+                          onChange={(e) => setInputLinks(e.target.value)}
+                          placeholder="Beam up your article or video link"
+                          className="w-full rounded-none pb-2 pl-8 bg-transparent border-b-[1px] placeholder-blue-500 dark:placeholder-blue-400 border-gray-300 dark:border-gray-600 text-black dark:text-white"
+                        />
                       </div>
                     </motion.form>
                   </div>

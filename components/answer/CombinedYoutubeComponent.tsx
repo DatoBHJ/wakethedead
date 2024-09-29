@@ -357,7 +357,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           >
             <ArrowsCounterClockwise size={20} />
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             size="icon"
             onClick={() => setIsEditing(!isEditing)}
@@ -365,7 +365,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             disabled={isGenerating[currentVideoId]}
           >
             {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

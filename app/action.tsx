@@ -313,7 +313,7 @@ async function myAction(
 
         2. Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
         <answerFormat>
-        ## Quick Answer ⚡
+        ## Quick Answer 💡
         [Quick answer to the user message in 1-2 punchy sentences with relevant emojis]
     
         ## Key Takeaways 🎯
