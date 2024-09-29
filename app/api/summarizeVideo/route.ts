@@ -399,7 +399,8 @@ export async function POST(request: Request) {
           content: accumulatedResponse,
           title: contentInfo.title || '',
           link: videoUrl,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          publishedTime: contentInfo.publishedTime || ''
         };
         await semanticCache.set(cacheKey, JSON.stringify(cacheData));
         console.log('Summary cached with key:', cacheKey);
