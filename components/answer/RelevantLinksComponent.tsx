@@ -65,7 +65,7 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevan
               onClick={() => handleLinkClick(link.url)}
             >
               <IconPlus className="flex-shrink-0 h-5 w-5 mr-2" />
-              <span className="font-handwriting underline text-left text-base">
+              <span className="font-handwriting text-left text-base">
                 {link.title.includes('Something went wrong!') ? link.url : link.title}
               </span>
               {addedLinks.has(link.url) && (

@@ -62,7 +62,7 @@ export async function fetchVideoInfo(videoId: string) {
       const scrapingResult = await fallbackScraping(link);
       
       // If scraping is successful, return the result
-      if (scrapingResult.title && scrapingResult.content) {
+      if (scrapingResult.title && scrapingResult.content && scrapingResult.content.length > 100) {
         return scrapingResult;
       }
   
