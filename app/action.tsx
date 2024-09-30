@@ -8,6 +8,7 @@ import { Index } from "@upstash/vector";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
+// import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
 import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 export const runtime = 'edge';
@@ -245,7 +246,7 @@ async function myAction(
     
     // 뉴스 관련 쿼리인지 확인하는 함수
     const isNewsQuery = (query: string): boolean => {
-      const newsKeywords = ['news', 'headline', 'breaking', 'latest', '뉴스', '헤드라인', '속보', '최신'];
+      const newsKeywords = ['news', 'headline', 'breaking', 'latest'];
       return newsKeywords.some(keyword => query.toLowerCase().includes(keyword));
     };
 

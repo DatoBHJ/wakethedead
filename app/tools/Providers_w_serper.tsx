@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 interface SearchResult {
     title: string;
     url: string;
@@ -51,69 +49,81 @@ export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan,
     }
 }
 
-const SEARCH_API_URL = "https://www.searchapi.io/api/v1/search";
-const SEARCH_API_KEY = process.env.SEARCH_API_KEY as string;
-
-export async function searchAPISearch(message: string): Promise<SearchResult[]> {
-    const params = {
-        "engine": "google",
-        "q": message,
-        "api_key": SEARCH_API_KEY
+export async function serperSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
+    const url = 'https://google.serper.dev/search';
+    const data = JSON.stringify({
+        "q": message
+    });
+    const requestOptions: RequestInit = {
+        method: 'POST',
+        headers: {
+            'X-API-KEY': process.env.SERPER_API as string,
+            'Content-Type': 'application/json'
+        },
+        body: data
     };
-
     try {
-        const response = await axios.get(SEARCH_API_URL, { params });
-        const results = response.data.organic_results;
-
-        const final = results.map((result: any): SearchResult => ({
+        const response = await fetch(url, requestOptions);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.organic) {
+            throw new Error('Invalid API response format');
+        }
+        const final = responseData.organic.map((result: any): SearchResult => ({
             title: result.title,
             pageContent: result.snippet,
             url: result.link
         }));
         return final;
     } catch (error) {
-        console.error('Error fetching SearchAPI results:', error);
+        console.error('Error fetching search results:', error);
         throw error;
     }
 }
 
-export async function searchAPINewsSearch(message: string): Promise<NewsResult[]> {
-    const params = {
-        "engine": "google_news",
-        "q": message,
-        "api_key": SEARCH_API_KEY
+
+export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
+    const url = 'https://google.serper.dev/news';
+    const data = JSON.stringify({
+        "q": message
+    });
+    const requestOptions: RequestInit = {
+        method: 'POST',
+        headers: {
+            'X-API-KEY': process.env.SERPER_API as string,
+            'Content-Type': 'application/json'
+        },
+        body: data
     };
-
     try {
-        const response = await axios.get(SEARCH_API_URL, { params });
-
-        // Check for news_results or organic_results
-        const results = response.data.organic_results;
-
-        const newsResults = results.map((result: any): NewsResult => ({
-            title: result.title ,
-            link: result.link ,
-            snippet: result.snippet ,
-            date: result.date ,
-            source: result.source ,
+        const response = await fetch(url, requestOptions);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.news) {
+            throw new Error('Invalid API response format');
+        }
+        const newsResults = responseData.news.map((result: any): NewsResult => ({
+            title: result.title,
+            link: result.link,
+            snippet: result.snippet,
+            date: result.date,
+            source: result.source
         }));
-
         return newsResults;
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios error:', error.response?.data || error.message);
-        } else {
-            console.error('Error fetching SearchAPI news results:', error);
-        }
+        console.error('Error fetching news results:', error);
         throw error;
     }
 }
-
 
 export async function performWebSearch(query: string, startIndexOfPagesToScan: number, numberOfPagesToScan: number, isNewsQuery: boolean = false): Promise<SearchResult[] | NewsResult[]> {
     if (isNewsQuery) {
         try {
-            const newsResults = await searchAPINewsSearch(query);
+            const newsResults = await serperNewsSearch(query);
             console.log('News results:', newsResults);
             return newsResults;
         } catch (error) {
@@ -128,19 +138,18 @@ export async function performWebSearch(query: string, startIndexOfPagesToScan: n
         } catch (error) {
             console.error('DuckDuckGo search error:', error);
             
-            // Fallback to SearchAPI
-            console.log('Falling back to SearchAPI');
+            // Fallback to serperSearch
+            console.log('Falling back to serperSearch');
             try {
-                const searchAPIResults = await searchAPISearch(query);
-                return searchAPIResults;
-            } catch (searchAPIError) {
-                console.error('SearchAPI search error:', searchAPIError);
+                const serperResults = await serperSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
+                return serperResults;
+            } catch (serperError) {
+                console.error('Serper search error:', serperError);
                 throw new Error('Both search methods failed');
             }
         }
     }
 }
-
 
   export async function duckDuckGoVideo(message: string): Promise<VideoResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/video-search?query=${encodeURIComponent(message)}`;
