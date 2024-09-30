@@ -274,7 +274,7 @@ async function myAction(
 
     streamable.update({
       relevantDocuments,
-      processedWebResults: slicedWebSearchResults,
+      // processedWebResults: slicedWebSearchResults, // showing user prequrated web search results
       ...(isRefresh ? {} : { images, videos })
     });
 
