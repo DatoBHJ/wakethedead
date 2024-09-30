@@ -8,8 +8,8 @@ import { Index } from "@upstash/vector";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
-// import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
-import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
+import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
+// import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 export const runtime = 'edge';
 

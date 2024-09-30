@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+const SEARCH_API_URL = "https://www.searchapi.io/api/v1/search";
+const SEARCH_API_KEY = process.env.SEARCH_API_KEY as string;
+
 interface SearchResult {
     title: string;
     url: string;
@@ -51,8 +54,6 @@ export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan,
     }
 }
 
-const SEARCH_API_URL = "https://www.searchapi.io/api/v1/search";
-const SEARCH_API_KEY = process.env.SEARCH_API_KEY as string;
 
 export async function searchAPISearch(message: string): Promise<SearchResult[]> {
     const params = {
