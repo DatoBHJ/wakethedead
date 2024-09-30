@@ -296,6 +296,24 @@ export default function Page() {
     }
   }, []);
 
+  // const memoizedCombinedYoutubeComponent = useMemo(() => (
+  //   <CombinedYoutubeComponent 
+  //     youtubeLinks={youtubeLinks} 
+  //     currentIndex={currentYoutubeIndex}
+  //     setCurrentIndex={setCurrentYoutubeIndex}
+  //     selectedModel={selectedModel}
+  //     selectedLanguage={selectedLanguage}
+  //     cards={cards}
+  //     onLinkClick={handleLinkClick}
+  //     onExtractQuestions={handleExtractQuestions}
+
+  //   />
+  // ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick]);
+
+  const handleQuestionSelected = useCallback((question: string) => {
+    handleFollowUpClick(question);
+  }, [handleFollowUpClick]);
+
   const memoizedCombinedYoutubeComponent = useMemo(() => (
     <CombinedYoutubeComponent 
       youtubeLinks={youtubeLinks} 
@@ -306,10 +324,11 @@ export default function Page() {
       cards={cards}
       onLinkClick={handleLinkClick}
       onExtractQuestions={handleExtractQuestions}
-
+      onQuestionSelected={handleQuestionSelected} // Add this new prop
     />
-  ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick]);
+  ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick, handleExtractQuestions, handleQuestionSelected]);
 
+  
   const handleAddLink = useCallback((link: string) => {
     setYoutubeLinks(prevLinks => {
       if (!prevLinks.includes(link)) {

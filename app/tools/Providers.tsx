@@ -171,7 +171,11 @@ export async function performWebSearch(query: string, startIndexOfPagesToScan: n
 export async function getVideos(message: string): Promise<VideoResult[]> {
     const url = 'https://google.serper.dev/videos';
     const data = JSON.stringify({
-        "q": message
+        "q": message,
+        "gl": "us", // Country code
+        "hl": "en", // Language code
+        "autocorrect": false,
+        "safe": "off"
     });
     const requestOptions: RequestInit = {
         method: 'POST',
@@ -191,7 +195,7 @@ export async function getVideos(message: string): Promise<VideoResult[]> {
             responseData.videos.map(async (video: any) => {
                 const imageUrl = video.imageUrl;
                 const title = video.title;
-                const duration = video.duration || 'Unknown';
+                const duration = video.duration || 'Unknown'; 
                 if (typeof imageUrl === 'string') {
                     try {
                         const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
@@ -260,53 +264,57 @@ export async function duckDuckGoImage(message: string): Promise<ImageResult[]> {
 }
 
 export async function getImages(message: string): Promise<ImageResult[]> {
-  const url = 'https://google.serper.dev/images';
-  const data = JSON.stringify({
-    "q": message
-  });
-  const requestOptions: RequestInit = {
-    method: 'POST',
-    headers: {
-      'X-API-KEY': process.env.SERPER_API as string,
-      'Content-Type': 'application/json'
-    },
-    body: data
-  };
-  try {
-    const response = await fetch(url, requestOptions);
-    if (!response.ok) {
-      throw new Error(`Network response was not ok. Status: ${response.status}`);
-    }
-    const responseData = await response.json();
-    const validLinks = await Promise.all(
-      responseData.images.map(async (image: any) => {
-        const link = image.imageUrl;
-        if (typeof link === 'string') {
-          try {
-            const imageResponse = await fetch(link, { method: 'HEAD' });
-            if (imageResponse.ok) {
-              const contentType = imageResponse.headers.get('content-type');
-              if (contentType && contentType.startsWith('image/')) {
-                return {
-                  title: image.title,
-                  link: link,
-                };
+    const url = 'https://google.serper.dev/images';
+    const data = JSON.stringify({
+      "q": message,
+      "gl": "us",
+      "hl": "en",
+      "autocorrect": false,
+      "safe": "off"
+    });
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': process.env.SERPER_API as string,
+        'Content-Type': 'application/json'
+      },
+      body: data
+    };
+    try {
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new Error(`Network response was not ok. Status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      const validLinks = await Promise.all(
+        responseData.images.map(async (image: any) => {
+          const link = image.imageUrl;
+          if (typeof link === 'string') {
+            try {
+              const imageResponse = await fetch(link, { method: 'HEAD' });
+              if (imageResponse.ok) {
+                const contentType = imageResponse.headers.get('content-type');
+                if (contentType && contentType.startsWith('image/')) {
+                  return {
+                    title: image.title,
+                    link: link,
+                  };
+                }
               }
+            } catch (error) {
+              console.error(`Error fetching image link ${link}:`, error);
             }
-          } catch (error) {
-            console.error(`Error fetching image link ${link}:`, error);
           }
-        }
-        return null;
-      })
-    );
-    const filteredLinks = validLinks.filter((link): link is ImageResult => link !== null);
-    return filteredLinks
-  } catch (error) {
-    console.error('Error fetching images:', error);
-    throw error;
+          return null;
+        })
+      );
+      const filteredLinks = validLinks.filter((link): link is ImageResult => link !== null);
+      return filteredLinks
+    } catch (error) {
+      console.error('Error fetching images:', error);
+      throw error;
+    }
   }
-}
 
 
 export async function performImageSearch(query: string): Promise<ImageResult[]> {
