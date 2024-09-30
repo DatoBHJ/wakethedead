@@ -76,9 +76,9 @@
 // export default InitialQueries;
 
 
-
 import React, { useState } from 'react';
 import { IconPlus, IconCheck } from '@/components/ui/icons';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface InitialQueriesProps {
   questions: string[];
@@ -87,6 +87,7 @@ interface InitialQueriesProps {
 
 const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollowUpClick }) => {
   const [clickedQuestions, setClickedQuestions] = useState<Set<string>>(new Set());
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const handleQuestionClick = (question: string) => {
     handleFollowUpClick(question);
@@ -105,7 +106,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
     return (
       <li
         key={index}
-        className={`flex items-center p-3 my-1 md:my-5 ${
+        className={`flex items-center p-3 ${isDesktop ? 'my-1 md:my-3' : 'my-1'} ${
           isSummary ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6' : 'bg-transparent'
         } ${isClicked ? 'opacity-70' : ''}`}
       >
@@ -130,7 +131,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
   };
 
   const renderSeparator = (index: number) => (
-    <li key={`separator-${index}`} className="my-2">
+    <li key={`separator-${index}`} className={isDesktop ? "my-2" : "my-1"}>
       <div className="w-full h-px bg-gray-200 dark:bg-gray-700 opacity-50"></div>
     </li>
   );
@@ -147,8 +148,8 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
   }, [] as string[][]);
 
   return (
-    <div className="h-full overflow-y-auto">
-      <ul className="mt-2 md:mr-10 mr-0">
+    <div className="h-full flex items-center justify-center">
+      <ul className="w-full max-w-md ">
         {groupedItems.map((group, groupIndex) => (
           <React.Fragment key={groupIndex}>
             {group.map(renderItem)}
