@@ -7,16 +7,13 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('query');
 
-  if (!query) {
-    return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 });
-  }
-
   try {
     const results = await searchImages(query);
     const formattedResults = results.results.map(image => ({
       title: image.title,
       image: image.image
     }));
+    // console.log('DuckDuckGo image search results:', formattedResults);
     return NextResponse.json({ results: formattedResults });
   } catch (error) {
     console.error('DuckDuckGo image search error:', error);

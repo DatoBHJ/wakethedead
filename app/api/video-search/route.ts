@@ -7,12 +7,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('query');
 
-  if (!query) {
-    return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 });
-  }
-
   try {
     const results = await searchVideos(query);
+    // console.log('DuckDuckGo video search results:', results);
     return NextResponse.json(results);
   } catch (error) {
     console.error('DuckDuckGo video search error:', error);

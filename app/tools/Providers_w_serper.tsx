@@ -167,7 +167,7 @@ export async function performWebSearch(query: string, startIndexOfPagesToScan: n
             title: result.title,
             link: result.url,
             imageUrl: result.image,
-            duration: result.duration || 'Unknown' // 새로 추가된 필드
+            duration: result.duration || 'Unknown' 
         }));
         return videos
     } catch (error) {
@@ -199,7 +199,7 @@ export async function getVideos(message: string): Promise<VideoResult[]> {
             responseData.videos.map(async (video: any) => {
                 const imageUrl = video.imageUrl;
                 const title = video.title;
-                const duration = video.duration || 'Unknown'; // 새로 추가된 필드
+                const duration = video.duration || 'Unknown'; 
                 if (typeof imageUrl === 'string') {
                     try {
                         const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
