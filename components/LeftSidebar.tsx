@@ -52,7 +52,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
                 title: videoInfo.title,
                 thumbnail: videoInfo.thumbnail,
                 isYouTube: true,
-                link: link, // 여기에 원본 링크 추가
+                link: link, 
               };
             } catch (error) {
               console.error('Error fetching video info:', error);
@@ -67,7 +67,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
                 title: data.data.title || 'Unknown Title',
                 thumbnail: data.data.image?.url || '/groq.png',
                 isYouTube: false,
-                link: link, // 여기에 원본 링크 추가
+                link: link, 
               };
             } catch (error) {
               console.error('Error fetching link info:', error);
@@ -76,7 +76,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
                 title: 'Unknown Title',
                 thumbnail: '/groq.png',
                 isYouTube: false,
-                link: link, // 여기에 원본 링크 추가
+                link: link, 
               };
             }
           }
