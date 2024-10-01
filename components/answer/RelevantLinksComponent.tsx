@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Check } from "lucide-react";
 import { IconPlus } from '@/components/ui/icons';
-import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface RelevantLink {
   title: string;
@@ -21,7 +20,6 @@ const decodeHtmlEntities = (text: string): string => {
 
 const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevantDocuments, onAddLink }) => {
   const [addedLinks, setAddedLinks] = React.useState<Set<string>>(new Set());
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
@@ -46,8 +44,8 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ relevan
   }
 
   return (
-    <div className={`${isDesktop ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5' : 'dark:bg-neutral-900/40'} rounded-xl p-5 mt-4 transition-all duration-300`}> 
-         <div className="flex flex-col mb-3">
+    <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
+      <div className="flex flex-col mb-3">
         <div className="flex items-center">
           <h2 className="text-2xl font-bold font-handwriting">
             Shared by our users 🤝

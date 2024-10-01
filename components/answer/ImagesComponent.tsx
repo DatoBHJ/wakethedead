@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { IconPlus, IconClose, IconChevronUpDown } from '@/components/ui/icons';
 import { performWebSearch, performImageSearch, performVideoSearch } from '@/app/tools/Providers';
-import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface Image {
     link: string;
@@ -17,7 +16,6 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
     const [visibleImages, setVisibleImages] = useState(3);
     const [expandedVisibleImages, setExpandedVisibleImages] = useState(9);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const isDesktop = useMediaQuery("(min-width: 1024px)");
 
     const ImagesSkeleton = () => (
         <>
@@ -55,8 +53,8 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
     };
 
     return (
-        <div className={`shadow-lg rounded-lg p-4 mt-4 ${isDesktop ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5' : 'dark:bg-neutral-900/40'}`}>
-                        <div className="flex items-center mb-4">
+        <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
+            <div className="flex items-center mb-4">
                 <h2 className="text-lg font-semibold flex-grow text-black dark:text-white">Images</h2>
                 <div className="flex justify-center ml-2">
                     <button

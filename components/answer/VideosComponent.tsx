@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { IconPlay, IconClock, IconChevronUpDown, IconClose, IconCheck, IconArrowRight } from '@/components/ui/icons';
-import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface Video {
   title: string;
@@ -23,7 +22,6 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   useEffect(() => {
     setLoadedImages(Array(videos.length).fill(false));
@@ -146,8 +144,8 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
   };
 
   return (
-    <div className={`shadow-lg rounded-lg p-4 mt-4 w-full ${isDesktop ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5' : 'dark:bg-neutral-900/40'}`}>
-            <div className="flex items-center mb-4">
+    <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4 w-full">
+      <div className="flex items-center mb-4">
         <h2 className="text-lg font-semibold flex-grow text-black dark:text-white">Videos</h2>
         {videos.length > 3 && (
           <button
