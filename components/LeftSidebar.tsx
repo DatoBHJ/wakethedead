@@ -5,6 +5,7 @@ import EmailContactButton from '@/components/ui/EmailContactButton';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
 import { Button } from '@/components/ui/button';
+import { List, ArrowRight, Gear } from "@phosphor-icons/react";
 
 interface YouTubeCard {
   id: string;
@@ -163,9 +164,15 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               type="text"
               value={newLink}
               onChange={(e) => setNewLink(e.target.value)}
-              placeholder="More links? Paste them here!"
+              placeholder="Paste more links here!"
               className="flex-grow pl-6 rounded-none bg-transparent border-b-[1px] placeholder-blue-500 dark:placeholder-blue-400 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
             />
+                  <button 
+              type="submit" 
+              className="flex text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
+            >
+                          <ArrowRight size={22} weight="bold" />
+                          </button>
           </div>
         </form>
         <div className="flex justify-center space-x-4">
