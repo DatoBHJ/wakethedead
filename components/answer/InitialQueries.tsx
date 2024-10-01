@@ -107,9 +107,15 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
       <li
         key={index}
         className={`flex items-center p-3 ${isDesktop ? 'my-1 md:my-3' : 'my-1'} ${
-          isSummary ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6' : 'bg-transparent'
+          isSummary ? 'relative overflow-hidden rounded-xl px-6' : 'bg-transparent'
         } ${isClicked ? 'opacity-70' : ''}`}
       >
+        {isSummary && (
+          <div 
+            className="absolute inset-0 bg-card-foreground/[3%] dark:bg-card-foreground/5 will-change-transform"
+            style={{ backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
+          />
+        )}
         {!isSummary && (
           <span
             role="img"
@@ -122,7 +128,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
         )}
         <p className={`${
           isSummary ? 'font-bold text-lg text-gray-700 dark:text-gray-300' : 'text-base text-black dark:text-gray-200 cursor-pointer'
-        } ${isClicked ? 'text-blue-600 dark:text-blue-400' : ''} font-handwriting`}
+        } ${isClicked ? 'text-blue-600 dark:text-blue-400' : ''} font-handwriting relative z-10`}
            onClick={() => !isSummary && handleQuestionClick(item)}>
           {formattedItem}
         </p>

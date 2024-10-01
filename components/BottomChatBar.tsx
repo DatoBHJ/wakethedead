@@ -51,7 +51,6 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
     "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
     "iPhone 16 📱",
     "I need a kindle link to The Hobbit 📚",
-    // "How many people did Pieter Levels mute on Twitter? 🤐",
   ];
 
   const combinedQuestions = useMemo(() => {
@@ -74,12 +73,12 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             isDesktop ? 'relative py-10 pr-48 pl-10 md:pr-32' : 'fixed inset-0'
           } backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${
             isDesktop ? 'h-full' : ''
-          } ${isDesktop ? '' : 'z-30'} overflow-hidden flex flex-col`}
+          } ${isDesktop ? '' : 'z-30'} flex flex-col`}
           initial={isDesktop ? false : "hidden"}
           animate={isDesktop ? false : "visible"}
           variants={isDesktop ? {} : mobileVariants}
           transition={{ type: "tween", duration: 0.15 }}
-                  >
+        >
           {!isDesktop && (
             <button 
               onClick={() => setIsOpen(!isOpen)} 
@@ -88,52 +87,55 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
             </button>
           )}
-          <div className={`flex-1 overflow-y-auto px-6 ${isDesktop ? 'py-10' : 'pb-20'} flex flex-col`}>
-            {messages.length === 0 && !inputValue && (
-              <div className="flex-grow flex items-center justify-center">
+          <div className={`flex-1 overflow-y-auto ${isDesktop ? 'py-10' : 'py-4'} pb-20 sm:pb-0 flex flex-col`}>
+            {messages.length === 0 && !inputValue ? (
+              <div className="flex-grow flex items-center justify-center px-4 sm:px-6">
                 <InitialQueries
                   questions={combinedQuestions}
                   handleFollowUpClick={handleFollowUpClick}
                 />
               </div>
-            )}
-            {messages.map((message, index) => (
-              <div key={index}>
-                <UserMessageComponent message={message.userMessage} />
-                {message.relevantDocuments && (
-                  <RelevantLinksComponent
-                    relevantDocuments={message.relevantDocuments}
-                    onAddLink={onAddLink}
-                  />
-                )}
-                {message.processedWebResults && (
-                  <ProcessedWebResults
-                    processedWebResults={message.processedWebResults}
-                    onAddLink={onAddLink}
-                  />
-                )}
-                <LLMResponseComponent
-                  llmResponse={message.content}
-                  currentLlmResponse={currentLlmResponse}
-                  index={index}
-                  isolatedView={false}
-                  onAddLink={onAddLink}
-                  onRefresh={onRefresh}
-                />
-                {message.followUp && (
-                  <FollowUpComponent
-                    followUp={message.followUp}
-                    handleFollowUpClick={handleFollowUpClick}
-                  />
-                )}
-                {message.videos && (
-                  <VideosComponent videos={message.videos} onAddLink={onAddLink} />
-                )}
-                {message.images && (
-                  <ImagesComponent images={message.images} />
-                )}
+            ) : (
+              <div className="px-4 sm:px-6">
+                {messages.map((message, index) => (
+                  <div key={index}>
+                    <UserMessageComponent message={message.userMessage} />
+                    {message.relevantDocuments && (
+                      <RelevantLinksComponent
+                        relevantDocuments={message.relevantDocuments}
+                        onAddLink={onAddLink}
+                      />
+                    )}
+                    {message.processedWebResults && (
+                      <ProcessedWebResults
+                        processedWebResults={message.processedWebResults}
+                        onAddLink={onAddLink}
+                      />
+                    )}
+                    <LLMResponseComponent
+                      llmResponse={message.content}
+                      currentLlmResponse={currentLlmResponse}
+                      index={index}
+                      isolatedView={false}
+                      onAddLink={onAddLink}
+                      onRefresh={onRefresh}
+                    />
+                    {message.followUp && (
+                      <FollowUpComponent
+                        followUp={message.followUp}
+                        handleFollowUpClick={handleFollowUpClick}
+                      />
+                    )}
+                    {message.videos && (
+                      <VideosComponent videos={message.videos} onAddLink={onAddLink} />
+                    )}
+                    {message.images && (
+                      <ImagesComponent images={message.images} />
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
           <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2`}>
             <div className="mx-auto max-w-xl">
