@@ -71,32 +71,44 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
         <motion.div
           className={`${
             isDesktop ? 'relative py-10 pr-48 pl-10 md:pr-32' : 'fixed inset-0'
-          } backdrop-blur-xl bg-background/90 dark:bg-background/50 will-change-transform ${
+          } bg-background/90 dark:bg-background/50 will-change-transform ${
             isDesktop ? 'h-full' : ''
-          } ${isDesktop ? '' : 'z-30'} flex flex-col`}
+          } ${isDesktop ? '' : 'z-30'} flex flex-col overflow-hidden`}
           initial={isDesktop ? false : "hidden"}
           animate={isDesktop ? false : "visible"}
           variants={isDesktop ? {} : mobileVariants}
           transition={{ type: "tween", duration: 0.15 }}
         >
-          {!isDesktop && (
-            <button 
-              onClick={() => setIsOpen(!isOpen)} 
-              className="w-full h-14 bg-transparent flex items-center justify-center"
-            >
-              <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
-            </button>
-          )}
-          <div className={`flex-1 overflow-y-auto ${isDesktop ? 'py-10' : 'py-4'} pb-20 sm:pb-0 flex flex-col`}>
-            {messages.length === 0 && !inputValue ? (
-              <div className="flex-grow flex items-center justify-center px-4 sm:px-6">
-                <InitialQueries
-                  questions={combinedQuestions}
-                  handleFollowUpClick={handleFollowUpClick}
-                />
-              </div>
-            ) : (
-              <div className="px-4 sm:px-6">
+          {/* Blur effect layer */}
+          <div 
+            className="absolute inset-0 will-change-transform"
+            style={{ 
+              backdropFilter: 'blur(10px)', 
+              WebkitBackdropFilter: 'blur(10px)',
+              zIndex: 0 
+            }}
+          />
+
+          {/* Content container */}
+          <div className="relative flex flex-col h-full z-10">
+            {!isDesktop && (
+              <button 
+                onClick={() => setIsOpen(!isOpen)} 
+                className="w-full h-14 bg-transparent flex items-center justify-center"
+              >
+                <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+              </button>
+            )}
+            <div className={`flex-1 overflow-y-auto ${isDesktop ? 'py-10' : 'py-4'} pb-20 sm:pb-0 flex flex-col`}>
+              {messages.length === 0 && !inputValue ? (
+                <div className="flex-grow flex items-center justify-center px-4 sm:px-6">
+                  <InitialQueries
+                    questions={combinedQuestions}
+                    handleFollowUpClick={handleFollowUpClick}
+                  />
+                </div>
+              ) : (
+                <div className="px-4 sm:px-6">
                 {messages.map((message, index) => (
                   <div key={index}>
                     <UserMessageComponent message={message.userMessage} />
@@ -138,39 +150,40 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             )}
           </div>
           <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2`}>
-            <div className="mx-auto max-w-xl">
-              <form ref={formRef} onSubmit={handleFormSubmit}>
-                <div className="relative px-3 py-4 pt-5">
-                  <Textarea
-                    ref={inputRef}
-                    tabIndex={0}
-                    onKeyDown={onKeyDown}
-                    placeholder="Help me Obi-Wan Kenobi"
-                    className="w-full placeholder:text-md rounded-none  bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
-                    spellCheck={false}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    name="message"
-                    rows={1}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                  />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <motion.button 
-                        type="submit" 
-                        className="absolute right-3 bottom-6 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={inputValue === ''}
-                      >
-                        <ArrowUp size={24} weight="bold" />
-                      </motion.button>
-                    </TooltipTrigger>
-                    <TooltipContent>Send message</TooltipContent>
-                  </Tooltip>
-                </div>
-              </form>
+              <div className="mx-auto max-w-xl">
+                <form ref={formRef} onSubmit={handleFormSubmit}>
+                  <div className="relative px-3 py-4 pt-5">
+                    <Textarea
+                      ref={inputRef}
+                      tabIndex={0}
+                      onKeyDown={onKeyDown}
+                      placeholder="Help me Obi-Wan Kenobi"
+                      className="w-full placeholder:text-md rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
+                      spellCheck={false}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      name="message"
+                      rows={1}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.button 
+                          type="submit" 
+                          className="absolute right-3 bottom-6 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={inputValue === ''}
+                        >
+                          <ArrowUp size={24} weight="bold" />
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent>Send message</TooltipContent>
+                    </Tooltip>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </motion.div>
