@@ -293,9 +293,9 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       {showVideo && (
-        <div className="w-full px-6 flex-shrink-0">
+        <div className="w-full flex-shrink-0">
           <div className="max-w-4xl mx-auto">
-            <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl">
+            <div className="relative pb-[56.25%] h-0 overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-full">
                 {renderMediaContent()}
               </div>
