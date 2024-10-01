@@ -8,6 +8,7 @@ import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip } from 'react-tooltip'
 import ChatView from './ChatView';
 import { IconAI } from '@/components/ui/icons';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface LLMResponseComponentProps {
     llmResponse: string;
@@ -65,6 +66,7 @@ const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolated
     const [isRefreshing, setIsRefreshing] = useState(false);
     const hasLlmResponse = llmResponse && llmResponse.trim().length > 0;
     const hasCurrentLlmResponse = currentLlmResponse && currentLlmResponse.trim().length > 0;
+    const isDesktop = useMediaQuery("(min-width: 1024px)");
 
     useEffect(() => {
         if (!hasLlmResponse && !hasCurrentLlmResponse) {
@@ -107,8 +109,8 @@ const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolated
     return (
         <div className={isolatedView ? 'flex flex-col max-w-[800px] mx-auto' : ''}>
             {(hasLlmResponse || hasCurrentLlmResponse) && !isRefreshing ? (
-                <div className="mt-4 backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6 pb-6 transition-all duration-300">
-                    <div className="text-card-foreground dark:text-card-foreground leading-relaxed">
+                <div className={`mt-4 rounded-xl px-6 pb-6 transition-all duration-300 ${isDesktop ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5' : 'dark:bg-neutral-900/40'}`}>
+                                        <div className="text-card-foreground dark:text-card-foreground leading-relaxed">
                         <ChatView 
                             content={llmResponse} 
                             onAddLink={onAddLink}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IconPlus, IconSparkles } from '@/components/ui/icons';
 import { Check } from "lucide-react";
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface FollowUp {
     choices: {
@@ -12,6 +13,7 @@ interface FollowUp {
 
 const FollowUpComponent = ({ followUp, handleFollowUpClick }: { followUp: FollowUp; handleFollowUpClick: (question: string) => void }) => {
     const [clickedQuestions, setClickedQuestions] = useState<Set<string>>(new Set());
+    const isDesktop = useMediaQuery("(min-width: 1024px)");
 
     const handleQuestionClick = (question: string) => {
         handleFollowUpClick(question);
@@ -19,8 +21,8 @@ const FollowUpComponent = ({ followUp, handleFollowUpClick }: { followUp: Follow
     };
 
     return (
-        <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
-            <div className="flex items-center mb-4">
+        <div className={`rounded-xl p-5 mt-4 transition-all duration-300 ${isDesktop ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5' : 'dark:bg-neutral-900/40'}`}>
+                        <div className="flex items-center mb-4">
                 <h2 className="text-2xl font-bold font-handwriting">Related Questions 🤔</h2>
             </div>
             <ul className="space-y-3">
