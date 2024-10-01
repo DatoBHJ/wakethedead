@@ -267,8 +267,8 @@ export default BottomChatBar;
 //           <div
 //             className="absolute inset-0 will-change-transform"
 //             style={{ 
-//               backdropFilter: 'blur(10px)', 
-//               WebkitBackdropFilter: 'blur(10px)',
+//               backdropFilter: 'blur(30px)', 
+//               WebkitBackdropFilter: 'blur(30px)',
 //               zIndex: 0 
 //             }}
 //           />
