@@ -472,7 +472,8 @@ export default function Page() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full max-w-xl pl-8 sm:pl-20 md:pl-10 xl:pl-32 pr-5 flex flex-col items-center"
+                  // className="w-full max-w-xl pl-8 sm:pl-20 md:pl-10 xl:pl-32 pr-5 flex flex-col items-center"
+                  className="w-full max-w-xl justify-center p-4 flex flex-col items-center"
                 >
                   <div className="w-full flex flex-col items-start lg:pb-48 pb-20">
                     {/* <motion.div 
@@ -523,6 +524,7 @@ export default function Page() {
                           placeholder="Beam up your article or video link"
                           className="w-full rounded-none pb-2 pl-7 bg-transparent border-b-[1px] placeholder-blue-500 dark:placeholder-blue-400 border-gray-300 dark:border-gray-600 text-black dark:text-white"
                         />
+                        <div className="absolute bottom-0 left-0 w-full border-b border-gray-200 dark:border-gray-700 opacity-50"></div>
                          <motion.button 
                           type="submit" 
                           className="absolute right-3 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
