@@ -9,7 +9,7 @@ const calculateReadingTime = (content: string): number => {
 interface ReadingTimeProps {
   content: string;
   inline?: boolean;
-  label: 'Headline Scan't | 'Full Read';
+  label: 'Headline Scan' | 'Full Read';
   isYouTube?: boolean;
 }
 
