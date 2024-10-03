@@ -93,6 +93,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                 <InitialQueries
                   questions={combinedQuestions}
                   handleFollowUpClick={handleFollowUpClick}
+                  setIsChatOpen={() => {}}
                 />
               </div>
             ) : (
