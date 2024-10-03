@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Check } from "lucide-react";
-import { IconPlus } from '@/components/ui/icons';
+import { getYouTubeVideoId } from '@/lib/youtube-transcript';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 interface RelevantLink {
   title: string;
@@ -10,6 +11,8 @@ interface RelevantLink {
 interface ProcessedWebResultsComponentProps {
   processedWebResults: RelevantLink[];
   onAddLink: (link: string) => void;
+  setIsChatOpen?: (isOpen: boolean) => void;
+  addedLinks: Set<string>;
 }
 
 const decodeHtmlEntities = (text: string): string => {
@@ -18,8 +21,13 @@ const decodeHtmlEntities = (text: string): string => {
   return textArea.value;
 };
 
-const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> = ({ processedWebResults, onAddLink }) => {
-  const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
+const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> = ({ 
+  processedWebResults, 
+  onAddLink,
+  setIsChatOpen,
+  addedLinks
+}) => {
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
@@ -36,7 +44,9 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
 
   const handleLinkClick = (url: string) => {
     onAddLink(url);
-    setAddedLinks(prev => new Set(prev).add(url));
+    if (!isDesktop && setIsChatOpen) {
+      setIsChatOpen(false);
+    }
   };
 
   if (uniqueLinks.length === 0) {
@@ -53,37 +63,33 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
         </div>
       </div>
       <ul className="space-y-3">
-        {uniqueLinks.map((link) => (
-          <li
-            key={link.url}
-            className="group relative"
-          >
-            <div 
-              className={`flex items-center cursor-pointer transition-all duration-200 
-                          text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300
-                          ${addedLinks.has(link.url) ? 'opacity-70' : ''}`}
-              onClick={() => handleLinkClick(link.url)}
+        {uniqueLinks.map((link) => {
+          const linkId = getYouTubeVideoId(link.url);
+          return (
+            <li
+              key={link.url}
+              className="group relative"
             >
-              {/* <IconPlus className="flex-shrink-0 h-5 w-5 mr-2 mb-1" />
-              <span className="font-handwriting text-left text-base">
-                {link.title.includes('Something went wrong!') ? link.url : link.title}
+              <div 
+                className={`flex items-center cursor-pointer transition-all duration-200 
+                            text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300
+                            ${addedLinks.has(linkId) ? 'opacity-70' : ''}`}
+                onClick={() => handleLinkClick(link.url)}
+              >
+                <span className="flex-shrink-0 mr-2 mb-1">⚡</span>
+                <span className="font-handwriting text-left text-base">
+                  {link.title.includes('Something went wrong!') ? link.url : link.title}
+                </span>
+                {addedLinks.has(linkId) && (
+                  <Check size={16} className="ml-2 text-green-500 flex-shrink-0" />
+                )}
+              </div>
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                {addedLinks.has(linkId) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
               </span>
-              {addedLinks.has(link.url) && (
-                <Check size={16} className="ml-2 text-green-500 flex-shrink-0" />
-              )} */}
-              <span className="flex-shrink-0 mr-2 mb-1">⚡</span>
-              <span className="font-handwriting text-left text-base">
-                {link.title.includes('Something went wrong!') ? link.url : link.title}
-              </span>
-              {addedLinks.has(link.url) && (
-                <Check size={16} className="ml-2 text-green-500 flex-shrink-0" />
-              )}
-            </div>
-            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-              {addedLinks.has(link.url) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
-            </span>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

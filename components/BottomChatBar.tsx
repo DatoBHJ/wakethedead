@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useMemo } from 'react';
+import React, { FormEvent, useRef, useMemo, useState, useCallback } from 'react';
 import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
 import Textarea from 'react-textarea-autosize';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -9,10 +9,11 @@ import FollowUpComponent from '@/components/answer/FollowUpComponent';
 import InitialQueries from '@/components/answer/InitialQueries';
 import { motion, AnimatePresence } from 'framer-motion';
 import RelevantLinksComponent from '@/components/answer/RelevantLinksComponent';
-import ProcessedWebResults from '@/components/answer/ProcessedWebResults';
+import ProcessedWebResultsComponent from '@/components/answer/ProcessedWebResults';
 import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
+import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
 
   const initialQuestions = [
     "latest AI news 📰",
@@ -64,6 +66,14 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
     hidden: { y: "100%" },
     visible: { y: 0 },
   };
+
+  const handleAddLink = useCallback((link: string) => {
+    const linkId = getYouTubeVideoId(link);
+    if (linkId) {
+      onAddLink(link);
+      setAddedLinks(prev => new Set(prev).add(linkId));
+    }
+  }, [onAddLink]);
 
   return (
     <AnimatePresence>
@@ -93,7 +103,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                 <InitialQueries
                   questions={combinedQuestions}
                   handleFollowUpClick={handleFollowUpClick}
-                  setIsChatOpen={() => {}}
+                   setIsChatOpen={() => {}}
                 />
               </div>
             ) : (
@@ -102,15 +112,19 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                   <div key={index}>
                     <UserMessageComponent message={message.userMessage} />
                     {message.relevantDocuments && (
-                      <RelevantLinksComponent
-                        relevantDocuments={message.relevantDocuments}
-                        onAddLink={onAddLink}
-                      />
+                           <RelevantLinksComponent
+                           relevantDocuments={message.relevantDocuments}
+                           onAddLink={handleAddLink}
+                           setIsChatOpen={setIsOpen}
+                           addedLinks={addedLinks}
+                         />
                     )}
                     {message.processedWebResults && (
-                      <ProcessedWebResults
+                        <ProcessedWebResultsComponent
                         processedWebResults={message.processedWebResults}
-                        onAddLink={onAddLink}
+                        onAddLink={handleAddLink}
+                        setIsChatOpen={setIsOpen}
+                        addedLinks={addedLinks}
                       />
                     )}
                     <LLMResponseComponent
