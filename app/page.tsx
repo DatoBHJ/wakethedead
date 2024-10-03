@@ -160,11 +160,6 @@ export default function Page() {
   };
 }, [inputRef]);
 
-  const handleFollowUpClick = useCallback(async (question: string) => {
-    setCurrentLlmResponse('');
-    await handleUserMessageSubmission({ message: question, youtubeLinks: []});
-  }, []);
-
   const handleSubmit = async (payload: { message: string; youtubeLinks: string[] }) => {
     if (!payload.message) return;
     await handleUserMessageSubmission(payload);
@@ -296,23 +291,17 @@ export default function Page() {
     }
   }, []);
 
-  // const memoizedCombinedYoutubeComponent = useMemo(() => (
-  //   <CombinedYoutubeComponent 
-  //     youtubeLinks={youtubeLinks} 
-  //     currentIndex={currentYoutubeIndex}
-  //     setCurrentIndex={setCurrentYoutubeIndex}
-  //     selectedModel={selectedModel}
-  //     selectedLanguage={selectedLanguage}
-  //     cards={cards}
-  //     onLinkClick={handleLinkClick}
-  //     onExtractQuestions={handleExtractQuestions}
-
-  //   />
-  // ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick]);
-
+  const handleFollowUpClick = useCallback(async (question: string) => {
+    setCurrentLlmResponse('');
+    await handleUserMessageSubmission({ message: question, youtubeLinks: []});
+  }, []);
+  
   const handleQuestionSelected = useCallback((question: string) => {
     handleFollowUpClick(question);
-  }, [handleFollowUpClick]);
+    if (!isDesktop) {
+      setIsChatOpen(true);
+    }
+  }, [handleFollowUpClick, isDesktop]);
 
   const memoizedCombinedYoutubeComponent = useMemo(() => (
     <CombinedYoutubeComponent 
@@ -324,7 +313,9 @@ export default function Page() {
       cards={cards}
       onLinkClick={handleLinkClick}
       onExtractQuestions={handleExtractQuestions}
-      onQuestionSelected={handleQuestionSelected} // Add this new prop
+      onQuestionSelected={handleQuestionSelected} 
+      setIsChatOpen={setIsChatOpen}
+
     />
   ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick, handleExtractQuestions, handleQuestionSelected]);
 

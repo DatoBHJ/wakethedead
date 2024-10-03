@@ -28,6 +28,7 @@ interface CombinedYoutubeComponentProps {
   onLinkClick: (link: string) => void;
   onExtractQuestions: (questions: string[]) => void;
   onQuestionSelected: (question: string) => void; // Add this new prop
+  setIsChatOpen: (isOpen: boolean) => void;
 
 }
 
@@ -41,6 +42,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   onLinkClick,
   onExtractQuestions,
   onQuestionSelected, // Add this new prop
+  setIsChatOpen,
 
 }) => {
   const { toast } = useToast();
@@ -310,10 +312,11 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         )} */}
       <div className="flex-grow overflow-y-auto">
         {showQuestionsModal ? (
-          <ExtractedQuestionsModal
-            questions={extractedQuestions}
-            handleFollowUpClick={handleExtractedQuestionClick}
-          />
+                 <ExtractedQuestionsModal
+                 questions={extractedQuestions}
+                 handleFollowUpClick={handleExtractedQuestionClick}
+                 setIsChatOpen={setIsChatOpen}
+               />
         ) : (
           <div className="py-4 px-2 max-w-4xl mx-auto">
             <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-200 px-4">

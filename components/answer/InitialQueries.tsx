@@ -5,15 +5,19 @@ import { useMediaQuery } from '@/lib/hooks/use-media-query';
 interface InitialQueriesProps {
   questions: string[];
   handleFollowUpClick: (question: string) => void;
+  setIsChatOpen: (isOpen: boolean) => void;
 }
 
-const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollowUpClick }) => {
+const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollowUpClick, setIsChatOpen }) => {
   const [clickedQuestions, setClickedQuestions] = useState<Set<string>>(new Set());
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const handleQuestionClick = (question: string) => {
     handleFollowUpClick(question);
     setClickedQuestions(prev => new Set(prev).add(question));
+    if (!isDesktop) {
+      setIsChatOpen(true);
+    }
   };
 
   const formatSummary = (summary: string) => {
