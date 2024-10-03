@@ -15,7 +15,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
 import UserSharedLinks from '@/components/UserSharedLinks';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
-
+import ExampleLinks from '@/components/ExampleLinks';
 interface UserDataResult {
   title: string;
   link: string;
@@ -463,18 +463,9 @@ export default function Page() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  // className="w-full max-w-xl pl-8 sm:pl-20 md:pl-10 xl:pl-32 pr-5 flex flex-col items-center"
                   className="w-full max-w-xl justify-center p-4 flex flex-col items-center"
                 >
-                  <div className="w-full flex flex-col items-start lg:pb-48 pb-20">
-                    {/* <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5, duration: 0.5 }}
-                      className="w-full aspect-video mb-3 rounded-lg overflow-hidden relative"
-                    >
-                      <ThemeBasedVideo />
-                    </motion.div> */}
+                  <div className="w-full flex flex-col items-start pb-5">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
                       className="w-full"
@@ -482,23 +473,6 @@ export default function Page() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6, duration: 0.5 }}
                     >
-                      {/* <div className="relative pl-1 flex items-center">
-                        <input
-                          type="text"
-                          value={inputLinks}
-                          onChange={(e) => setInputLinks(e.target.value)}
-                          placeholder="Beam up your article or video link ⚡"
-                          className="w-full rounded-none pb-2 pr-7 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
-                        />
-                        <motion.button 
-                          type="submit" 
-                          className="absolute right-1 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <ArrowRight size={24} weight="bold" />
-                        </motion.button>
-                      </div> */}
                       <div className="relative flex items-center">
                         <motion.button 
                           type="submit" 
@@ -526,6 +500,8 @@ export default function Page() {
                         </motion.button>
                       </div>
                     </motion.form>
+                    {/* New ExampleLinks component */}
+                    <ExampleLinks onAddLink={handleAddLink} />
                   </div>
                 </motion.div>
               </div>
@@ -598,7 +574,6 @@ export default function Page() {
                   onAddLink={handleAddLink}
                   onRefresh={handleRefresh}
                   extractedQuestions={extractedQuestions}
-
                 />
               </div>
             </motion.div>
@@ -617,7 +592,6 @@ export default function Page() {
             onAddLink={handleAddLink}
             onRefresh={handleRefresh}
             extractedQuestions={extractedQuestions}
-
           />
         )}
       </div>

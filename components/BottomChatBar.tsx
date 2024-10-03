@@ -103,7 +103,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                 <InitialQueries
                   questions={combinedQuestions}
                   handleFollowUpClick={handleFollowUpClick}
-                   setIsChatOpen={() => {}}
+                  setIsChatOpen={() => {}}
                 />
               </div>
             ) : (
@@ -120,7 +120,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                          />
                     )}
                     {message.processedWebResults && (
-                        <ProcessedWebResultsComponent
+                      <ProcessedWebResultsComponent
                         processedWebResults={message.processedWebResults}
                         onAddLink={handleAddLink}
                         setIsChatOpen={setIsOpen}
