@@ -8,6 +8,7 @@ import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera
 import { useArticleGenerator } from './useYoutubeHooks';
 import { useToast } from "@/components/ui/use-toast";
 import ExtractedQuestionsModal from './ExtractedQuestionsModal';
+import ReadingTime from './ReadingTime'; // 새로 추가된 import
 
 interface YouTubeCard {
   id: string;
@@ -212,38 +213,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   const currentVideoId = videoIds[currentIndex];
   
-  const renderContent = () => {
-    if (isGenerating[currentVideoId]) {
-      return (
-        <>
-          {streamingContent[currentVideoId] && (
-            <EditableArticleView 
-              content={streamingContent[currentVideoId]}
-              onTimestampClick={handleTimestampClick}
-              onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
-              isEditing={false}
-            />
-          )}
-          <LoadingIndicator />
-        </>
-      );
-    }
-
-    if (!articles[currentVideoId] && !streamingContent[currentVideoId]) {
-      return <Skeleton />;
-    }
-
-    const contentToShow = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
-
-    return (
-      <EditableArticleView 
-        content={contentToShow}
-        onTimestampClick={handleTimestampClick}
-        onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
-        isEditing={isEditing}
-      />
-    );
-  };
+  
 
   const handleThumbnailClick = useCallback((event: React.MouseEvent<HTMLDivElement>, link: string) => {
     event.preventDefault();
@@ -292,6 +262,73 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     }
   }, [cards, currentIndex, youtubeLinks, handleThumbnailClick, videoRef]);
 
+  const extractSubtitles = (content: string): string => {
+    const subtitles = content.match(/##[^\n]+/g);
+    return subtitles ? subtitles.join('\n') : '';
+  };
+
+  const renderReadingTimes = (content: string) => {
+    const subtitles = extractSubtitles(content);
+    const currentCard = cards[currentIndex];
+    const isYouTube = currentCard?.isYouTube ?? false;
+  
+    return (
+      <div className="text-sm text-muted-foreground mb-2 whitespace-normal">
+        <ReadingTime 
+          content={subtitles} 
+          inline={true} 
+          label="Headline Scan"
+          isYouTube={isYouTube}
+        />
+        <ReadingTime 
+          content={content} 
+          inline={true} 
+          label="Full Read"
+          isYouTube={isYouTube}
+        />
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    if (isGenerating[currentVideoId]) {
+      return (
+        <>
+          {streamingContent[currentVideoId] && (
+            <>
+              {renderReadingTimes(streamingContent[currentVideoId])}
+              <EditableArticleView 
+                content={streamingContent[currentVideoId]}
+                onTimestampClick={handleTimestampClick}
+                onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
+                isEditing={false}
+              />
+            </>
+          )}
+          <LoadingIndicator />
+        </>
+      );
+    }
+
+    if (!articles[currentVideoId] && !streamingContent[currentVideoId]) {
+      return <Skeleton />;
+    }
+
+    const contentToShow = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
+
+    return (
+      <>
+        {renderReadingTimes(contentToShow)}
+        <EditableArticleView 
+          content={contentToShow}
+          onTimestampClick={handleTimestampClick}
+          onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
+          isEditing={isEditing}
+        />
+      </>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       {showVideo && (
@@ -305,18 +342,13 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </div>
         </div>
       )}
-        {/* {showVideo && (
-          <div className="w-full lg:w-1/2 relative pt-[56.25%] lg:pt-0 bg-black">
-            {renderMediaContent()}
-          </div>
-        )} */}
       <div className="flex-grow overflow-y-auto">
         {showQuestionsModal ? (
-                 <ExtractedQuestionsModal
-                 questions={extractedQuestions}
-                 handleFollowUpClick={handleExtractedQuestionClick}
-                 setIsChatOpen={setIsChatOpen}
-               />
+          <ExtractedQuestionsModal
+            questions={extractedQuestions}
+            handleFollowUpClick={handleExtractedQuestionClick}
+            setIsChatOpen={setIsChatOpen}
+          />
         ) : (
           <div className="py-4 px-2 max-w-4xl mx-auto">
             <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-200 px-4">
