@@ -25,7 +25,7 @@ const ExampleLinks = ({ onAddLink }) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className="text-sm sm:text-base text-gray-700 dark:text-gray-400 font-bold font-handwriting">{link.label}</div>
+          <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-handwriting">{link.label}</div>
           <div className="text-xs text-gray-500 dark:text-gray-500">{link.duration} • {link.category}</div>
         </motion.button>
       ))}

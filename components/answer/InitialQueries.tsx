@@ -56,12 +56,6 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
     );
   };
 
-  const renderSeparator = (index: number) => (
-    <li key={`separator-${index}`} className={isDesktop ? "my-2" : "my-1"}>
-      <div className="w-full h-px bg-gray-200 dark:bg-gray-700 opacity-50"></div>
-    </li>
-  );
-
   const groupedItems = questions.reduce((acc, item, index) => {
     if (item.startsWith('**Part')) {
       acc.push([item]);
@@ -79,7 +73,6 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
         {groupedItems.map((group, groupIndex) => (
           <React.Fragment key={groupIndex}>
             {group.map(renderItem)}
-            {/* {groupIndex < groupedItems.length - 1 && renderSeparator(groupIndex)} */}
           </React.Fragment>
         ))}
       </ul>
