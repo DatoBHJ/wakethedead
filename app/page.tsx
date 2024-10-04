@@ -632,11 +632,11 @@ export default function Page() {
         currentIndex={currentYoutubeIndex}
         onCardsUpdate={handleCardsUpdate}
       />
-      <UserSharedLinks 
+      {/* <UserSharedLinks 
         onAddLink={handleAddLink} 
         showUFO={showUFO}
         mainContentRef={mainContentRef}
-      />
+      /> */}
     </div>
   );
 }
