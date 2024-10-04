@@ -33,11 +33,11 @@ const ReadingTime: React.FC<ReadingTimeProps> = ({ content, inline = false, labe
   );
 
   return inline ? (
-    <span className="text-sm text-muted-foreground">
+    <span className="text-sm text-purple-600 dark:text-purple-400 ">
       {timeContent}
     </span>
   ) : (
-    <div className="text-sm text-muted-foreground mb-2">
+    <div className="text-sm text-purple-600 dark:text-purple-400  mb-2">
       {timeContent}
     </div>
   );
