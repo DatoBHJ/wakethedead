@@ -465,7 +465,7 @@ export default function Page() {
                   transition={{ duration: 0.5 }}
                   className="w-full max-w-xl justify-center p-4 flex flex-col items-start"
                 >
-                <h1 className="text-7xl font-bold mb-14 text-left text-blue-500 dark:text-blue-400 w-full">
+                <h1 className="text-7xl font-bold mb-14 text-left text-blue-500 w-full">
                   Wake The Dead
                 </h1>
                   <div className="w-full flex flex-col items-start pb-20">

@@ -99,7 +99,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
           )}
           <div className={`flex-1 overflow-y-auto ${isDesktop ? 'py-10' : 'py-4'} pb-20 sm:pb-0 flex flex-col`}>
             {messages.length === 0 && !inputValue ? (
-              <div className="flex-grow flex items-center justify-center px-4 sm:px-6">
+              <div className="flex-grow flex items-center justify-center pr-0 sm:pr-36 md:pr-0">
                 <InitialQueries
                   questions={combinedQuestions}
                   handleFollowUpClick={handleFollowUpClick}
