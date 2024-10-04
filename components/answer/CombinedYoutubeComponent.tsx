@@ -277,7 +277,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         <ReadingTime 
           content={subtitles} 
           inline={true} 
-          label="Headline Scan"
+          label="Headline Skim"
           isYouTube={isYouTube}
         />
         <ReadingTime 

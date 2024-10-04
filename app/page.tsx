@@ -468,13 +468,13 @@ export default function Page() {
                 {/* <h1 className="text-7xl font-bold mb-10 text-left text-blue-500 w-full">
                   Wake The Dead
                 </h1> */}
-               <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
+               <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-5 text-left text-blue-500 w-full">
                Skim Fast, Learn Faster
               </h1>
-              <p className="text-sm text-gray-400 dark:text-gray-600 mb-8">
+              <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
                 Dive into articles and videos effortlessly. Extract key insights, ask questions, and explore content like never before.
               </p>
-                  <div className="w-full flex flex-col items-start pb-20">
+                  <div className="w-full flex flex-col items-start sm:pb-32 pb-20">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
                       className="w-full"
