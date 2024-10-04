@@ -16,7 +16,7 @@ const ExampleLinks = ({ onAddLink }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7, duration: 0.5 }}
     >
-      <p className="text-sm text-blue-500 dark:text-blue-400 mb-2 pl-2">
+      <p className="text-sm text-blue-500 dark:text-blue-400 mt-10 mb-2 pl-2">
         {/* Or try these examples:  */}
       </p>
       <div className="grid grid-cols-2 gap-2">

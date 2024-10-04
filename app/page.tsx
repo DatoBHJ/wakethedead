@@ -16,6 +16,7 @@ import ThemeBasedVideo from '@/components/ThemeBasedVideo';
 import UserSharedLinks from '@/components/UserSharedLinks';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import ExampleLinks from '@/components/ExampleLinks';
+
 interface UserDataResult {
   title: string;
   link: string;
@@ -468,12 +469,15 @@ export default function Page() {
                 {/* <h1 className="text-7xl font-bold mb-10 text-left text-blue-500 w-full">
                   Wake The Dead
                 </h1> */}
-               <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-5 text-left text-blue-500 w-full">
+               <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
                Skim Fast, Learn Faster
               </h1>
               <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
-                Dive into articles and videos effortlessly. Extract key insights, ask questions, and explore content like never before.
+              From 20-minute videos to lengthy articles and 3-hour podcasts - <span className="text-lg font-bold">Skim</span> all of them in seconds and <span className="text-lg font-bold">move on</span> to your next discovery.
               </p>
+              {/* <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
+                Dive into articles and videos effortlessly. Extract key insights, ask questions, and explore content like never before.
+              </p> */}
                   <div className="w-full flex flex-col items-start sm:pb-32 pb-20">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
@@ -511,6 +515,17 @@ export default function Page() {
                     </motion.form>
                     {/* New ExampleLinks component */}
                     <ExampleLinks onAddLink={handleAddLink} />
+                    {/* <div className="space-y-6 text-sm text-gray-400 dark:text-gray-600 mt-10 px-1">
+                      <p>
+                        <span className="text-lg font-bold">Smart Caching:</span> After the initial processing, your content is globally cached. Future access is instant, eliminating repeated wait times.
+                      </p>
+                      <p>
+                        <span className="text-lg font-bold">Lightning-Fast Access:</span> Paste or click a link, and skim through content in seconds. What you unlock is available for everyone.
+                      </p>
+                      <p>
+                        <span className="text-lg font-bold">Interactive Exploration:</span> Ask questions, uncover insights, and dive deep into content like never before.
+                      </p>
+                    </div> */}
                   </div>
                 </motion.div>
               </div>
