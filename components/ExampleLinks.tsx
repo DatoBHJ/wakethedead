@@ -11,24 +11,32 @@ const exampleLinks = [
 const ExampleLinks = ({ onAddLink }) => {
   return (
     <motion.div 
-      className="mt-4 space-y-2 pl-0 sm:pl-5 pr-1"
+      className="mt-4 pr-1"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7, duration: 0.5 }}
     >
-      <p className="text-sm text-blue-500 dark:text-blue-400 mb-2 pl-2 "> ㄴ Or try these examples:</p>
-      {exampleLinks.map((link, index) => (
-        <motion.button
-          key={index}
-          onClick={() => onAddLink(link.url)}
-          className="w-full text-left p-2 rounded-md hover:bg-card-foreground/[3%] dark:hover:bg-card-foreground/5 transition-colors duration-200"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-handwriting">{link.label}</div>
-          <div className="text-xs text-purple-600 dark:text-purple-400 ">{link.duration}</div>
-        </motion.button>
-      ))}
+      <p className="text-sm text-blue-500 dark:text-blue-400 mb-2 pl-2">
+        Or try these examples:
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        {exampleLinks.map((link, index) => (
+          <motion.button
+            key={index}
+            onClick={() => onAddLink(link.url)}
+            className="text-left p-2 rounded-md backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 hover:bg-card-foreground/[10%] dark:hover:bg-card-foreground/20 transition-colors duration-200"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="text-sm text-gray-700 dark:text-gray-300 font-handwriting line-clamp-2">
+              {link.label}
+            </div>
+            <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+              {link.duration}
+            </div>
+          </motion.button>
+        ))}
+      </div>
     </motion.div>
   );
 };
