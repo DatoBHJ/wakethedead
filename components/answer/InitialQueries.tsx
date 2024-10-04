@@ -68,7 +68,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
   }, [] as string[][]);
 
   return (
-    <div className="h-full flex items-center justify-center">
+    <div className="h-full flex items-center justify-center px-4">
       <ul className="w-full max-w-md ">
         {groupedItems.map((group, groupIndex) => (
           <React.Fragment key={groupIndex}>

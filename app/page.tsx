@@ -465,9 +465,15 @@ export default function Page() {
                   transition={{ duration: 0.5 }}
                   className="w-full max-w-xl justify-center p-4 flex flex-col items-start"
                 >
-                <h1 className="text-7xl font-bold mb-14 text-left text-blue-500 w-full">
+                {/* <h1 className="text-7xl font-bold mb-10 text-left text-blue-500 w-full">
                   Wake The Dead
-                </h1>
+                </h1> */}
+               <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
+               Skim Fast, Learn Faster
+              </h1>
+              <p className="text-sm text-gray-400 dark:text-gray-600 mb-8">
+                Dive into articles and videos effortlessly. Extract key insights, ask questions, and explore content like never before.
+              </p>
                   <div className="w-full flex flex-col items-start pb-20">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
@@ -514,6 +520,9 @@ export default function Page() {
               </div>
             )}
           </main>
+          <footer className="p-2 text-center">
+            <span className="text-[8px] text-gray-400">created by human</span>
+          </footer>
         </div>
         {isDesktop && (
           <>

@@ -358,7 +358,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </div>
         )}
       </div>
-      <div className="flex-shrink-0 flex items-center justify-between pt-5 pb-9  py-1 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
+      <div className="flex-shrink-0 flex items-center justify-between pt-5 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 
