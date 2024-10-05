@@ -85,7 +85,7 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
                 )}
               </div>
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                {addedLinks.has(linkId) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
+                {addedLinks.has(linkId) ? 'Link beamed up!⚡️' : 'Beam me up! 🚀'}
               </span>
             </li>
           );

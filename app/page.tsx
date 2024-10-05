@@ -473,7 +473,7 @@ export default function Page() {
                Skim Fast, Learn Faster
               </h1>
               <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
-              From 20-minute videos to lengthy articles and 3-hour podcasts - <span className="text-lg font-bold">Skim</span> all of them in seconds and <span className="text-lg font-bold">move on</span> to your next discovery.
+              Maximize your time: <span className="text-lg font-bold">SKIM</span> in 20 seconds what might take 20 minutes. <span className="text-lg font-bold">ASK</span> questions and <span className="text-lg font-bold">LEARN</span> faster.
               </p>
               {/* <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
                 Dive into articles and videos effortlessly. Extract key insights, ask questions, and explore content like never before.

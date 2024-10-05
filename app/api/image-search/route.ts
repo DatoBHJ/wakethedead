@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       title: image.title,
       image: image.image
     }));
-    console.log('DuckDuckGo image search results:', formattedResults);
+    // console.log('DuckDuckGo image search results:', formattedResults);
     return NextResponse.json({ results: formattedResults });
   } catch (error) {
     console.error('DuckDuckGo image search error:', error);

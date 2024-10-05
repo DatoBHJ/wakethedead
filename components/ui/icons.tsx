@@ -396,6 +396,26 @@ function IconBuyMeACoffee({ className, ...props }: React.ComponentProps<'svg'>) 
   );
 }
 
+function IconInfo({ className, ...props }: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn('h-4 w-4', className)}
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+  );
+}
+
 export {
   IconAI,
   IconVercel,
@@ -422,5 +442,6 @@ export {
   IconExpand,
   IconShrink,
   IconPhoto,
-  IconBuyMeACoffee
+  IconBuyMeACoffee,
+  IconInfo
 };
