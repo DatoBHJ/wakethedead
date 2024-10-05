@@ -14,6 +14,7 @@ import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
+import { initialQuestions } from './initialQuestions';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -47,20 +48,17 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
 
-  const initialQuestions = [
-    "latest AI news 📰",
-    "Give me some memes 🤣",
-    "OpenAI o1 Mini vs Claude 3.5 Sonnet 🤖",
-    "iPhone 16 📱",
-    "I need a kindle link to The Hobbit 📚",
-  ];
-
+  const randomQuestions = useMemo(() => {
+    const shuffled = [...initialQuestions].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 5);
+  }, []);
+  
   const combinedQuestions = useMemo(() => {
     if (extractedQuestions.length > 0) {
       return extractedQuestions;
     }
-    return initialQuestions;
-  }, [extractedQuestions, initialQuestions]);
+    return randomQuestions;
+  }, [extractedQuestions, randomQuestions]);
 
   const mobileVariants = {
     hidden: { y: "100%" },
