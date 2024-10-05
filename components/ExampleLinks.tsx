@@ -6,6 +6,7 @@ const exampleLinks = [
   { url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "📱 Marques is checking out the world's largest fake iPhone lol", duration: "55s video -> 12s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review - Charli XCX's BRAT", duration: "14m video -> 27s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", label: "🎙️ Lex Fridman Podcast - Pieter Levels: AI & Digital Nomad Life", duration: "3h 43m video -> 5m skim", source: "youtube.com" },
+  // { url: "https://x.com/ainasanghi/status/1835265784773591364?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "The Fetch API is a modern, promise-based JavaScript API", duration: "3m read -> 6s skim", source: "youtube.com" },
 ];
 
 const ExampleLinks = ({ onAddLink }) => {

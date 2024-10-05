@@ -5,6 +5,7 @@ export const initialQuestions = [
 "iPhone 16📱",
 "Kindle link to The Hobbit 📚",
 "Nvidia stock price analysis 📈",
+"US election 2024 🇺🇸",
     "Is Kanye West crazy or a genius…or both? Or neither? 🤔",
     "Tesla Model 3 vs Ford Mustang Mach-E 🚗",
     "Is autonomous driving ever going to be a thing? 🚗",
