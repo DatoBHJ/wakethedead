@@ -30,10 +30,10 @@ enum LoadingStage {
 
 const LoadingMessage = ({ stage }: { stage: LoadingStage }) => {
     const messages = [
-        "Searching source...",
+        "Searching sources shared by our users...",
         "Web searching...",
-        "Data found!",
-        "Reading data...",
+        "Reading all sources...",
+        "Curating...",
         "Generating response..."
     ];
 
