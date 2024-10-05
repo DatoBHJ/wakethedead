@@ -351,7 +351,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           />
         ) : (
           <div className="py-4 px-2 max-w-4xl mx-auto">
-            <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-200 px-4">
+            <div className="bg-card dark:bg-card text-card-foreground dark:text-gray-400 px-4">
               {renderContent()}
             </div>
             {articleError}

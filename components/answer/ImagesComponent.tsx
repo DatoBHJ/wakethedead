@@ -55,10 +55,10 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
     return (
         <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
             <div className="flex items-center mb-4">
-                <h2 className="text-lg font-semibold flex-grow text-black dark:text-white">Images</h2>
+                <h2 className="text-lg font-semibold flex-grow text-black  dark:text-gray-400">Images</h2>
                 <div className="flex justify-center ml-2">
                     <button
-                        className="text-black dark:text-white focus:outline-none"
+                        className="text-black  dark:text-gray-400 focus:outline-none"
                         onClick={handleExpand}>
                         {isExpanded ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
                     </button>

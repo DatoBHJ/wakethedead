@@ -24,14 +24,14 @@ const ExampleLinks = ({ onAddLink }) => {
           <motion.button
             key={index}
             onClick={() => onAddLink(link.url)}
-            className="text-left p-2 rounded-md backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 hover:bg-card-foreground/[10%] dark:hover:bg-card-foreground/20 transition-colors duration-200 relative"
+            className="text-left p-2 sm:p-4 rounded-md backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 hover:bg-card-foreground/[10%] dark:hover:bg-card-foreground/20 transition-colors duration-200 relative"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="text-xs text-gray-400 dark:text-gray-400 absolute top-1 left-2">
+            <div className="text-xs text-gray-400 dark:text-gray-600 absolute top-1 left-2">
               {link.source}
             </div>
-            <div className="text-sm text-gray-700 dark:text-gray-300 font-handwriting line-clamp-2 mt-4">
+            <div className="text-sm text-gray-700 dark:text-gray-400 font-handwriting line-clamp-2 mt-4">
               {link.label}
             </div>
             <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
