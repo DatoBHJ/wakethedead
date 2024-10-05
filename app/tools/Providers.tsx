@@ -29,6 +29,17 @@ interface NewsResult {
     source: string;
 }
 
+interface DuckDuckGoNewsResult {
+    date: number;
+    excerpt: string;
+    image?: string;
+    relativeTime: string;
+    syndicate: string;
+    title: string;
+    url: string;
+    isOld: boolean;
+  }
+
 
 export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(message)}`;
@@ -110,9 +121,44 @@ export async function searchAPINewsSearch(message: string): Promise<NewsResult[]
     }
 }
 
+export async function duckDuckGoNewsSearch(message: string): Promise<NewsResult[]> {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/news-search?query=${encodeURIComponent(message)}`;
+    
+    try {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Network response was not ok. Status: ${response.status}`);
+    }
+    const responseData = await response.json();
+    if (!responseData.results) {
+        throw new Error('Invalid API response format');
+    }
+    const newsResults = responseData.results.map((result: DuckDuckGoNewsResult): NewsResult => ({
+        title: result.title,
+        link: result.url,
+        snippet: result.excerpt,
+        date: new Date(result.date * 1000).toISOString(),
+        source: result.syndicate
+    }));
+    return newsResults;
+    } catch (error) {
+    console.error('Error fetching DuckDuckGo news search results:', error);
+    throw error;
+    }
+}
 
 export async function performWebSearch(query: string, startIndexOfPagesToScan: number, numberOfPagesToScan: number, isNewsQuery: boolean = false): Promise<SearchResult[] | NewsResult[]> {
     if (isNewsQuery) {
+        try {
+            // First, try DuckDuckGo news search
+            const duckDuckGoNewsResults = await duckDuckGoNewsSearch(query);
+            console.log('DuckDuckGo news results:', duckDuckGoNewsResults);
+            return duckDuckGoNewsResults;
+          } catch (error) {
+            console.error('DuckDuckGo news search error:', error);
+            
+            // Fallback to serperNewsSearch
+            console.log('Falling back to serperNewsSearch');
         try {
             const newsResults = await searchAPINewsSearch(query);
             console.log('News results:', newsResults);
@@ -121,6 +167,7 @@ export async function performWebSearch(query: string, startIndexOfPagesToScan: n
             console.error('News search error:', error);
             throw new Error('News search failed');
         }
+    }
     } else {
         try {
             // First, try DuckDuckGo search

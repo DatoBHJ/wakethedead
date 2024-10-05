@@ -1,7 +1,7 @@
-import { search, SafeSearchType } from 'duck-duck-scrape';
+import { searchNews, SafeSearchType } from 'duck-duck-scrape';
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs' 
+export const runtime = 'nodejs'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,14 +12,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const results = await search(query, 
-      {
+    const results = await searchNews(query, {
       safeSearch: SafeSearchType.OFF
-    }
-  );
+    });
     return NextResponse.json(results);
   } catch (error) {
-    console.error('DuckDuckGo search error:', error);
-    return NextResponse.json({ error: 'Failed to perform search' }, { status: 500 });
+    console.error('DuckDuckGo news search error:', error);
+    return NextResponse.json({ error: 'Failed to perform news search' }, { status: 500 });
   }
 }
