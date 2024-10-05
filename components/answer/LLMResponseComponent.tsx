@@ -33,7 +33,7 @@ const LoadingMessage = ({ stage }: { stage: LoadingStage }) => {
         "Searching source...",
         "Web searching...",
         "Data found!",
-        "AI is starting to respond.",
+        "Reading data...",
         "Generating response..."
     ];
 
