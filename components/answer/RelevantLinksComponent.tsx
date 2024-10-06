@@ -21,6 +21,13 @@ const decodeHtmlEntities = (text: string): string => {
   return textArea.value;
 };
 
+const truncateText = (text: string, maxLength: number = 70): string => {
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + '...';
+  }
+  return text;
+};
+
 const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({ 
   relevantDocuments, 
   onAddLink, 
@@ -35,7 +42,7 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({
       if (!linkMap.has(link.url)) {
         linkMap.set(link.url, {
           ...link,
-          title: decodeHtmlEntities(link.title)
+          title: truncateText(decodeHtmlEntities(link.title))
         });
       }
     });

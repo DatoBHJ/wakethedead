@@ -6,6 +6,7 @@ import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
 import { Button } from '@/components/ui/button';
 import { List, ArrowRight, Gear } from "@phosphor-icons/react";
+import { Coffee } from 'lucide-react';
 
 interface YouTubeCard {
   id: string;
@@ -203,7 +204,8 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               rel="noopener noreferrer"
               title="Buy Me a Coffee"
             >
-              <IconBuyMeACoffee className="h-5 w-5" />
+              {/* <IconBuyMeACoffee className="h-5 w-5" /> */}
+              <Coffee className="h-5 w-5" />
             </a>
           </Button>
           <Button 

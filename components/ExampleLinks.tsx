@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const exampleLinks = [
   { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14m read -> 32s skim", source: "deeplearning.ai" },
@@ -40,6 +41,12 @@ const ExampleLinks = ({ onAddLink }) => {
             </div>
           </motion.button>
         ))}
+     </div>
+      
+      <div className="mt-16 text-center">
+        <Link href="/tips" className="text-xs text-gray-400 underline hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200">
+          Wake The Dead: User Guide
+        </Link>
       </div>
     </motion.div>
   );
