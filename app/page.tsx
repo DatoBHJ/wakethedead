@@ -466,18 +466,12 @@ export default function Page() {
                   transition={{ duration: 0.5 }}
                   className="w-full max-w-xl justify-center p-4 flex flex-col items-start"
                 >
-                {/* <h1 className="text-7xl font-bold mb-10 text-left text-blue-500 w-full">
-                  Wake The Dead
-                </h1> */}
                <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
-               Skim Fast, Learn Faster
+               Skim Fast, Move on
               </h1>
               <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
-              Maximize your time: <span className="text-lg font-bold">SKIM</span> in 20 seconds what might take 20 minutes. <span className="text-lg font-bold">ASK</span> questions and <span className="text-lg font-bold">LEARN</span> faster.
+              No need to save for later: <span className="text-lg font-bold">SKIM</span> in 20 seconds what might take 20 minutes. <span className="text-lg font-bold">ASK</span> questions and <span className="text-lg font-bold">MOVE ON</span>.
               </p>
-              {/* <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
-                Dive into articles and videos effortlessly. Extract key insights, ask questions, and explore content like never before.
-              </p> */}
                   <div className="w-full flex flex-col items-start sm:pb-32 pb-20">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
