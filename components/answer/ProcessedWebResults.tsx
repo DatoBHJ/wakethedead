@@ -13,7 +13,7 @@ interface ProcessedWebResultsComponentProps {
   onAddLink: (link: string) => void;
   setIsChatOpen?: (isOpen: boolean) => void;
   addedLinks: Set<string>;
-  currentLlmResponse: string; // isLoading 대신 currentLlmResponse를 받습니다
+  currentLlmResponse: string;
 
 }
 
