@@ -51,11 +51,11 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
 
   const renderWithClickableTimestamps = (children: ReactNode): ReactNode => {
     if (typeof children === 'string') {
-      const regex = /(\[\d{2}:\d{2}(?::\d{2})?\])/g;
+      const regex = /(\[?\d{1,2}:\d{2}(?::\d{2})?\]?)/g;
       const parts = children.split(regex);
       return parts.map((part, index) => {
         if (part.match(regex)) {
-          const timestamp = part.slice(1, -1);
+          const timestamp = part.replace(/^\[|\]$/g, '');
           const seconds = parseTimestamp(timestamp);
           return (
             <React.Fragment key={index}>
@@ -73,7 +73,6 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
           <React.Fragment key={index}>
             {part.split('\n').map((line, lineIndex) => (
               <React.Fragment key={lineIndex}>
-                {/* {lineIndex > 0 && <br />} */}
                 {line}
               </React.Fragment>
             ))}

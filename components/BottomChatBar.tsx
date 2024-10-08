@@ -123,6 +123,8 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                         onAddLink={handleAddLink}
                         setIsChatOpen={setIsOpen}
                         addedLinks={addedLinks}
+                        currentLlmResponse={currentLlmResponse} // isLoading 대신 currentLlmResponse를 전달
+
                       />
                     )}
                     <LLMResponseComponent

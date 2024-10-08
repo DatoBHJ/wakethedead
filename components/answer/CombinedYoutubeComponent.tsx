@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import Skeleton, { LoadingIndicator } from './Skeleton';
 import EditableArticleView from './VideoSummaryView';
-import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera, Article, Rows, TextAlignLeft, ClipboardText, X, FileText } from "@phosphor-icons/react";
+import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera, Article, Rows, TextAlignLeft, PencilSimple, FloppyDisk } from "@phosphor-icons/react";
 import { useArticleGenerator } from './useYoutubeHooks';
 import { useToast } from "@/components/ui/use-toast";
 import ExtractedQuestionsModal from './ExtractedQuestionsModal';
@@ -418,7 +418,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           >
             <ArrowsCounterClockwise size={20} />
           </Button>
-          {/* <Button
+          <Button
             variant="outline"
             size="icon"
             onClick={() => setIsEditing(!isEditing)}
@@ -426,7 +426,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             disabled={isGenerating[currentVideoId]}
           >
             {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
-          </Button> */}
+          </Button>
 
         </div>
       </div>

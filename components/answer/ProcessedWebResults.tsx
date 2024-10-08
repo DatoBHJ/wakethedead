@@ -13,6 +13,8 @@ interface ProcessedWebResultsComponentProps {
   onAddLink: (link: string) => void;
   setIsChatOpen?: (isOpen: boolean) => void;
   addedLinks: Set<string>;
+  currentLlmResponse: string; // isLoading 대신 currentLlmResponse를 받습니다
+
 }
 
 const decodeHtmlEntities = (text: string): string => {
@@ -25,9 +27,12 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
   processedWebResults, 
   onAddLink,
   setIsChatOpen,
-  addedLinks
+  addedLinks,
+  currentLlmResponse
+
 }) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isLoading = !currentLlmResponse || currentLlmResponse.trim().length === 0;
 
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
@@ -58,7 +63,7 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
           <h2 className="text-2xl font-bold font-handwriting  dark:text-gray-400">
-            Curated web discoveries 🔎
+          {isLoading ? "Reading searched results..." : "Curated web discoveries 🔎"}
           </h2>
         </div>
       </div>

@@ -39,8 +39,10 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({
   const uniqueLinks = useMemo(() => {
     const linkMap = new Map<string, RelevantLink>();
     relevantDocuments.forEach(link => {
-      if (!linkMap.has(link.url)) {
-        linkMap.set(link.url, {
+      const videoId = getYouTubeVideoId(link.url);
+      const key = videoId || link.url;
+      if (!linkMap.has(key)) {
+        linkMap.set(key, {
           ...link,
           title: truncateText(decodeHtmlEntities(link.title))
         });
@@ -74,25 +76,25 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({
           const linkId = getYouTubeVideoId(link.url);
           return (
             <li
-              key={link.url}
+              key={linkId || link.url}
               className="group relative"
             >
               <div 
                 className={`flex items-center cursor-pointer transition-all duration-200 
                             text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300
-                            ${addedLinks.has(linkId) ? 'opacity-70' : ''}`}
+                            ${addedLinks.has(linkId || link.url) ? 'opacity-70' : ''}`}
                 onClick={() => handleLinkClick(link.url)}
               >
                 <span className="flex-shrink-0 mr-2 mb-1">⚡</span>
                 <span className="font-handwriting text-left text-base">
                   {link.title.includes('Something went wrong!') ? link.url : link.title}
                 </span>
-                {addedLinks.has(linkId) && (
+                {addedLinks.has(linkId || link.url) && (
                   <Check size={16} className="ml-2 text-green-500 flex-shrink-0" />
                 )}
               </div>
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                {addedLinks.has(linkId) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
+                {addedLinks.has(linkId || link.url) ? 'Link beamed up!⚡️' : 'Beam me up!🚀'}
               </span>
             </li>
           );

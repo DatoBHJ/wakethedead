@@ -34,7 +34,12 @@ const TipsPage = () => {
             <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 mr-3 sm:mr-4 flex-shrink-0 mt-1" />
             <div>
               <h2 className="text-lg sm:text-xl font-semibold mb-2">Customize Your Experience</h2>
-              <p className="text-sm sm:text-base">Tailor the AI to your needs. The default 'llama3-8b-8192' model offers quick responses for simpler queries. For more complex, multilingual support, switch to the 'llama-3.1-70b-versatile' model. Experiment to find your perfect balance of speed and capability.</p>
+              <p className="text-sm sm:text-base">
+                Tailor the AI to your needs. The default 'llama3-8b-8192' model excels at most tasks, offering a great balance of speed and capability. For more complex, multilingual support, consider switching to other models. Experiment to find your perfect fit.
+              </p>
+              <p className="text-sm sm:text-base mt-2">
+                If you encounter rate limits or errors, please wait a moment and try again. Alternatively, you can try switching to a different model. 
+              </p>
             </div>
           </li>
           <li className="flex items-start">

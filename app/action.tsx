@@ -237,13 +237,18 @@ async function myAction(
   isRefresh: boolean = false,
 ): Promise<any> {
   "use server";
+  console.log('myAction called with:', {
+    userMessage,
+    selectedModel,
+    selectedLanguage,
+    isRefresh
+  });
 
   const streamable = createStreamableValue({});
   (async () => {
     const currentTimestamp = new Date().toISOString();
     const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
-    console.log('User message:', userMessage, '\n');
-    
+
     // 뉴스 관련 쿼리인지 확인하는 함수
     const isNewsQuery = (query: string): boolean => {
       const newsKeywords = ['news', 'headline', 'breaking', 'latest'];
@@ -275,7 +280,7 @@ async function myAction(
 
     streamable.update({
       relevantDocuments,
-      // processedWebResults: slicedWebSearchResults, // showing user prequrated web search results
+      processedWebResults: slicedWebSearchResults, // showing user prequrated web search results
       ...(isRefresh ? {} : { images, videos })
     });
 
@@ -315,8 +320,7 @@ async function myAction(
         Sources shared by users:
         ${JSON.stringify(promptRelevantDocuments)}
     
-        2. Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
-        <answerFormat>
+        2. Respond back ALWAYS IN MARKDOWN, with the following structure:
         ## Quick Answer 💡
         [Provide a brief, engaging response to the user's input '${userMessage}' in 1-2 punchy sentences with relevant emojis. If it's a search term, give a concise overview of the topic.]
     
@@ -325,7 +329,6 @@ async function myAction(
     
         ## The Scoop 🔍
         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples! If the input was a search term, elaborate on the most interesting aspects of the topic.]
-        </answerFormat>
         `
       },
       {
@@ -338,7 +341,7 @@ async function myAction(
         `
       }
     ];
-    
+        
     const chatCompletion = await openai.chat.completions.create({
       temperature: 0.3, 
       messages,
