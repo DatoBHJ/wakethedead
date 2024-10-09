@@ -12,7 +12,7 @@ const TipsPage = () => {
           <li className="flex items-start">
             <span className="text-2xl mr-3 sm:mr-4 flex-shrink-0 mt-1">⚡</span>
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-2">Instant Access to Content</h2>
+              <h2 className="text-lg sm:text-xl font-semibold mb-2">Smart Skimming</h2>
               <p className="text-sm sm:text-base">Paste any URL or click on titles with the ⚡ icon in the chat. Our smart reader instantly generates a skimmable version, allowing you to digest content in seconds. Once processed, content is cached globally for immediate access by all users!</p>
             </div>
           </li>

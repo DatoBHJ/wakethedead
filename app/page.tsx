@@ -403,7 +403,7 @@ export default function Page() {
             >
               <List size={24} />
             </button>
-            <a href="/" className=" text-muted-foreground hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4">
+            <a href="/" className=" hover:text-blue-600 dark:hover:text-blue-300 dark:text-neutral-300 text-black z-50 font-semibold px-4">
               {/* Wake The Dead */}
               {isDesktop ? 'Wake The Dead' : 'WTD'}
             </a>
@@ -456,7 +456,7 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 flex flex-col overflow-y-auto ${isDesktop ? 'pl-48 md:pl-32 py-10 pr-10' : ''}`}
+            className={`flex-1 flex flex-col overflow-y-auto ${isDesktop ? 'pl-48 md:pl-32 py-10 pr-10' : 'overflow-y-auto'}`}
           >
             {showLinkInput ? (
               <div className="flex-grow flex items-center justify-center w-full">
@@ -466,11 +466,14 @@ export default function Page() {
                   transition={{ duration: 0.5 }}
                   className="w-full max-w-xl justify-center p-4 flex flex-col items-start"
                 >
-               <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
-               Skim Fast, Move on
-              </h1>
-              <p className="text-sm text-gray-400 dark:text-gray-600 mb-10 px-1">
-              No need to save for later: <span className="text-lg font-bold">SKIM</span> in 20 seconds what might take 20 minutes. <span className="text-lg font-bold">ASK</span> questions and <span className="text-lg font-bold">MOVE ON</span>.
+                  <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
+                    Skim. Ask. Move on.
+                  </h1>
+              {/* <p className="text-lg text-gray-400 dark:text-gray-500 font-semibold mb-10 px-1">
+              No need to save for later. <span className="text-lg font-bold dark:dark:text-gray-300">Absorb in seconds</span> what used to take minutes. 
+              </p> */}
+              <p className="text-lg font-bold text-gray-400 dark:text-gray-600 mb-10 px-1">
+              No need to save for later: <span className=" text-gray-600 dark:text-gray-400">Absorb in seconds</span> what used to take minutes. 
               </p>
                   <div className="w-full flex flex-col items-start sm:pb-32 pb-20">
                     <motion.form 
@@ -509,17 +512,6 @@ export default function Page() {
                     </motion.form>
                     {/* New ExampleLinks component */}
                     <ExampleLinks onAddLink={handleAddLink} />
-                    {/* <div className="space-y-6 text-sm text-gray-400 dark:text-gray-600 mt-10 px-1">
-                      <p>
-                        <span className="text-lg font-bold">Smart Caching:</span> After the initial processing, your content is globally cached. Future access is instant, eliminating repeated wait times.
-                      </p>
-                      <p>
-                        <span className="text-lg font-bold">Lightning-Fast Access:</span> Paste or click a link, and skim through content in seconds. What you unlock is available for everyone.
-                      </p>
-                      <p>
-                        <span className="text-lg font-bold">Interactive Exploration:</span> Ask questions, uncover insights, and dive deep into content like never before.
-                      </p>
-                    </div> */}
                   </div>
                 </motion.div>
               </div>

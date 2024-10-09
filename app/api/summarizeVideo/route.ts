@@ -81,7 +81,8 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
     const chunks = await textSplitter.createDocuments([transcript], [metadata]);
 
     const embeddingPromises = chunks.map(async (chunk, index) => {
-      const formattedContent = convertTimestamps(chunk.pageContent);
+      // const formattedContent = convertTimestamps(chunk.pageContent);
+      const formattedContent = `${convertTimestamps(chunk.pageContent)}\nTitle: ${metadata.title}\nAuthor: ${metadata.author}\nLink: ${metadata.link}`;
       const embedding = await embeddings.embedQuery(formattedContent);
       return embeddingsIndex.upsert([
         {
