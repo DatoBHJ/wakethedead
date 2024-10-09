@@ -16,6 +16,7 @@ import ThemeBasedVideo from '@/components/ThemeBasedVideo';
 import UserSharedLinks from '@/components/UserSharedLinks';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import ExampleLinks from '@/components/ExampleLinks';
+import { initialQuestions } from '@/components/initialQuestions';
 
 interface UserDataResult {
   title: string;
@@ -111,6 +112,11 @@ export default function Page() {
   const [showUFO, setShowUFO] = useState(false);
   const mainContentRef = useRef(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  const randomQuestions = useMemo(() => {
+    const shuffled = [...initialQuestions].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 5);
+  }, []);
 
   // Ref declarations
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -587,6 +593,7 @@ export default function Page() {
                   onAddLink={handleAddLink}
                   onRefresh={handleRefresh}
                   extractedQuestions={extractedQuestions}
+                  randomQuestions={randomQuestions}  // 새로 추가된 prop
                 />
               </div>
             </motion.div>
@@ -605,6 +612,7 @@ export default function Page() {
             onAddLink={handleAddLink}
             onRefresh={handleRefresh}
             extractedQuestions={extractedQuestions}
+            randomQuestions={randomQuestions}  // 새로 추가된 prop
           />
         )}
       </div>

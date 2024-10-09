@@ -41,7 +41,6 @@ export const initialQuestions = [
     "How to register to vote in the us 🗳️",
     "Messi vs Ronaldo ⚽",
     "Kendrick Lamar vs Drake: Who won the beef? 🎤",
-    "Explain the movie TENET very simply 🎥",
     "How many people did Pieter Levels mute on Twitter? 🤐",
     "Charli XCX new album review 🎵",
     "Is Kanye West crazy or a genius…or both? Or neither? 🤔",
@@ -166,5 +165,4 @@ export const initialQuestions = [
             "Space tourism companies comparison 🚀",
             "Metaverse real estate investment guide 🏙️",
             "5G vs 6G technology comparison 📡",
-            "Cybersecurity trends for 2025 🔒",
     ];

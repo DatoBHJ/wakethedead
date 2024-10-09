@@ -14,7 +14,6 @@ import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
-import { initialQuestions } from './initialQuestions';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -28,6 +27,7 @@ interface BottomChatBarProps {
   onAddLink: (link: string) => void;
   onRefresh: (index: number) => void;
   extractedQuestions: string[];
+  randomQuestions: string[];  // 새로 추가된 prop
 }
 
 const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -42,16 +42,12 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   onAddLink,
   onRefresh,
   extractedQuestions,
+  randomQuestions,  // 새로 추가된 prop
 }) => {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
-
-  const randomQuestions = useMemo(() => {
-    const shuffled = [...initialQuestions].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5);
-  }, []);
   
   const combinedQuestions = useMemo(() => {
     if (extractedQuestions.length > 0) {
@@ -59,6 +55,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
     }
     return randomQuestions;
   }, [extractedQuestions, randomQuestions]);
+
 
   const mobileVariants = {
     hidden: { y: "100%" },
