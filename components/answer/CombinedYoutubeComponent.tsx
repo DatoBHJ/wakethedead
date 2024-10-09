@@ -65,7 +65,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
-
+  
   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
     const extractedContent: string[] = [];
