@@ -478,7 +478,7 @@ export default function Page() {
                   <p className="text-xs text-center sm:text-left sm:text-sm text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
                   No need to save for later. Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
                   </p>
-                  <div className="w-full flex flex-col items-start  pb-20 sm:pb-12 px-6">
+                  <div className="w-full flex flex-col items-start sm:pb-4 px-6">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
                       className="w-full"

@@ -44,7 +44,7 @@ const ExampleLinks = ({ onAddLink }) => {
         ))}
      </div>
       
-      <div className="mt-16 text-center">
+      <div className="mt-10 sm:mt-16 text-center">
         <Link href="/tips" className="text-xs text-gray-400 underline hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200">
           Wake The Dead: User Guide
         </Link>
