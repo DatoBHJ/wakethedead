@@ -8,7 +8,8 @@
 // import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 // import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 // import { Document as DocumentInterface } from 'langchain/document';
-// import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
+// import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
+// // import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 // export const runtime = 'edge';
 
@@ -143,42 +144,46 @@
 //   }
 // }
 // async function processAndVectorizeContent(
-//   contents: ContentResult[],
-//   query: string,
-//   textChunkSize = config.textChunkSize,
-//   textChunkOverlap = config.textChunkOverlap,
-//   numberOfSimilarityResults = config.numberOfSimilarityResults,
-// ): Promise<SearchResult[]> {
-//   const relevantDocuments: [DocumentInterface, number][] = [];
-//   try {
-//     for (let i = 0; i < contents.length; i++) {
-//       const content = contents[i];
-//       if (content.html.length > 0) {
-//         try {
-//           const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
-//           const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
-//           const queryEmbedding = await embeddings.embedQuery(query);
-//           const contentResults = await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
-//           relevantDocuments.push(...contentResults);
-//         } catch (error) {
-//           console.error(`Error processing content for ${content.url}:`, error);
+//     contents: ContentResult[],
+//     query: string,
+//     textChunkSize = config.textChunkSize,
+//     textChunkOverlap = config.textChunkOverlap,
+//     numberOfSimilarityResults = config.numberOfSimilarityResults,
+//   ): Promise<SearchResult[]> {
+//     const relevantDocuments: [DocumentInterface, number][] = [];
+//     try {
+//       const processingPromises = contents.map(async (content) => {
+//         if (content.html.length > 0) {
+//           try {
+//             const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
+//             const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
+//             const queryEmbedding = await embeddings.embedQuery(query);
+//             return await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
+//           } catch (error) {
+//             console.error(`Error processing content for ${content.url}:`, error);
+//             return [];
+//           }
 //         }
-//       }
+//         return [];
+//       });
+  
+//       const results = await Promise.all(processingPromises);
+//       relevantDocuments.push(...results.flat());
+  
+//       return relevantDocuments
+//         .sort((a, b) => b[1] - a[1])
+//         .filter(([_, score]) => score >= config.similarityThreshold)
+//         .map(([doc, score]) => ({
+//           title: doc.metadata.title as string,
+//           pageContent: doc.pageContent,
+//           url: doc.metadata.url as string,
+//           score: score
+//         }));
+//     } catch (error) {
+//       console.error('Error processing and vectorizing content:', error);
+//       throw error;
 //     }
-//     return relevantDocuments
-//       .sort((a, b) => b[1] - a[1])
-//       .filter(([_, score]) => score >= config.similarityThreshold)
-//       .map(([doc, score]) => ({
-//         title: doc.metadata.title as string,
-//         pageContent: doc.pageContent,
-//         url: doc.metadata.url as string,
-//         score: score
-//       }));
-//   } catch (error) {
-//     console.error('Error processing and vectorizing content:', error);
-//     throw error;
 //   }
-// }
 
 
 // const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
@@ -221,6 +226,14 @@
 //   return [processedResults, uniqueRelevantDocs];
 // }
 
+// interface NewsResult {
+//   title: string;
+//   link: string;
+//   snippet: string;
+//   date: string;
+//   source: string;
+// }
+
 // async function myAction(
 //   userMessage: string, 
 //   selectedModel: string,
@@ -228,25 +241,50 @@
 //   isRefresh: boolean = false,
 // ): Promise<any> {
 //   "use server";
+//   console.log('myAction called with:', {
+//     userMessage,
+//     selectedModel,
+//     selectedLanguage,
+//     isRefresh
+//   });
 
 //   const streamable = createStreamableValue({});
 //   (async () => {
 //     const currentTimestamp = new Date().toISOString();
 //     const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
-//     console.log('User message:', userMessage, '\n');
-    
+
+//     // 뉴스 관련 쿼리인지 확인하는 함수
+//     const isNewsQuery = (query: string): boolean => {
+//       const newsKeywords = ['news', 'headline', 'breaking', 'latest'];
+//       return newsKeywords.some(keyword => query.toLowerCase().includes(keyword));
+//     };
+
+//     const isNewsSearch = isNewsQuery(userMessage);
+
 //     const [webSearchResults, relevantDocuments, images, videos] = await Promise.all([
-//       performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan),
+//       performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan, isNewsSearch),
 //       getUserSharedDocument(userMessage, embeddings, index),
 //       isRefresh ? null : performImageSearch(userMessage),
 //       isRefresh ? null : performVideoSearch(userMessage)
 //     ]);
 
-//     const slicedWebSearchResults = webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
+//     // 뉴스 검색 결과를 SearchResult 형식으로 변환
+//     let processedResults: SearchResult[];
+//     if (isNewsSearch) {
+//       processedResults = (webSearchResults as NewsResult[]).map((result): SearchResult => ({
+//         title: result.title,
+//         pageContent: `${result.snippet} (Source: ${result.source}, Date: ${result.date})`,
+//         url: result.link
+//       }));
+//     } else {
+//       processedResults = webSearchResults as SearchResult[];
+//     }
+
+//     const slicedWebSearchResults = processedResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
 
 //     streamable.update({
 //       relevantDocuments,
-//       // processedWebResults: slicedWebSearchResults,
+//       processedWebResults: slicedWebSearchResults, // showing user prequrated web search results
 //       ...(isRefresh ? {} : { images, videos })
 //     });
 
@@ -273,39 +311,41 @@
 //         content: `You're a witty and clever AI assistant.
 //         Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
     
-//         1. Answer the user query using only relevant documents from the provided sources.
+//         1. Respond to the user's input, which may be a question or a search term. If it's a search term, provide relevant information about that topic.
+//         Use only relevant documents from the provided sources.
 //         If you find any conflicting or outdated information, trust sources shared by web search results over user-shared documents.
-//         Also fyi squared brackets like [HH:MM:SS] or [MM:SS] are timestamps for videos.\n\n
+    
 //         Today's date and time: 
-//         ${currentTimestamp}\n\n
+//         ${currentTimestamp}
+    
 //         Sources from the web:
-//         ${JSON.stringify(promptProcessedWebResults)}\n\n
+//         ${JSON.stringify(promptProcessedWebResults)}
+    
 //         Sources shared by users:
-//         ${JSON.stringify(promptRelevantDocuments)}\n\n
-
-//         2. Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
-//         <answerFormat>
-//         ## Quick Answer ⚡
-//         [Quick answer to the user message in 1-2 punchy sentences with relevant emojis]
+//         ${JSON.stringify(promptRelevantDocuments)}
+    
+//         2. Respond back ALWAYS IN MARKDOWN, with the following structure:
+//         ## Quick Answer 💡
+//         [Provide a brief, engaging response to the user's input '${userMessage}' in 1-2 punchy sentences with relevant emojis. If it's a search term, give a concise overview of the topic.]
     
 //         ## Key Takeaways 🎯
-//         - [List 3-5 key points related to the question with relevant emojis]
+//         - [List 3-5 key points related to the input with relevant emojis]
     
 //         ## The Scoop 🔍
-//         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples!]
-//         </answerFormat>
+//         [Provide a more detailed explanation with relevant emojis. Be verbose with a lot of details. Spice it up with fun analogies or examples! If the input was a search term, elaborate on the most interesting aspects of the topic.]
 //         `
 //       },
 //       {
 //         role: "user" as const,
 //         content: `
-//         Here is my query:
-//         ${userMessage}\n\n
-//         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
-//       `
+//         Here is my input:
+//         ${userMessage}
+    
+//         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.
+//         `
 //       }
 //     ];
-    
+        
 //     const chatCompletion = await openai.chat.completions.create({
 //       temperature: 0.3, 
 //       messages,

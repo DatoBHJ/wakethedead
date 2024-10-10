@@ -9,7 +9,8 @@ export const config = {
     useSemanticCache: true, 
     startIndexOfPagesToScan: 0,
     numberOfPagesToScan: 7,
-    timeout: 700, //800
+    timeout: 700, 
+    embedTimeout: 15000, // 15 seconds
     similarityThreshold: 0.6,
     numberOfSimilarityResults: 4, 
     numberOfVideosToScan: 6,
