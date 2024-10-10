@@ -409,7 +409,7 @@ export default function Page() {
             >
               <List size={24} />
             </button>
-            <a href="/" className=" hover:text-blue-600 dark:hover:text-blue-300 dark:text-neutral-300 text-black z-50 font-semibold px-4">
+            <a href="/" className=" hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4">
               {/* Wake The Dead */}
               {isDesktop ? 'Wake The Dead' : 'WTD'}
             </a>
@@ -470,18 +470,15 @@ export default function Page() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full max-w-xl justify-center p-4 flex flex-col items-start"
+                  className="w-full max-w-xl justify-center p-4 flex flex-col item-center sm:items-start"
                 >
-                  <h1 className="text-6xl sm:text-7xl font-bold mt-5 mb-10 text-left text-blue-500 w-full">
-                    Skim. Ask. Move on.
+                  <h1 className="text-4xl sm:text-5xl font-bold mt-5 mb-5 text-center sm:text-left text-blue-500 w-full px-6">
+                    Skim. Ask. <br /> Move on.
                   </h1>
-              {/* <p className="text-lg text-gray-400 dark:text-gray-500 font-semibold mb-10 px-1">
-              No need to save for later. <span className="text-lg font-bold dark:dark:text-gray-300">Absorb in seconds</span> what used to take minutes. 
-              </p> */}
-              <p className="text-lg font-bold text-gray-400 dark:text-gray-600 mb-10 px-1">
-              No need to save for later: <span className=" text-gray-600 dark:text-gray-400">Absorb in seconds</span> what used to take minutes. 
-              </p>
-                  <div className="w-full flex flex-col items-start sm:pb-32 pb-20">
+                  <p className="text-xs text-center sm:text-left sm:text-sm text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
+                  No need to save for later. Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
+                  </p>
+                  <div className="w-full flex flex-col items-start  pb-20 sm:pb-12 px-6">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
                       className="w-full"

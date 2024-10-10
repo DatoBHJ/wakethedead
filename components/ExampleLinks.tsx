@@ -19,7 +19,7 @@ const ExampleLinks = ({ onAddLink }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7, duration: 0.5 }}
     >
-      <p className="text-sm text-blue-500 dark:text-blue-400 mt-10 mb-2 pl-2">
+      <p className="text-sm text-blue-500 dark:text-blue-400 mb-2 pl-2">
         {/* Or try these examples:  */}
       </p>
       <div className="grid grid-cols-2 gap-2">
@@ -34,7 +34,7 @@ const ExampleLinks = ({ onAddLink }) => {
             <div className="text-xs text-gray-400 dark:text-gray-600 absolute top-1 left-2">
               {link.source}
             </div>
-            <div className="text-sm text-gray-700 dark:text-gray-400 font-handwriting line-clamp-2 mt-4">
+            <div className="text-sm text-gray-700 dark:text-gray-400 line-clamp-2 mt-4">
               {link.label}
             </div>
             <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
