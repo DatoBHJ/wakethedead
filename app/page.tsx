@@ -7,7 +7,7 @@ import CombinedYoutubeComponent from '@/components/answer/CombinedYoutubeCompone
 import LeftSidebar from '@/components/LeftSidebar';
 import BottomChatBar from '@/components/BottomChatBar';
 import { List, ArrowRight, Gear } from "@phosphor-icons/react";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { IconMessage } from '@/components/ui/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ModelSelector from '@/components/ModelSelector';
@@ -413,9 +413,6 @@ export default function Page() {
               {/* Wake The Dead */}
               {isDesktop ? 'Wake The Dead' : 'WTD'}
             </a>
-            {/* <a href="/" className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 z-50 font-semibold px-4 ">
-              WTD
-            </a> */}
             {!isDesktop && (
               <div className="flex items-center space-x-4 ml-auto">
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
@@ -513,7 +510,6 @@ export default function Page() {
                         </motion.button>
                       </div>
                     </motion.form>
-                    {/* New ExampleLinks component */}
                     <ExampleLinks onAddLink={handleAddLink} />
                   </div>
                 </motion.div>
@@ -590,7 +586,7 @@ export default function Page() {
                   onAddLink={handleAddLink}
                   onRefresh={handleRefresh}
                   extractedQuestions={extractedQuestions}
-                  randomQuestions={randomQuestions}  // 새로 추가된 prop
+                  randomQuestions={randomQuestions}  
                 />
               </div>
             </motion.div>
@@ -609,7 +605,7 @@ export default function Page() {
             onAddLink={handleAddLink}
             onRefresh={handleRefresh}
             extractedQuestions={extractedQuestions}
-            randomQuestions={randomQuestions}  // 새로 추가된 prop
+            randomQuestions={randomQuestions} 
           />
         )}
       </div>
