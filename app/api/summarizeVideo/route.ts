@@ -232,43 +232,30 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
     messages: [
       {
         role: "system",
-        content: `
-        You're casually watching a YouTube video and creating quick, informal notes with emojis.
-        Use everyday language and be super casual - like real handwritten notes.`
+        content: `Create casual, emoji-rich notes for a YouTube video in ${selectedLanguage}. Be informative and visually appealing.`
       },
       {
         role: "user",
-        content: `Create casual notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-        I speak ${selectedLanguage}, so respond in that language.\n\n
-        Include LOTS of relevant emojis! Your MARKDOWN response MUST have these 4 elements:\n
-        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-        2. A level 2 heading (##) followed immediately by a short but comprehensive summary in 1-2 sentences with emojis:
-          * Start with "## " and then write that summary.
-          * Focus on the most crucial information or main idea of this chunk.
-          * Include ANY key data, numbers, scores, or events if mentioned.
-          * Use emojis, arrows (→, ↑, ↓), or other relevant symbols to enhance readability and make the summary more visually appealing.\n\n
-        3. Casual short scribble with 2-5 key points:
-          * Start each point with timestamp which should be in [HH:MM:SS] or [MM:SS] format with square brackets.
-          * Avoid directly quoting or listing the transcript chunk.
-          * Be short, casual and informal. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
-        4. 1 follow-up question starting with a blockquote (>):
-          * Make it self-contained and clearly indicate its topic.
-          * Aim for a thought-provoking question that encourages further exploration.\n\n
+        content: `Summarize part ${chunkNumber}/${totalChunks} of "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+        
+        Format:
+        # Part ${chunkNumber}/${totalChunks}
+        ## [Immediate 1-2 sentence summary with content-specific emojis]
+        [3-5 ultra-concise key points with timestamps and content-related emojis]
+        > [Standalone follow-up question with emojis]
 
-        Follow this MARKDOWN format:\n
-        # Part ${chunkNumber}/${totalChunks}\n
-        ## Comprehensive summary in 1-2 sentences\n
-        casual short scribble with key points and timestamps\n
-        > [Follow-up question]\n\n
+        Guidelines:
+        1. Start summary immediately after ##. No separate title.
+        2. Use many content-specific emojis, not format-related ones.
+        3. Key points should be free-form, ultra-concise (3-7 words each), and include timestamps.
+        4. Ensure the summary and key points are specific and informative. Don't quote directly.
+        5. Include a standalone question that encourages further exploration. Make sure it starts with >.
 
-        Base your notes on this transcript chunk:\n
-        ${formattedChunk}\n\n
-
-        Remember to have all 4 ELEMENTS in your MARKDOWN response and NEVER INCLUDE any notes or explanations or system prompts in your response.
-        `
+        Transcript chunk:
+        ${formattedChunk}`
       }
     ],
-    temperature: 0.8,
+    temperature: 0.3,
     stream: true,
     max_tokens: 500,
   });
@@ -283,43 +270,30 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
     messages: [
       {
         role: "system",
-        content: `You're casually reading an article and creating quick, informal notes with emojis.
-        Use everyday language, be super casual - like real handwritten notes.
-        `
+        content: `Create casual, emoji-rich notes for an article in ${selectedLanguage}. Be informative and visually appealing.`
       },
       {
         role: "user",
-        content: `Create casual notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}". 
-        I speak ${selectedLanguage}, so respond in that language.\n\n
-        Include LOTS of relevant emojis! Your MARKDOWN response MUST have these 4 elements:\n
-        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-        2. A level 2 heading (##) followed immediately by a short but comprehensive summary in 1-2 sentences with emojis:
-          * Start with "## " and then write that summary.
-          * Focus on the most crucial information or main idea of this chunk.
-          * Include ANY key data, numbers, scores, or events if mentioned.
-          * Use emojis, arrows (→, ↑, ↓), or other relevant symbols to enhance readability and make the summary more visually appealing.\n\n
-        3. Casual short scribble with 2-5 key points:
-          * Avoid directly quoting or listing the transcript chunk.
-          * Be short, casual and informal. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
-        4. 1 follow-up question starting with a blockquote (>):
-          * Make it self-contained and clearly indicate its topic.
-          * Aim for a thought-provoking question that encourages further exploration.\n\n
-
-        Follow this MARKDOWN format:\n
-        # Part ${chunkNumber}/${totalChunks}\n
-        ## Comprehensive summary in 1-2 sentences\n
-        casual short scribble with key points\n
-        > [Follow-up question]\n\n
-
-        Base your scribbles on this:\n
-        Chunk: ${chunk}\n\n
+        content: `Summarize part ${chunkNumber}/${totalChunks} of "${articleInfo.title || ''}". 
         
-        Remember to have all 4 ELEMENTS in your MARKDOWN response and NEVER INCLUDE any notes or explanations or system prompts in your response.
-        If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated content..." or "📢 Possible advertisement?" and move on.
-        `
+        Format:
+        # Part ${chunkNumber}/${totalChunks}
+        ## [Immediate 1-2 sentence summary with content-specific emojis]
+        [3-5 ultra-concise key points with content-related emojis]
+        > [Standalone follow-up question with emojis]
+
+        Guidelines:
+        1. Start summary immediately after ##. No separate title.
+        2. Use many content-specific emojis, not format-related ones.
+        3. Key points should be free-form, ultra-concise (3-7 words each).
+        4. Ensure the summary and key points are specific and informative. Don't quote directly.
+        5. Include a standalone question that encourages further exploration. Make sure it starts with >.
+
+        Article chunk:
+        ${chunk}`
       }
     ],
-    temperature: 0.7,
+    temperature: 0.3,
     stream: true,
     max_tokens: 500,
   });

@@ -81,16 +81,14 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       }
   
       // Improved question extraction
-      const questionMatches = part.match(/^>\s*(.+?)(?:\n|$)/gm);
-      if (questionMatches) {
-        questionMatches.forEach(match => {
-          const question = match.replace(/^>\s*/, '').trim();
-          // Check if it's a question or ends with emojis
-          if (question.endsWith('?') || /[\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]$/u.test(question)) {
-            extractedContent.push(question);
-          }
-        });
-      }
+      const lines = part.split('\n');
+      lines.forEach(line => {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('>') && trimmedLine.includes('?')) {
+          const question = trimmedLine.replace(/^>\s*/, '').trim();
+          extractedContent.push(question);
+        }
+      });
     });
   
     return extractedContent;

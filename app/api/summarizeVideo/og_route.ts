@@ -81,7 +81,8 @@
 //     const chunks = await textSplitter.createDocuments([transcript], [metadata]);
 
 //     const embeddingPromises = chunks.map(async (chunk, index) => {
-//       const formattedContent = convertTimestamps(chunk.pageContent);
+//       // const formattedContent = convertTimestamps(chunk.pageContent);
+//       const formattedContent = `${convertTimestamps(chunk.pageContent)}\nTitle: ${metadata.title}\nAuthor: ${metadata.author}\nLink: ${metadata.link}`;
 //       const embedding = await embeddings.embedQuery(formattedContent);
 //       return embeddingsIndex.upsert([
 //         {
@@ -120,312 +121,346 @@
 //       return formatTimestamp(parseFloat(seconds));
 //     });
 //   }
-  
 
+// // async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+// //   const formattedChunk = convertTimestamps(chunk);
+// //   // console.log('formattedChunk:', formattedChunk);
+// //   console.log('selectedModel:', selectedModel);
+// //   const response = await openai.chat.completions.create({
+// //     model: selectedModel,
+// //     messages: [
+// //       {
+// //         role: "system",
+// //         content: `
+// //         You're casually watching a YouTube video and scribbling down quick, messy, informal short notes filled with emojis.
+// //         Use everyday language, be super casual - like real handwritten notes.
+// //         Always respond in the user's preferred language, which is ${selectedLanguage}.
+// //         Your response must include all required 4 elements.`
+// //       },
+// //       {
+// //         role: "user",
+// //         content: `Scribble down some casual notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+// //         I speak ${selectedLanguage}, so respond in that language.\n\n
+// //         Sprinkle in LOTS of relevant emojis! Your response MUST include these 4 elements:\n
+// //         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+// //         2. A level 2 heading (##) that has a summary with 1-2 sentences, including ANY crucial information or major conclusions, even if briefly mentioned.
+// //           For example, if a specific data, number, score, or event is mentioned, ALWAYS include it.\n\n
+// //         3. Casual short summary scribble, maximum 3-8 concise key points that have timestamps at the beginning of each point.\n
+// //           * Timestamps should be in [HH:MM:SS] or [MM:SS] format with square brackets.\n
+// //           * Avoid directly quoting or listing the transcript CHUNK.\n
+// //           * Be short, casual and informal. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
+// //         4. 1 follow-up question which starts with a blockquote (>).\n
+// //           * Each question should be self-contained and clearly indicate what it's about without needing context.\n
+// //           * Avoid questions that rely on personal opinions or subjective experiences of the LLM.\n
+// //           * Focus on questions that can be answered based on factual information, analysis, or interpretation of known events/works.\n\n
 
-//   // async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
-//   //   const formattedChunk = convertTimestamps(chunk);
-//   //   console.log('formattedChunk:', formattedChunk);
-//   //   const response = await openai.chat.completions.create({
-//   //     model: selectedModel,
-//   //     messages: [
-//   //       {
-//   //         role: "system",
-//   //         content: `You're casually watching a YouTube video and jotting down quick, brief, informal notes. Use everyday language, and include brief personal reactions or questions.
-//   //                 Always respond in user preference language whcih is ${selectedLanguage}. `
-//   //       },
-//   //       {
-//   //         role: "user",
-//   //         content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-//   //         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
-//   //         Use many relevant emojis !! Include:
-//   //         - A super brief "what's this part about" line
-//   //         - A few key points with timestamps (always use [HH:MM:SS] or [MM:SS] format with square brackets)
-//   //         - Maybe 1 question/thought or reaction
-  
-//   //         Base your notes on this transcript chunk:
-//   //         ${formattedChunk}
-  
-//   //         Format your response like someone quickly jotting notes. Use dashes, arrows, emojis. Be brief and casual! Start with "Part ${chunkNumber}/${totalChunks}:" to indicate which part of the video these notes cover. Remember, always use square brackets for timestamps!`
-//   //       }
-//   //     ],
-//   //     temperature: 0.7,
-//   //     stream: true,
-//   //     max_tokens: 500,
-//   //   });
-  
-//   //   return response;
-//   // }
-  
-//   // async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage): Promise<any> {
-//   //   const response = await openai.chat.completions.create({
-//   //     model: selectedModel,
-//   //     messages: [
-//   //       {
-//   //         role: "system",
-//   //         content: `You're quickly skimming through an article and taking brief, informal notes. Use everyday language, and include short personal reactions or questions.
-//   //                     Always respond in user preference language whcih is ${selectedLanguage}. `
-//   //       },
-//   //       {
-//   //         role: "user",
-//   //         content: `Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}".
-//   //         I speak ${selectedLanguage} and I want you to respond in ${selectedLanguage}.\n\n
-//   //         Use many relevant emojis !! Include:
-//   //         - A very brief "what's this part about" line
-//   //         - A few key points or interesting facts 
-//   //         - Maybe 1 question/thought or reaction
-  
-//   //         Base your notes on this content chunk:
-//   //         ${chunk}
-  
-//   //         Format your response like someone quickly jotting notes. Use dashes, arrows, emojis. Be brief and casual! Start with "Part ${chunkNumber}/${totalChunks}:" to indicate which part of the article these notes cover.
-//   //         If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated stuff..." or "📢 Looks like an ad?" and move on. 
-//   //         `
-//   //       }
-//   //     ],
-//   //     temperature: 0.7,
-//   //     stream: true,
-//   //     max_tokens: 500,
-//   //   });
-  
-//   //   return response;
-//   // }
+// //         Follow this format:\n
+// //         # Part ${chunkNumber}/${totalChunks}\n
+// //         ## [Summary with 1-2 sentences]\n
+// //         [casual short summary scribble with key points that have timestamps]\n
+// //         > [Follow-up question]\n\n
 
-//   async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-//     const formattedChunk = convertTimestamps(chunk);
-//     console.log('formattedChunk:', formattedChunk);
-//     const response = await openai.chat.completions.create({
-//       model: selectedModel,
-//       messages: [
-//         {
-//           role: "system",
-//           content: `You're casually watching a YouTube video and jotting down quick, informal notes. Use everyday language and be spontaneous. Always respond in ${selectedLanguage}. 
-//           Use emojis frequently to enhance the mood and give a quick impression of the content. Aim for a balance where emojis complement the text without overwhelming it.`
-//         },
-//         {
-//           role: "user",
-//           content: `
-//           Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-//           Respond in ${selectedLanguage}.
+// //         Base your scribbles on this CHUNK:\n
+// //         ${formattedChunk}\n\n
+
+// //         Remember, always to answer in MARKDOWN with emojis and do not include any notes or explanations about the format in your response.
+// //         `
+// //       }
+// //     ],
+// //     temperature: 0.6,
+// //     stream: true,
+// //     max_tokens: 500,
+// //   });
+
+// //   return response;
+// // }
+
+// // async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+// //   const response = await openai.chat.completions.create({
+// //     model: selectedModel,
+// //     messages: [
+// //       {
+// //         role: "system",
+// //         content: `You're casually skimming an article and scribbling down quick, messy, informal short notes filled with emojis.
+// //         Use everyday language, be super casual - like real handwritten notes.
+// //         Always respond in the user's preferred language, which is ${selectedLanguage}.
+// //         Your response must include all required 4 elements.`
+// //       },
+// //       {
+// //         role: "user",
+// //         content: `Scribble down some casual, messy notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}". 
+// //         I speak ${selectedLanguage}, so respond in that language.\n\n
+// //         Sprinkle in LOTS of relevant emojis! Your response MUST include these 4 elements:\n
+// //         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+// //         2. A level 2 heading (##) that has a summary with 1-2 sentences, including ANY crucial information or major conclusions, even if briefly mentioned.
+// //           For example, if a specific data, number, score, or event is mentioned, ALWAYS include it.\n\n
+// //         3. Casual short summary scribble, maximum 3-8 key points.\n
+// //           * Avoid directly quoting or listing the article content.\n
+// //           * Be short, casual and informal. Use arrows (->), squiggles (~), and other doodles.\n\n
+// //         4. 1 follow-up question which starts with a blockquote (>).\n
+// //           * Each question should be self-contained and clearly indicate what it's about without needing context.\n
+// //           * Avoid questions that rely on personal opinions or subjective experiences of the LLM.\n
+// //           * Focus on questions that can be answered based on factual information, analysis, or interpretation of known events/works.\n\n
+
+// //         Follow this format:\n
+// //         # Part ${chunkNumber}/${totalChunks}\n
+// //         ## [Summary with 1-2 sentences]\n
+// //         [casual short summary scribble with key points]\n
+// //         > [Follow-up question]\n\n
+
+// //         Base your scribbles on this:\n
+// //         Chunk: ${chunk}\n\n
+        
+// //         Remember, always to answer in MARKDOWN and do not include any notes or explanations about the format in your response.
+// //         If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated content..." or "📢 Possible advertisement?" and move on.
+// //         `
+// //       }
+// //     ],
+// //     temperature: 0.7,
+// //     stream: true,
+// //     max_tokens: 500,
+// //   });
+
+// //   return response;
+// // }
   
-//           Include:
-//           - A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}".
-//           - A level 2 heading (##) with a summary with 1-2 sentences, including ANY crucial information or major conclusions, even if briefly mentioned.
-//           - 5-8 key points or interesting facts.
-//             * Each point should start with a timestamp in [HH:MM:SS] or [MM:SS] format.
-//             * Be extremely concise. Aim for 10-15 words max per point, focusing on the most important information.
-//             * ALWAYS include any important data or key information, even if it's mentioned only briefly or once in the chunk. For example, if a review score is mentioned, always include it as a key point.
-//             * Use emojis to make the notes engaging and fun!
-//           - 2-3 follow-up questions which start with a blockquote (>).
-//             * Use SPECIFIC proper nouns, album/song titles, or event names. Avoid vague references like "the album" or "the artist". Use the title or author's name for clarity if needed.
-//             * Each question should be self-contained and clearly indicate what it's about without needing context.
-  
-//           Base your notes on this transcript chunk:
-//           ${formattedChunk}
-  
-//           Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
-  
-//           <answerFormat>
-//           # Part ${chunkNumber}/${totalChunks}
-  
-//           ## [Summary with 1-2 sentences]
-  
-//           [5-8 concise key points with timestamps]
-//           * Example: [10:15] 🎸 John Mayer wrote "Your Body Is a Wonderland" in 30 minutes!
-//           * Example: [05:30] 🏆 "Folklore" scores 10/10 on Pitchfork!
+// async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+//   const formattedChunk = convertTimestamps(chunk);
+//   console.log('selectedModel:', selectedModel);
+//   const response = await openai.chat.completions.create({
+//     model: selectedModel,
+//     messages: [
+//       {
+//         role: "system",
+//         content: `
+//         You're casually watching a YouTube video and creating quick, informal notes with emojis.
+//         Use everyday language and be super casual - like real handwritten notes.`
+//       },
+//       {
+//         role: "user",
+//         content: `Create casual notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+//         I speak ${selectedLanguage}, so respond in that language.\n\n
+//         Include LOTS of relevant emojis! Your MARKDOWN response MUST have these 4 elements:\n
+//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+//         2. A level 2 heading (##) followed immediately by a short but comprehensive summary in 1-2 sentences with emojis:
+//           * Start with "## " and then write that summary.
+//           * Focus on the most crucial information or main idea of this chunk.
+//           * Include ANY key data, numbers, scores, or events if mentioned.
+//           * Use emojis, arrows (→, ↑, ↓), or other relevant symbols to enhance readability and make the summary more visually appealing.\n\n
+//         3. Casual short scribble with 2-5 key points:
+//           * Start each point with timestamp which should be in [HH:MM:SS] or [MM:SS] format with square brackets.
+//           * Avoid directly quoting or listing the transcript chunk.
+//           * Be short, casual and informal. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
+//         4. 1 follow-up question starting with a blockquote (>):
+//           * Make it self-contained and clearly indicate its topic.
+//           * Aim for a thought-provoking question that encourages further exploration.\n\n
 
-//           [2-3 follow-up questions in blockquotes]
-//           * Example: > How will Beyoncé's "Renaissance" influence 2023's pop landscape? 🏠🎵
-          
-//           </answerFormat>
-//           Do not include any notes or explanations about the format in your response.
-//           `
-//         }
-//       ],
-//       temperature: 0.7,
-//       stream: true,
-//       max_tokens: 500,
-//     });
-  
-//     return response;
-//   }
-//   async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-//     const response = await openai.chat.completions.create({
-//       model: selectedModel,
-//       messages: [
-//         {
-//           role: "system",
-//           content: `You're casually skimming an article and jotting down quick, informal notes. Use everyday language and be spontaneous. Always respond in ${selectedLanguage}. 
-//           Use emojis frequently to enhance the mood and give a quick impression of the content. Aim for a balance where emojis complement the text without overwhelming it.`
-//         },
-//         {
-//           role: "user",
-//           content: `
-//           Create casual, quick notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}". 
-//           Respond in ${selectedLanguage}.
+//         Follow this MARKDOWN format:\n
+//         # Part ${chunkNumber}/${totalChunks}\n
+//         ## Comprehensive summary in 1-2 sentences\n
+//         casual short scribble with key points and timestamps\n
+//         > [Follow-up question]\n\n
 
-//           Include:
-//           - A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}".
-//           - A level 2 heading (##) with a summary with 1-2 sentences, including ANY crucial information or major conclusions, even if briefly mentioned.
-//           - 5-8 key points or interesting facts.
-//             * Be extremely concise. Aim for 10-15 words max per point, focusing on the most important information.
-//             * ALWAYS include any important data or key information, even if it's mentioned only briefly or once in the chunk.
-//             * Use emojis to make the notes engaging and fun!
-//           - 2-3 follow-up questions which start with a blockquote (>).
-//             * Use SPECIFIC proper nouns, article titles, or event names. Avoid vague references.
-//             * Each question should be self-contained and clearly indicate what it's about without needing context.
+//         Base your notes on this transcript chunk:\n
+//         ${formattedChunk}\n\n
 
-//           Base your notes on this content chunk:
-//           ${chunk}
+//         Remember to have all 4 ELEMENTS in your MARKDOWN response and NEVER INCLUDE any notes or explanations or system prompts in your response.
+//         `
+//       }
+//     ],
+//     temperature: 0.8,
+//     stream: true,
+//     max_tokens: 500,
+//   });
 
-//           Respond back ALWAYS IN MARKDOWN, following the format <answerFormat> below.
+//   return response;
+// }
 
-//           <answerFormat>
-//           # Part ${chunkNumber}/${totalChunks}
+// async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+//   console.log('selectedModel:', selectedModel);
+//   const response = await openai.chat.completions.create({
+//     model: selectedModel,
+//     messages: [
+//       {
+//         role: "system",
+//         content: `You're casually reading an article and creating quick, informal notes with emojis.
+//         Use everyday language, be super casual - like real handwritten notes.
+//         `
+//       },
+//       {
+//         role: "user",
+//         content: `Create casual notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}". 
+//         I speak ${selectedLanguage}, so respond in that language.\n\n
+//         Include LOTS of relevant emojis! Your MARKDOWN response MUST have these 4 elements:\n
+//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+//         2. A level 2 heading (##) followed immediately by a short but comprehensive summary in 1-2 sentences with emojis:
+//           * Start with "## " and then write that summary.
+//           * Focus on the most crucial information or main idea of this chunk.
+//           * Include ANY key data, numbers, scores, or events if mentioned.
+//           * Use emojis, arrows (→, ↑, ↓), or other relevant symbols to enhance readability and make the summary more visually appealing.\n\n
+//         3. Casual short scribble with 2-5 key points:
+//           * Avoid directly quoting or listing the transcript chunk.
+//           * Be short, casual and informal. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
+//         4. 1 follow-up question starting with a blockquote (>):
+//           * Make it self-contained and clearly indicate its topic.
+//           * Aim for a thought-provoking question that encourages further exploration.\n\n
 
-//           ## [Summary with 1-2 sentences]
+//         Follow this MARKDOWN format:\n
+//         # Part ${chunkNumber}/${totalChunks}\n
+//         ## Comprehensive summary in 1-2 sentences\n
+//         casual short scribble with key points\n
+//         > [Follow-up question]\n\n
 
-//           [5-8 concise key points]
-//           * Example: 🚀 SpaceX launches 60 Starlink satellites in single mission!
-//           * Example: 📊 Global smartphone sales declined 5.9% in Q2 2023.
+//         Base your scribbles on this:\n
+//         Chunk: ${chunk}\n\n
+        
+//         Remember to have all 4 ELEMENTS in your MARKDOWN response and NEVER INCLUDE any notes or explanations or system prompts in your response.
+//         If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated content..." or "📢 Possible advertisement?" and move on.
+//         `
+//       }
+//     ],
+//     temperature: 0.7,
+//     stream: true,
+//     max_tokens: 500,
+//   });
 
-//           [2-3 follow-up questions in blockquotes]
-//           * Example: > How will Apple's new M2 chip impact the laptop market in 2024? 💻🍎
-
-//           </answerFormat>
-//           Do not include any notes or explanations about the format in your response.
-//           If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated content..." or "📢 Possible advertisement?" and move on.
-//           `
-//         }
-//       ],
-//       temperature: 0.7,
-//       stream: true,
-//       max_tokens: 500,
-//     });
-
-//     return response;
+//   return response;
 // }
   
-//   export async function POST(request: Request) {
-//     const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
+// export async function POST(request: Request) {
+//   const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
+
+//   const language = selectedLanguage || 'en';
+//   console.log('selectedLanguage:', language);
+//   console.log('selectedModel:', selectedModel);
+
+//   const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
+//   console.log('cachekey', cacheKey)
   
-//     const language = selectedLanguage || 'en';
-//     console.log('selectedLanguage:', language);
-//     console.log('selectedModel:', selectedModel);
+//   const { exists, article } = await checkCachedArticle(cacheKey);
+
+//   if (!forceRegenerate && exists && article) {
+//     console.log('Returning cached summary');
+//     try {
+//       const parsedArticle = JSON.parse(article);
+//       return new NextResponse(parsedArticle.content, {
+//         headers: {
+//           'Content-Type': 'text/plain',
+//           'X-Cache-Exists': 'true',
+//           'X-Stream-Response': 'false',
+//         },
+//       });
+//     } catch (error) {
+//       console.error('Error parsing cached article:', error);
+//       return new NextResponse(article, {
+//         headers: {
+//           'Content-Type': 'text/plain',
+//           'X-Cache-Exists': 'true',
+//           'X-Stream-Response': 'false',
+//         },
+//       });
+//     }
+//   }
   
-//     const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
-//     console.log('cachekey', cacheKey)
-    
-//     const { exists, article } = await checkCachedArticle(cacheKey);
-  
-//     if (!forceRegenerate && exists && article) {
-//       console.log('Returning cached summary');
-//       try {
-//         const parsedArticle = JSON.parse(article);
-//         return new NextResponse(parsedArticle.content, {
-//           headers: {
-//             'Content-Type': 'text/plain',
-//             'X-Cache-Exists': 'true',
-//             'X-Stream-Response': 'false',
-//           },
-//         });
-//       } catch (error) {
-//         console.error('Error parsing cached article:', error);
-//         // 파싱 에러 발생 시 캐시된 데이터를 그대로 반환
-//         return new NextResponse(article, {
-//           headers: {
-//             'Content-Type': 'text/plain',
-//             'X-Cache-Exists': 'true',
-//             'X-Stream-Response': 'false',
-//           },
-//         });
+//   try {
+//     let contentInfo;
+//     let transcript;
+//     let isYouTube = false;
+
+//     if (videoUrl.includes('youtube') || videoUrl.includes('youtu.be')) {
+//       isYouTube = true;
+//       contentInfo = await fetchVideoInfo(videoId);
+//       transcript = await fetchTranscriptWithBackup(videoId);
+//       if (!transcript) {
+//         return NextResponse.json({ error: 'Failed to fetch video link content' }, { status: 500 });
+//       }
+//     } else {
+//       contentInfo = await fetchLinkInfo(videoUrl);
+//       transcript = contentInfo.content;
+//       if (!transcript) {
+//         return NextResponse.json({ error: 'Failed to fetch link content' }, { status: 500 });
 //       }
 //     }
-    
-//     try {
-//       let contentInfo;
-//       let transcript;
-//       let isYouTube = false;
+
+//     console.log('app/api/summarizeContent contentInfo:', { contentInfo });
+
+//     if (!forceRegenerate && !exists) {
+//       embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
+//     }
   
-//       if (videoUrl.includes('youtube') || videoUrl.includes('youtu.be')) {
-//         isYouTube = true;
-//         contentInfo = await fetchVideoInfo(videoId);
-//         transcript = await fetchTranscriptWithBackup(videoId);
-//         if (!transcript) {
-//           return NextResponse.json({ error: 'Failed to fetch video link content' }, { status: 500 });
-//         }
-//       } else {
-//         contentInfo = await fetchLinkInfo(videoUrl);
-//         transcript = contentInfo.content;
-//         if (!transcript) {
-//           return NextResponse.json({ error: 'Failed to fetch link content' }, { status: 500 });
-//         }
-//       }
-  
-//       console.log('app/api/summarizeContent contentInfo:', { contentInfo });
-  
-//       if (!forceRegenerate && !exists) {
-//         embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
-//       }
-    
-//       const textSplitter = new RecursiveCharacterTextSplitter({
-//         chunkSize: 6000,
-//         chunkOverlap: 0,
-//       });
-//       const chunks = await textSplitter.splitText(transcript);
-//       const encoder = new TextEncoder();
-  
-//       const customStream = new ReadableStream({
-//         async start(controller) {
-//           let accumulatedResponse = "";
-  
-//           for (let i = 0; i < chunks.length; i++) {
-//             console.log(`Processing chunk ${i + 1} of ${chunks.length}`);
-//             const chunk = chunks[i];
+//     const textSplitter = new RecursiveCharacterTextSplitter({
+//       chunkSize: 6000,
+//       chunkOverlap: 0,
+//     });
+//     const chunks = await textSplitter.splitText(transcript);
+//     const encoder = new TextEncoder();
+
+//     const customStream = new ReadableStream({
+//       async start(controller) {
+//         let accumulatedResponse = "";
+
+//         for (let i = 0; i < chunks.length; i++) {
+//           console.log(`Processing chunk ${i + 1} of ${chunks.length}`);
+//           const chunk = chunks[i];
+//           try {
 //             const summaryStream = isYouTube
 //               ? await generateCasualSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language)
 //               : await generateArticleSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language);
-  
+
 //             for await (const part of summaryStream) {
 //               const content = part.choices[0]?.delta?.content || '';
 //               controller.enqueue(encoder.encode(content));
 //               accumulatedResponse += content;
 //             }
-  
+
 //             if (i < chunks.length - 1) {
 //               controller.enqueue(encoder.encode('\n\n---\n\n'));
 //               accumulatedResponse += '\n\n---\n\n';
 //             }
+//           } catch (error) {
+//             console.error('Error processing chunk:', error);
+//             if (error.status === 429) {
+//               controller.enqueue(encoder.encode(`Error: ${error.error.message}`));
+//               controller.close();
+//               return;
+//             } else {
+//               throw error;
+//             }
 //           }
-  
-//           // Cache the complete generated summary with title, link, and timestamp
-//           const cacheData = {
-//             content: accumulatedResponse,
-//             title: contentInfo.title || '',
-//             link: videoUrl,
-//             timestamp: Date.now()
-//           };
-//           await semanticCache.set(cacheKey, JSON.stringify(cacheData));
-//           console.log('Summary cached with key:', cacheKey);
-          
-//           controller.close();
-//         },
-//       });
-  
-//       return new NextResponse(customStream, {
-//         headers: {
-//           'Content-Type': 'text/plain',
-//           'Cache-Control': 'no-cache',
-//           'Connection': 'keep-alive',
-//           'X-Stream-Response': 'true',
-//         },
-//       });
-//     }
-//     catch (error) {
-//       console.error('Error generating summary:', error);
-//       return NextResponse.json({ error: 'Failed to generate summary' }, { status: 500 });
-//     }
+//         }
+
+//         // Cache the complete generated summary with title, link, and timestamp
+//         const cacheData = {
+//           content: accumulatedResponse,
+//           title: contentInfo.title || '',
+//           link: videoUrl,
+//           timestamp: Date.now(),
+//           publishedTime: contentInfo.publishedTime || ''
+//         };
+//         await semanticCache.set(cacheKey, JSON.stringify(cacheData));
+//         console.log('Summary cached with key:', cacheKey);
+        
+//         controller.close();
+//       },
+//     });
+
+//     return new NextResponse(customStream, {
+//       headers: {
+//         'Content-Type': 'text/plain',
+//         'Cache-Control': 'no-cache',
+//         'Connection': 'keep-alive',
+//         'X-Stream-Response': 'true',
+//       },
+//     });
 //   }
+//   catch (error) {
+//     console.error('Error generating summary:', error);
+//     if (error.status === 429) {
+//       return NextResponse.json({ error: error.error.message }, { status: 429 });
+//     }
+//     return NextResponse.json({ error: 'Failed to generate summary' }, { status: 500 });
+//   }
+// }
   
 //   export async function PUT(request: Request) {
 //     const { videoId, editedContent, selectedModel, selectedLanguage, title, link } = await request.json();

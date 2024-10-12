@@ -9,7 +9,6 @@
 // import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 // import { Document as DocumentInterface } from 'langchain/document';
 // import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
-// // import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers';
 
 // export const runtime = 'edge';
 
@@ -45,7 +44,6 @@
 //   token: UPSTASH_VECTOR_REST_TOKEN,
 // });
 
-
 // interface SearchResult {
 //   title: string;
 //   url: string;
@@ -56,6 +54,13 @@
 //   html: string;
 // }
 
+// interface NewsResult {
+//   title: string;
+//   link: string;
+//   snippet: string;
+//   date: string;
+//   source: string;
+// }
 
 // async function getUserSharedDocument(userMessage: string, embeddings: OllamaEmbeddings | OpenAIEmbeddings, index: Index) {
 //   const queryEmbedding = await embeddings.embedQuery(userMessage);
@@ -81,112 +86,91 @@
 //     }));
 // }
 
+// async function fetchAndProcessContent(source: SearchResult): Promise<ContentResult | null> {
+//   const controller = new AbortController();
+//   const timeoutId = setTimeout(() => controller.abort(), config.timeout);
 
-// export async function get10BlueLinksContents(sources: SearchResult[]): Promise<ContentResult[]> {
-//   async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = config.timeout): Promise<Response> {
-//     try {
-//       const controller = new AbortController();
-//       const timeoutId = setTimeout(() => controller.abort(), timeout);
-//       const response = await fetch(url, { ...options, signal: controller.signal });
-//       clearTimeout(timeoutId);
-//       return response;
-//     } catch (error) {
-//       if (error) {
-//         console.log(`Skipping ${url}!`);
-//       }
-//       throw error;
-//     }
-//   }
-
-  
-//   function extractMainContent(html: string): string {
-//     let content = '';
-//     const mainContent = html.match(/<main[\s\S]*?>([\s\S]*?)<\/main>/i) ||
-//                         html.match(/<article[\s\S]*?>([\s\S]*?)<\/article>/i) ||
-//                         html.match(/<div[\s\S]*?class=["'][\s\S]*?content[\s\S]*?["'][\s\S]*?>([\s\S]*?)<\/div>/i);
-    
-//     if (mainContent) {
-//       content = mainContent[1]
-//         .replace(/<script[\s\S]*?<\/script>/gi, '') 
-//         .replace(/<style[\s\S]*?<\/style>/gi, '')   
-//         .replace(/<[^>]*>/g, ' ')              
-//         .replace(/\s+/g, ' ')                 
-//         .trim();                              
-//     } else {
-//       content = html.replace(/<head[\s\S]*?<\/head>/i, '')
-//                     .replace(/<script[\s\S]*?<\/script>/gi, '')
-//                     .replace(/<style[\s\S]*?<\/style>/gi, '')
-//                     .replace(/<[^>]*>/g, ' ')
-//                     .replace(/\s+/g, ' ')
-//                     .trim();
-//     }
-    
-//     return content;
-//   }
-
-//   const promises = sources.map(async (source): Promise<ContentResult | null> => {
-//     try {
-//       const response = await fetchWithTimeout(source.url, {}, config.timeout);
-//       const html = await response.text();
-//       const mainContent = extractMainContent(html);
-//       return { ...source, html: mainContent };
-//     } catch (error) {
-//       console.error(`Error processing ${source.url}:`, error);
-//       return null;
-//     }
-//   });
 //   try {
-//     const results = await Promise.all(promises);
-//     return results.filter((source): source is ContentResult => source !== null);
+//     const response = await fetch(source.url, { 
+//       signal: controller.signal 
+//     });
+//     clearTimeout(timeoutId);
+
+//     const html = await response.text();
+//     const mainContent = extractMainContent(html);
+//     return { ...source, html: mainContent };
 //   } catch (error) {
-//     console.error('Error fetching and processing blue links contents:', error);
-//     throw error;
+//     console.error(`Error processing ${source.url}:`, error);
+//     return null;
+//   } finally {
+//     clearTimeout(timeoutId);
 //   }
 // }
-// async function processAndVectorizeContent(
-//     contents: ContentResult[],
-//     query: string,
-//     textChunkSize = config.textChunkSize,
-//     textChunkOverlap = config.textChunkOverlap,
-//     numberOfSimilarityResults = config.numberOfSimilarityResults,
-//   ): Promise<SearchResult[]> {
-//     const relevantDocuments: [DocumentInterface, number][] = [];
-//     try {
-//       const processingPromises = contents.map(async (content) => {
-//         if (content.html.length > 0) {
-//           try {
-//             const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
-//             const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
-//             const queryEmbedding = await embeddings.embedQuery(query);
-//             return await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
-//           } catch (error) {
-//             console.error(`Error processing content for ${content.url}:`, error);
-//             return [];
-//           }
-//         }
-//         return [];
-//       });
+
+// function extractMainContent(html: string): string {
+//   let content = '';
+//   const mainContent = html.match(/<main[\s\S]*?>([\s\S]*?)<\/main>/i) ||
+//                       html.match(/<article[\s\S]*?>([\s\S]*?)<\/article>/i) ||
+//                       html.match(/<div[\s\S]*?class=["'][\s\S]*?content[\s\S]*?["'][\s\S]*?>([\s\S]*?)<\/div>/i);
   
-//       const results = await Promise.all(processingPromises);
-//       relevantDocuments.push(...results.flat());
-  
-//       return relevantDocuments
-//         .sort((a, b) => b[1] - a[1])
-//         .filter(([_, score]) => score >= config.similarityThreshold)
-//         .map(([doc, score]) => ({
-//           title: doc.metadata.title as string,
-//           pageContent: doc.pageContent,
-//           url: doc.metadata.url as string,
-//           score: score
-//         }));
-//     } catch (error) {
-//       console.error('Error processing and vectorizing content:', error);
-//       throw error;
-//     }
+//   if (mainContent) {
+//     content = mainContent[1]
+//       .replace(/<script[\s\S]*?<\/script>/gi, '') 
+//       .replace(/<style[\s\S]*?<\/style>/gi, '')   
+//       .replace(/<[^>]*>/g, ' ')              
+//       .replace(/\s+/g, ' ')                 
+//       .trim();                              
+//   } else {
+//     content = html.replace(/<head[\s\S]*?<\/head>/i, '')
+//                   .replace(/<script[\s\S]*?<\/script>/gi, '')
+//                   .replace(/<style[\s\S]*?<\/style>/gi, '')
+//                   .replace(/<[^>]*>/g, ' ')
+//                   .replace(/\s+/g, ' ')
+//                   .trim();
 //   }
+  
+//   return content;
+// }
 
+// async function processAndVectorizeContent(
+//   contents: ContentResult[],
+//   query: string,
+//   embeddings: OllamaEmbeddings | OpenAIEmbeddings,
+//   textChunkSize = config.textChunkSize,
+//   textChunkOverlap = config.textChunkOverlap,
+//   numberOfSimilarityResults = config.numberOfSimilarityResults,
+// ): Promise<SearchResult[]> {
+//   const relevantDocuments: [DocumentInterface, number][] = [];
+//   const processingPromises = contents.map(async (content) => {
+//     if (content.html.length > 0) {
+//       try {
+//         const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
+//         const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
+//         const queryEmbedding = await embeddings.embedQuery(query);
+//         return await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
+//       } catch (error) {
+//         console.error(`Error processing content for ${content.url}:`, error);
+//         return [];
+//       }
+//     }
+//     return [];
+//   });
 
-// const relevantQuestions = async (sources: SearchResult[], userMessage: String, selectedModel:string): Promise<any> => {
+//   const results = await Promise.all(processingPromises);
+//   relevantDocuments.push(...results.flat());
+
+//   return relevantDocuments
+//     .sort((a, b) => b[1] - a[1])
+//     .filter(([_, score]) => score >= config.similarityThreshold)
+//     .map(([doc, score]) => ({
+//       title: doc.metadata.title as string,
+//       pageContent: doc.pageContent,
+//       url: doc.metadata.url as string,
+//       score: score
+//     }));
+// }
+
+// async function relevantQuestions(sources: SearchResult[], userMessage: string, selectedModel: string): Promise<any> {
 //   return await openai.chat.completions.create({
 //     messages: [
 //       {
@@ -212,26 +196,11 @@
 //     model: selectedModel,
 //     response_format: { type: "json_object" },
 //   });
-// };
+// }
 
-
-// function removeDuplicatesForStreamable(relevantDocs: SearchResult[], processedResults: SearchResult[]): SearchResult[] {
+// function removeDuplicates(processedResults: SearchResult[], relevantDocs: SearchResult[]): SearchResult[] {
 //   const relevantUrls = new Set(relevantDocs.map(doc => doc.url));
 //   return processedResults.filter(result => !relevantUrls.has(result.url));
-// }
-
-// function removeDuplicatesForPrompt(processedResults: SearchResult[], relevantDocs: SearchResult[] | undefined): [SearchResult[], SearchResult[]] {
-//   const processedUrls = new Set(processedResults.map(result => result.url));
-//   const uniqueRelevantDocs = relevantDocs ? relevantDocs.filter(doc => !processedUrls.has(doc.url)) : [];
-//   return [processedResults, uniqueRelevantDocs];
-// }
-
-// interface NewsResult {
-//   title: string;
-//   link: string;
-//   snippet: string;
-//   date: string;
-//   source: string;
 // }
 
 // async function myAction(
@@ -241,19 +210,14 @@
 //   isRefresh: boolean = false,
 // ): Promise<any> {
 //   "use server";
-//   console.log('myAction called with:', {
-//     userMessage,
-//     selectedModel,
-//     selectedLanguage,
-//     isRefresh
-//   });
+//   console.log('myAction called with:', { userMessage, selectedModel, selectedLanguage, isRefresh });
 
 //   const streamable = createStreamableValue({});
+  
 //   (async () => {
 //     const currentTimestamp = new Date().toISOString();
 //     const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
 
-//     // 뉴스 관련 쿼리인지 확인하는 함수
 //     const isNewsQuery = (query: string): boolean => {
 //       const newsKeywords = ['news', 'headline', 'breaking', 'latest'];
 //       return newsKeywords.some(keyword => query.toLowerCase().includes(keyword));
@@ -261,6 +225,7 @@
 
 //     const isNewsSearch = isNewsQuery(userMessage);
 
+//     // Parallel execution of initial searches
 //     const [webSearchResults, relevantDocuments, images, videos] = await Promise.all([
 //       performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan, isNewsSearch),
 //       getUserSharedDocument(userMessage, embeddings, index),
@@ -268,43 +233,44 @@
 //       isRefresh ? null : performVideoSearch(userMessage)
 //     ]);
 
-//     // 뉴스 검색 결과를 SearchResult 형식으로 변환
-//     let processedResults: SearchResult[];
-//     if (isNewsSearch) {
-//       processedResults = (webSearchResults as NewsResult[]).map((result): SearchResult => ({
-//         title: result.title,
-//         pageContent: `${result.snippet} (Source: ${result.source}, Date: ${result.date})`,
-//         url: result.link
-//       }));
-//     } else {
-//       processedResults = webSearchResults as SearchResult[];
-//     }
-
-//     const slicedWebSearchResults = processedResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
-
+//     // Immediately update streamable with available results
 //     streamable.update({
 //       relevantDocuments,
-//       processedWebResults: slicedWebSearchResults, // showing user prequrated web search results
+//       processedWebResults: webSearchResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan),
 //       ...(isRefresh ? {} : { images, videos })
 //     });
 
-//     const blueLinksContents = await get10BlueLinksContents(slicedWebSearchResults);
-//     let processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp);
+//     // Process web search results
+//     let processedResults: SearchResult[] = isNewsSearch
+//       ? (webSearchResults as NewsResult[]).map((result): SearchResult => ({
+//           title: result.title,
+//           pageContent: `${result.snippet} (Source: ${result.source}, Date: ${result.date})`,
+//           url: result.link
+//         }))
+//       : webSearchResults as SearchResult[];
 
-//     processedWebResults = processedWebResults.length > 0 ? processedWebResults : slicedWebSearchResults;
+//     const slicedWebSearchResults = processedResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
 
-//     const uniqueProcessedWebResults = removeDuplicatesForStreamable(
-//       relevantDocuments || [],
-//       processedWebResults.slice(0, config.numberOfSimilarityResults)
+//     // Fetch and process content in parallel
+//     const contentPromises = slicedWebSearchResults.map(source => fetchAndProcessContent(source));
+//     const blueLinksContents = (await Promise.all(contentPromises)).filter((content): content is ContentResult => content !== null);
+
+//     // Process and vectorize content
+//     const processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp, embeddings);
+//     console.log('Processed web results:', processedWebResults);
+
+//     const uniqueProcessedWebResults = removeDuplicates(
+//       processedWebResults.length > 0 ? processedWebResults : slicedWebSearchResults,
+//       relevantDocuments || []
 //     );
 
-//     streamable.update({ 'processedWebResults': uniqueProcessedWebResults });
+//     // Update streamable with processed results
+//     streamable.update({ 'processedWebResults': uniqueProcessedWebResults.slice(0, config.numberOfSimilarityResults) });
 
-//     const [promptProcessedWebResults, promptRelevantDocuments] = removeDuplicatesForPrompt(
-//       processedWebResults.slice(0, config.numberOfSimilarityResults),
-//       relevantDocuments
-//     );
-    
+//     // Prepare final results for LLM prompt
+//     const promptProcessedWebResults = uniqueProcessedWebResults.slice(0, config.numberOfSimilarityResults);
+
+//     // LLM request
 //     const messages = [
 //       {
 //         role: "system" as const,
@@ -322,7 +288,7 @@
 //         ${JSON.stringify(promptProcessedWebResults)}
     
 //         Sources shared by users:
-//         ${JSON.stringify(promptRelevantDocuments)}
+//         ${JSON.stringify(relevantDocuments)}
     
 //         2. Respond back ALWAYS IN MARKDOWN, with the following structure:
 //         ## Quick Answer 💡
@@ -360,16 +326,17 @@
 //         streamable.update({ 'llmResponseEnd': true });
 //       }
 //     }
-    
 
+//     // Generate follow-up questions after LLM response
 //     const followUp = await relevantQuestions(
-//       [...promptProcessedWebResults, ...promptRelevantDocuments],
+//       [...promptProcessedWebResults, ...(relevantDocuments || [])],
 //       userMessage,
 //       selectedModel
 //     );
 //     streamable.update({ 'followUp': followUp });
 //     streamable.done({ status: 'done' });
 //   })();
+
 //   return streamable.value;
 // }
 

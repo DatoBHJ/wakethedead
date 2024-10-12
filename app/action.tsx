@@ -176,7 +176,7 @@ async function relevantQuestions(sources: SearchResult[], userMessage: string, s
       {
         role: "system",
         content: `
-          You are a Question generator who generates an array of 3 follow-up questions in JSON format.
+          You are a Question generator who generates an array of 3 follow-up self-contained questions in JSON format.
           The JSON schema should include:
           {
             "original": "The original search query or context",
@@ -190,7 +190,7 @@ async function relevantQuestions(sources: SearchResult[], userMessage: string, s
       },
       {
         role: "user",
-        content: `Generate follow-up questions based on the top results from a similarity search: ${JSON.stringify(sources)}. The original search query is: "${userMessage}".`,
+        content: `Generate follow-up self-contained questions based on the top results from a similarity search: ${JSON.stringify(sources)}. The original search query is: "${userMessage}".`,
       },
     ],
     model: selectedModel,

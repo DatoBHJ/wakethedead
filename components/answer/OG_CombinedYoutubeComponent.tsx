@@ -1,11 +1,14 @@
+
 // import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 // import { Button } from '@/components/ui/button';
 // import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 // import Skeleton, { LoadingIndicator } from './Skeleton';
 // import EditableArticleView from './VideoSummaryView';
-// import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera, Article, PencilSimple, FloppyDisk } from "@phosphor-icons/react";
+// import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera, Article, Rows, TextAlignLeft, PencilSimple, FloppyDisk } from "@phosphor-icons/react";
 // import { useArticleGenerator } from './useYoutubeHooks';
 // import { useToast } from "@/components/ui/use-toast";
+// import ExtractedQuestionsModal from './ExtractedQuestionsModal';
+// import ReadingTime from './ReadingTime'; // 새로 추가된 import
 
 // interface YouTubeCard {
 //   id: string;
@@ -24,6 +27,10 @@
 //   selectedLanguage: string;
 //   cards: YouTubeCard[];
 //   onLinkClick: (link: string) => void;
+//   onExtractQuestions: (questions: string[]) => void;
+//   onQuestionSelected: (question: string) => void; // Add this new prop
+//   setIsChatOpen: (isOpen: boolean) => void;
+
 // }
 
 // const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.memo(({
@@ -34,6 +41,10 @@
 //   selectedLanguage,
 //   cards,
 //   onLinkClick,
+//   onExtractQuestions,
+//   onQuestionSelected, // Add this new prop
+//   setIsChatOpen,
+
 // }) => {
 //   const { toast } = useToast();
 
@@ -41,8 +52,9 @@
 //   const [showVideo, setShowVideo] = useState(true);
 //   const [isEditing, setIsEditing] = useState(false);
 //   const videoRef = useRef<HTMLIFrameElement>(null);
-
 //   const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
+//   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
+//   const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
 
 //   const { 
 //     articles, 
@@ -53,7 +65,56 @@
 //   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
 //   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
+  
+//   const extractQuestionsFromContent = (content: string): string[] => {
+//     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
+//     const extractedContent: string[] = [];
+  
+//     parts.forEach((part, index) => {
+//       const partMatch = content.match(new RegExp(`# Part (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
+//       const partNumber = partMatch ? partMatch[1] : `${index + 1}/?`;
+  
+//       const summaryMatch = part.match(/##\s*(.+?)(?=\n|$)/);
+//       if (summaryMatch) {
+//         const summary = summaryMatch[1].trim();
+//         extractedContent.push(`**Part ${partNumber}: ${summary}**`);
+//       }
+  
+//       // Improved question extraction
+//       const questionMatches = part.match(/^>\s*(.+?)(?:\n|$)/gm);
+//       if (questionMatches) {
+//         questionMatches.forEach(match => {
+//           const question = match.replace(/^>\s*/, '').trim();
+//           // Check if it's a question or ends with emojis
+//           if (question.endsWith('?') || /[\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]$/u.test(question)) {
+//             extractedContent.push(question);
+//           }
+//         });
+//       }
+//     });
+  
+//     return extractedContent;
+//   };
+  
+//   useEffect(() => {
+//     const currentVideoId = videoIds[currentIndex];
+//     const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
+    
+//     if (contentToAnalyze) {
+//       const extractedQuestions = extractQuestionsFromContent(contentToAnalyze);
+//       setExtractedQuestions(extractedQuestions);
+//       onExtractQuestions(extractedQuestions);
+//     }
+//   }, [currentIndex, videoIds, editedArticles, articles, streamingContent, onExtractQuestions]);
 
+//   const handleExtractedQuestionClick = (question: string) => {
+//     // setShowQuestionsModal(false);
+//     onQuestionSelected(question); // Call this function when a question is selected
+//   };
+
+//   const toggleQuestionsModal = () => {
+//     setShowQuestionsModal(prev => !prev);
+//   };
 
 //   const handleEdit = useCallback(async (videoId: string, editedContent: string) => {
 //     const originalContent = articles[videoId] || streamingContent[videoId];
@@ -152,38 +213,7 @@
 
 //   const currentVideoId = videoIds[currentIndex];
   
-//   const renderContent = () => {
-//     if (isGenerating[currentVideoId]) {
-//       return (
-//         <>
-//           {streamingContent[currentVideoId] && (
-//             <EditableArticleView 
-//               content={streamingContent[currentVideoId]}
-//               onTimestampClick={handleTimestampClick}
-//               onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
-//               isEditing={false}
-//             />
-//           )}
-//           <LoadingIndicator />
-//         </>
-//       );
-//     }
-
-//     if (!articles[currentVideoId] && !streamingContent[currentVideoId]) {
-//       return <Skeleton />;
-//     }
-
-//     const contentToShow = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
-
-//     return (
-//       <EditableArticleView 
-//         content={contentToShow}
-//         onTimestampClick={handleTimestampClick}
-//         onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
-//         isEditing={isEditing}
-//       />
-//     );
-//   };
+  
 
 //   const handleThumbnailClick = useCallback((event: React.MouseEvent<HTMLDivElement>, link: string) => {
 //     event.preventDefault();
@@ -232,35 +262,103 @@
 //     }
 //   }, [cards, currentIndex, youtubeLinks, handleThumbnailClick, videoRef]);
 
+//   const extractSubtitles = (content: string): string => {
+//     const subtitles = content.match(/##[^\n]+/g);
+//     return subtitles ? subtitles.join('\n') : '';
+//   };
+
+//   const renderReadingTimes = (content: string) => {
+//     const subtitles = extractSubtitles(content);
+//     const currentCard = cards[currentIndex];
+//     const isYouTube = currentCard?.isYouTube ?? false;
+  
+//     return (
+//       <div className="text-sm text-muted-foreground mb-2 whitespace-normal">
+//         <ReadingTime 
+//           content={subtitles} 
+//           inline={true} 
+//           label="Headline Skim"
+//           isYouTube={isYouTube}
+//         />
+//         <ReadingTime 
+//           content={content} 
+//           inline={true} 
+//           label="Full Read"
+//           isYouTube={isYouTube}
+//         />
+//       </div>
+//     );
+//   };
+
+//   const renderContent = () => {
+//     if (isGenerating[currentVideoId]) {
+//       return (
+//         <>
+//           {streamingContent[currentVideoId] && (
+//             <>
+//               {renderReadingTimes(streamingContent[currentVideoId])}
+//               <EditableArticleView 
+//                 content={streamingContent[currentVideoId]}
+//                 onTimestampClick={handleTimestampClick}
+//                 onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
+//                 isEditing={false}
+//               />
+//             </>
+//           )}
+//           <LoadingIndicator />
+//         </>
+//       );
+//     }
+
+//     if (!articles[currentVideoId] && !streamingContent[currentVideoId]) {
+//       return <Skeleton />;
+//     }
+
+//     const contentToShow = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
+
+//     return (
+//       <>
+//         {renderReadingTimes(contentToShow)}
+//         <EditableArticleView 
+//           content={contentToShow}
+//           onTimestampClick={handleTimestampClick}
+//           onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
+//           isEditing={isEditing}
+//         />
+//       </>
+//     );
+//   };
+
 //   return (
 //     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
-//       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-//         {showVideo && (
-//           <div className="w-full lg:w-1/2 relative pt-[56.25%] lg:pt-0 bg-black">
-//             {renderMediaContent()}
-//           </div>
-//         )}
-//         <div className={`flex-1 overflow-y-auto ${showVideo ? 'lg:w-1/2' : 'w-full lg:flex lg:justify-center'}`}>
-//           <div className={`py-4 px-1 ${!showVideo && 'lg:max-w-2xl'}`}>
-//             <div className="bg-card dark:bg-card text-card-foreground dark:text-card-foreground rounded-lg px-4">
-//               {renderContent()}
+//       {showVideo && (
+//         <div className="w-full px-4 flex-shrink-0">
+//           <div className="max-w-4xl mx-auto">
+//             <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl">
+//               <div className="absolute top-0 left-0 w-full h-full">
+//                 {renderMediaContent()}
+//               </div>
 //             </div>
-//             {( articleError) && (
-//             <p className="text-foreground dark:text-foreground font-handwriting mt-3 px-4 text-sm">
-//               🚧 Oops! YouTube's giving us the cold shoulder right now 🥶<br /><br />
-//               But don't worry! Our tech wizards are on the case 🧙‍♂️💻<br /><br />
-//               In the meantime, try these alternatives:<br />
-//               🔄 Come back later (YouTube might be in a better mood)<br />
-//               🦸‍♀️ Use a VPN - it might just save the day!<br />
-//               📰 Try news articles or blog post web links instead<br />
-//               🤖 Check out our chatbot for instant answers<br /><br />
-//               Thanks for being patient! 🌟 We'll be back in action soon! 💪
-//             </p>
-//           )}
 //           </div>
 //         </div>
+//       )}
+//       <div className="flex-grow overflow-y-auto">
+//         {showQuestionsModal ? (
+//           <ExtractedQuestionsModal
+//             questions={extractedQuestions}
+//             handleFollowUpClick={handleExtractedQuestionClick}
+//             setIsChatOpen={setIsChatOpen}
+//           />
+//         ) : (
+//           <div className="py-4 px-2 max-w-4xl mx-auto">
+//             <div className="bg-card dark:bg-card text-gray-700 dark:text-gray-400 px-4">
+//               {renderContent()}
+//             </div>
+//             {articleError}
+//           </div>
+//         )}
 //       </div>
-//       <div className="flex items-center justify-between py-3 pt-2 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
+//       <div className="flex-shrink-0 flex items-center justify-between pt-5 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
 //         <div className="flex items-center space-x-1">
 //           <Button 
 //             onClick={handlePrevious} 
@@ -286,8 +384,16 @@
 //             <CaretRight size={20} />
 //           </Button>
 //         </div>
-        
+
 //         <div className="flex items-center space-x-2">
+//         <Button
+//             variant="outline"
+//             size="icon"
+//             onClick={toggleQuestionsModal}
+//             className="text-foreground/70 hover:text-foreground"
+//           >
+//             {showQuestionsModal ? <TextAlignLeft size={20} /> : <Rows size={20} />}
+//             </Button>
 //           <Button
 //             variant="outline"
 //             size="icon"
@@ -321,6 +427,7 @@
 //           >
 //             {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
 //           </Button>
+
 //         </div>
 //       </div>
 //     </div>
