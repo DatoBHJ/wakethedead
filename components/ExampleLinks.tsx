@@ -1,21 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { url } from 'inspector';
 
 const exampleLinks = [
   { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14m read -> 32s skim", source: "deeplearning.ai" },
-  { url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "📱 Marques is checking out the world's largest fake iPhone lol", duration: "55s video -> 9s skim", source: "youtube.com" },
+  { url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "😂 Marques is checking out the world's largest fake iPhone lol", duration: "55s video -> 9s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review - Charli XCX's BRAT", duration: "14m video -> 28s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", label: "🎙️ Lex Fridman Podcast - Pieter Levels: AI & Digital Nomad Life", duration: "3h 43m video -> 4m skim", source: "youtube.com" },
-  
-  // candidates
-  // { url: "https://x.com/smokeawayyy/status/1841215305751937156?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "OpenAI's issues 🚨: No DevDay livestream + compromised accounts 🤔", duration: "2m read -> 4s skim", source: "x.com" },
-  // { url: "https://www.psychiatrictimes.com/view/are-we-overdiagnosing-and-overtreating-adhd", label: "Are We Overdiagnosing and Overtreating ADHD?", duration: "11m read -> 20s skim", source: "youtube.com" },
-  // { url: "https://x.com/JonathanRoss321/status/1845548327963926678", label: "🚀 Unlock the Secrets of the Generative Age: 5 Unlocks to Artificial General Intelligence 🤖", duration: "3m read -> 5s skim", source: "youtube.com" },
+  { url: "https://www.youtube.com/watch?v=SBGG4WNweEc", label: "🏆 Announcement of the 2024 Nobel Prize in Physics", duration: "37m video -> 13s skim", source: "youtube.com" },
+  { url: "https://www.youtube.com/watch?v=MRtg6A1f2Ko", label: "📱 Marques Brownlee dives into the iPhone 16 and 16 Pro", duration: "21m video -> 18s skim", source: "youtube.com" },
+  { url: "https://x.com/smokeawayyy/status/1841215305751937156?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "OpenAI's issues 🚨: No DevDay livestream + compromised accounts 🤔", duration: "2m read -> 4s skim", source: "x.com" },
+  { url: "https://www.psychiatrictimes.com/view/are-we-overdiagnosing-and-overtreating-adhd", label: "💊 Are We Overdiagnosing and Overtreating ADHD?", duration: "11m read -> 20s skim", source: "psychiatrictimes.com" },
+  { url: "https://x.com/JonathanRoss321/status/1845548327963926678", label: "🚀 Unlock the Secrets of the Generative Age: 5 Unlocks to Artificial General Intelligence 🤖", duration: "3m read -> 5s skim", source: "x.com" },
+  { url: "https://www.summitdetox.com/blog/what-is-lean-drink/#:~:text=Lean%20consists%20of%20a%20combination,to%20give%20it%20more%20flavor.", label: "🍇 What is Lean Drink?", duration: "12m read -> 30s skim", source: "summitdetox.com" },
 ];
 
 const ExampleLinks = ({ onAddLink }) => {
+  const [randomLinks, setRandomLinks] = useState([]);
+
+  useEffect(() => {
+    const shuffled = [...exampleLinks].sort(() => 0.5 - Math.random());
+    setRandomLinks(shuffled.slice(0, 4));
+  }, []);
+
   return (
     <motion.div 
       className="mt-4 pr-1"
@@ -24,10 +32,10 @@ const ExampleLinks = ({ onAddLink }) => {
       transition={{ delay: 0.7, duration: 0.5 }}
     >
       <p className="text-sm text-blue-500 dark:text-blue-400 mb-2 pl-2">
-        {/* Or try these examples:  */}
+        {/* Or try these random examples: */}
       </p>
       <div className="grid grid-cols-2 gap-2">
-        {exampleLinks.map((link, index) => (
+        {randomLinks.map((link, index) => (
           <motion.button
             key={index}
             onClick={() => onAddLink(link.url)}
@@ -46,7 +54,7 @@ const ExampleLinks = ({ onAddLink }) => {
             </div>
           </motion.button>
         ))}
-     </div>
+      </div>
       
       <div className="mt-10 sm:mt-16 text-center">
         <Link href="/tips" className="text-xs text-gray-400 underline hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200">

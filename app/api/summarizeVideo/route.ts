@@ -252,15 +252,16 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
         Format:
         # Part ${chunkNumber}/${totalChunks}
         ## [Immediate 1-2 sentence summary with content-specific emojis]
-        [3-5 ultra-concise key points with timestamps and content-related emojis]
+        [3-5 concise key points with timestamps and content-related emojis]
         > [Standalone follow-up question with emojis]
 
         Guidelines:
-        1. Start summary immediately after ##. No separate title.
-        2. Use many content-specific emojis, not format-related ones.
-        3. Key points should be free-form, ultra-concise (3-7 words each), and include timestamps.
-        4. Ensure the summary and key points are specific and informative. Don't quote directly.
-        5. Include a standalone question that encourages further exploration. Make sure it starts with >.
+        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+        2. A level 2 heading (##), Start summary immediately after ##. No separate title.
+        3. Use many content-specific emojis, not format-related ones.
+        4. Key points should be free-form, concise (3-7 words each), and include timestamps.
+        5. Ensure the summary and key points are specific and informative. Don't quote directly.
+        6. Include a standalone question that encourages further exploration. Make sure it starts with >.
 
         Transcript chunk:
         ${formattedChunk}`
@@ -290,21 +291,22 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
         Format:
         # Part ${chunkNumber}/${totalChunks}
         ## [Immediate 1-2 sentence summary with content-specific emojis]
-        [3-5 ultra-concise key points with content-related emojis]
+        [3-5 concise key points with content-related emojis]
         > [Standalone follow-up question with emojis]
 
         Guidelines:
-        1. Start summary immediately after ##. No separate title.
-        2. Use many content-specific emojis, not format-related ones.
-        3. Key points should be free-form, ultra-concise (3-7 words each).
-        4. Ensure the summary and key points are specific and informative. Don't quote directly.
-        5. Include a standalone question that encourages further exploration. Make sure it starts with >.
+        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+        2. A level 2 heading (##), Start summary immediately after ##. No separate title.
+        3. Use many content-specific emojis, not format-related ones.
+        4. Key points should be free-form, concise (3-7 words each).
+        5. Ensure the summary and key points are specific and informative. Don't quote directly.
+        6. Include a standalone question that encourages further exploration. Make sure it starts with >.
 
         Article chunk:
         ${chunk}`
       }
     ],
-    temperature: 0.3,
+    temperature: 0.5,
     stream: true,
     max_tokens: 500,
   });

@@ -8,7 +8,7 @@ const TipsPage = () => {
       <div className="max-w-3xl w-full p-2 sm:p-8 my-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-blue-500 mb-6 sm:mb-8 text-center">Wake The Dead: User Guide</h1>
         
-        <ul className="space-y-6 sm:space-y-8  dark:text-gray-600">
+        <ul className="space-y-6 sm:space-y-8  dark:text-gray-400">
           <li className="flex items-start">
             <span className="text-2xl mr-3 sm:mr-4 flex-shrink-0 mt-1">⚡</span>
             <div>
