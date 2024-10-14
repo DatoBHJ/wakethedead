@@ -13,7 +13,8 @@ const exampleLinks = [
   { url: "https://x.com/smokeawayyy/status/1841215305751937156?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "OpenAI's issues 🚨: No DevDay livestream + compromised accounts 🤔", duration: "2m read -> 4s skim", source: "x.com" },
   { url: "https://www.psychiatrictimes.com/view/are-we-overdiagnosing-and-overtreating-adhd", label: "💊 Are We Overdiagnosing and Overtreating ADHD?", duration: "11m read -> 20s skim", source: "psychiatrictimes.com" },
   { url: "https://x.com/JonathanRoss321/status/1845548327963926678", label: "🚀 Unlock the Secrets of the Generative Age: 5 Unlocks to Artificial General Intelligence 🤖", duration: "3m read -> 5s skim", source: "x.com" },
-  { url: "https://www.summitdetox.com/blog/what-is-lean-drink/#:~:text=Lean%20consists%20of%20a%20combination,to%20give%20it%20more%20flavor.", label: "🍇 What is Lean Drink?", duration: "12m read -> 30s skim", source: "summitdetox.com" },
+  { url: "https://www.summitdetox.com/blog/what-is-lean-drink/#:~:text=Lean%20consists%20of%20a%20combination,to%20give%20it%20more%20flavor.", label: "🫗 What is Lean Drink?", duration: "12m read -> 30s skim", source: "summitdetox.com" },
+  { url: "https://www.nytimes.com/athletic/5739705/2024/10/13/footballers-esports-david-beckham-neymar-casemiro/", label: "⚽ Footballers are investing in esport 🎮", duration: "7m read -> 11s skim", source: "nytimes.com" },
 ];
 
 const ExampleLinks = ({ onAddLink }) => {

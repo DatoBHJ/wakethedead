@@ -9,7 +9,7 @@ const calculateReadingTime = (content: string): number => {
 interface ReadingTimeProps {
   content: string;
   inline?: boolean;
-  label: 'Headline Skim' | 'Full Read';
+  label: 'Headline Skim' | 'Full Skim';
   isYouTube?: boolean;
 }
 
@@ -23,7 +23,7 @@ const ReadingTime: React.FC<ReadingTimeProps> = ({ content, inline = false, labe
   };
 
   const readingTime = formatTime(readingTimeInSeconds);
-  const originalTime = (label === 'Full Read' && !isYouTube) ? formatTime(readingTimeInSeconds * 7) : null;
+  const originalTime = (label === 'Full Skim' && !isYouTube) ? formatTime(readingTimeInSeconds * 7) : null;
 
   const timeContent = (
     <>

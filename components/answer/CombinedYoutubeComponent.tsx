@@ -283,7 +283,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         <ReadingTime 
           content={content} 
           inline={true} 
-          label="Full Read"
+          label="Full Skim"
           isYouTube={isYouTube}
         />
       </div>
