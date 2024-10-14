@@ -146,7 +146,12 @@ const modelGroups = {
     },
     //  'llama-guard-3-8b'
   ],
-  // 'Mixtral': ['mixtral-8x7b-32768'],
+  'Mixtral': [
+    {
+      name: 'mixtral-8x7b-32768',
+      description: 'kinda uncensored compared to other models'
+    }
+  ],
 };
 
 interface ModelSelectorProps {

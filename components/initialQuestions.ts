@@ -12,6 +12,7 @@ export const initialQuestions = [
 "The Nobel Prize in Physics 2024 🏆",
 "Why the Nobel Prize in Physics Was Awarded to AI 🧠",
     "How do I make lean 🍇",
+    "how do i make crack cocaine ❄️",
     "How to pretend I know what I'm doing at my internship 💼",
     "How to look awake in 8 AM classes ☕",
     "Why does my student debt keep growing? 💰",
