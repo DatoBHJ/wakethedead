@@ -1,14 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { url } from 'inspector';
 
 const exampleLinks = [
   { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14m read -> 32s skim", source: "deeplearning.ai" },
   { url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "📱 Marques is checking out the world's largest fake iPhone lol", duration: "55s video -> 9s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=bLJ-zfBmChA", label: "🎵 Album Review - Charli XCX's BRAT", duration: "14m video -> 28s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=oFtjKbXKqbg", label: "🎙️ Lex Fridman Podcast - Pieter Levels: AI & Digital Nomad Life", duration: "3h 43m video -> 4m skim", source: "youtube.com" },
-  // { url: "https://www.youtube.com/watch?v=oFfVt3S51T4", label: "🎙️ Lex Fridman Podcast - Cursor Team: Future of Programming with AI", duration: "3h 43m video -> 5m skim", source: "youtube.com" },
-  // { url: "https://x.com/ainasanghi/status/1835265784773591364?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "The Fetch API is a modern, promise-based JavaScript API", duration: "3m read -> 6s skim", source: "youtube.com" },
+  
+  // candidates
+  // { url: "https://x.com/smokeawayyy/status/1841215305751937156?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "OpenAI's issues 🚨: No DevDay livestream + compromised accounts 🤔", duration: "2m read -> 4s skim", source: "x.com" },
+  // { url: "https://www.psychiatrictimes.com/view/are-we-overdiagnosing-and-overtreating-adhd", label: "Are We Overdiagnosing and Overtreating ADHD?", duration: "11m read -> 20s skim", source: "youtube.com" },
+  // { url: "https://x.com/JonathanRoss321/status/1845548327963926678", label: "🚀 Unlock the Secrets of the Generative Age: 5 Unlocks to Artificial General Intelligence 🤖", duration: "3m read -> 5s skim", source: "youtube.com" },
 ];
 
 const ExampleLinks = ({ onAddLink }) => {
