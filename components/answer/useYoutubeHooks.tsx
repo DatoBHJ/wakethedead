@@ -10,6 +10,7 @@ export const useArticleGenerator = (
   const [streamingContent, setStreamingContent] = useState<{ [key: string]: string }>({});
   const [isGenerating, setIsGenerating] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState<string | null>(null);
+  const [rateLimitError, setRateLimitError] = useState<boolean>(false);
   const requestedArticles = useRef(new Set<string>());
   const videoIds = youtubeLinks.map(getYouTubeVideoId);
 
@@ -20,6 +21,7 @@ export const useArticleGenerator = (
     }
 
     setError(null);
+    setRateLimitError(false);
 
     requestedArticles.current.add(videoId);
     setStreamingContent(prev => ({ ...prev, [videoId]: '' }));
@@ -32,7 +34,13 @@ export const useArticleGenerator = (
         body: JSON.stringify({ videoId, videoUrl: youtubeLinks[videoIds.indexOf(videoId)], forceRegenerate, selectedModel, selectedLanguage }),
       });
 
-      if (!response.ok) throw new Error(`Article generation failed: ${response.statusText}`);
+      if (!response.ok) {
+        if (response.status === 429) {
+          setRateLimitError(true);
+          throw new Error('Rate limit exceeded');
+        }
+        throw new Error(`Article generation failed: ${response.statusText}`);
+      }
 
       const isStreaming = response.headers.get('X-Stream-Response') === 'true';
 
@@ -62,5 +70,5 @@ export const useArticleGenerator = (
     }
   }, [youtubeLinks, videoIds, selectedModel, selectedLanguage]);
 
-  return { articles, streamingContent, isGenerating, error, generateArticle };
+  return { articles, streamingContent, isGenerating, error, rateLimitError, generateArticle };
 };

@@ -14,6 +14,7 @@ import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
+// import RateLimit from '@/components/answer/RateLimit';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -104,7 +105,9 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             ) : (
               <div className="px-4 sm:px-6">
                 {messages.map((message, index) => (
+                  console.log(message),
                   <div key={index}>
+                    {/* {message.status && message.status === 'rateLimitReached' && <RateLimit />} */}
                     <UserMessageComponent message={message.userMessage} />
                     {message.relevantDocuments && (
                            <RelevantLinksComponent

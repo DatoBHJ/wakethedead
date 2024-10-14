@@ -9,8 +9,19 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama";
 import { fetchTranscriptWithBackup } from '@/lib/youtube-transcript';
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { headers } from 'next/headers'
 
 export const runtime = 'edge';
+
+let ratelimit: Ratelimit | undefined;
+if (config.useRateLimiting) {
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(10, "10 m") 
+  });
+}
 
 let openai: OpenAI;
 let semanticCache: SemanticCache | undefined;
@@ -305,11 +316,7 @@ export async function POST(request: Request) {
   const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
 
   const language = selectedLanguage || 'en';
-  console.log('selectedLanguage:', language);
-  console.log('selectedModel:', selectedModel);
-
   const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
-  console.log('cachekey', cacheKey)
   
   const { exists, article } = await checkCachedArticle(cacheKey);
 
@@ -333,6 +340,21 @@ export async function POST(request: Request) {
           'X-Stream-Response': 'false',
         },
       });
+    }
+  }
+
+  // Rate limiting 체크 (캐시되지 않은 경우에만)
+  if (config.useRateLimiting && ratelimit && (!exists || forceRegenerate)) {
+    const identifier = headers().get('x-forwarded-for') || 
+                       headers().get('x-real-ip') || 
+                       headers().get('cf-connecting-ip') || 
+                       headers().get('client-ip') || "";
+    const { success, limit, reset, remaining } = await ratelimit.limit(identifier)
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', limit, reset, remaining },
+        { status: 429 }
+      );
     }
   }
   

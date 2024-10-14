@@ -9,6 +9,7 @@ import { useArticleGenerator } from './useYoutubeHooks';
 import { useToast } from "@/components/ui/use-toast";
 import ExtractedQuestionsModal from './ExtractedQuestionsModal';
 import ReadingTime from './ReadingTime'; // 새로 추가된 import
+import RateLimit from '@/components/answer/RateLimit';
 
 interface YouTubeCard {
   id: string;
@@ -61,6 +62,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     streamingContent, 
     isGenerating, 
     error: articleError, 
+    rateLimitError,
     generateArticle 
   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
@@ -329,6 +331,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
+      {rateLimitError && <RateLimit />}
       {showVideo && (
         <div className="w-full px-4 flex-shrink-0">
           <div className="max-w-4xl mx-auto">

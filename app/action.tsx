@@ -10,6 +10,18 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
 import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
 
+// // ratelimit
+// import { Ratelimit } from "@upstash/ratelimit";
+// import { Redis } from "@upstash/redis";
+// import { headers } from 'next/headers'
+// let ratelimit: Ratelimit | undefined;
+// if (config.useRateLimiting) {
+//   ratelimit = new Ratelimit({
+//     redis: Redis.fromEnv(),
+//     limiter: Ratelimit.slidingWindow(2, "10 m") // 2 requests per 10 minutes
+//   });
+// }
+
 export const runtime = 'edge';
 
 let openai: OpenAI;
@@ -215,8 +227,17 @@ async function myAction(
   const streamable = createStreamableValue({});
   
   (async () => {
+
+    // if (config.useRateLimiting && ratelimit) {
+    //   const identifier = headers().get('x-forwarded-for') || headers().get('x-real-ip') || headers().get('cf-connecting-ip') || headers().get('client-ip') || "";
+    //   const { success } = await ratelimit.limit(identifier)
+    //   if (!success) {
+    //     return streamable.done({ 'status': 'rateLimitReached' });
+    //   }
+    // }
+
     const currentTimestamp = new Date().toISOString();
-    const userMessageWithTimestamp = `${currentTimestamp}: ${userMessage}`;
+    const userMessageWithTimestamp = `Today's date:${currentTimestamp} - ${userMessage}`;
 
     const isNewsQuery = (query: string): boolean => {
       const newsKeywords = ['news', 'headline', 'breaking', 'latest'];

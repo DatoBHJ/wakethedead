@@ -7,6 +7,7 @@ export const config = {
     textChunkOverlap: 200, 
     nonOllamaBaseURL: 'https://api.groq.com/openai/v1', 
     useSemanticCache: true, 
+    useRateLimiting: true, // Uses Upstash rate limiting to limit the number of requests per user
     startIndexOfPagesToScan: 0,
     numberOfPagesToScan: 7,
     timeout: 700, 
