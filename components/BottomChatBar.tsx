@@ -105,7 +105,6 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
             ) : (
               <div className="px-4 sm:px-6">
                 {messages.map((message, index) => (
-                  console.log(message),
                   <div key={index}>
                     {/* {message.status && message.status === 'rateLimitReached' && <RateLimit />} */}
                     <UserMessageComponent message={message.userMessage} />

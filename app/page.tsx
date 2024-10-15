@@ -17,6 +17,7 @@ import UserSharedLinks from '@/components/UserSharedLinks';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import ExampleLinks from '@/components/ExampleLinks';
 import { initialQuestions } from '@/components/initialQuestions';
+import ChatRateLimit from '@/components/answer/ChatRateLimit';
 
 interface UserDataResult {
   title: string;
@@ -64,6 +65,13 @@ interface Message {
   videos?: Video[];
 }
 
+
+interface RateLimitInfo {
+  limit: number;
+  reset: number;
+  remaining: number;
+}
+
 interface StreamMessage {
   userMessage?: string;
   llmResponse?: string;
@@ -75,8 +83,8 @@ interface StreamMessage {
   SearchResult?: SearchResult[];
   images?: Image[];
   videos?: Video[];
+  rateLimitInfo?: RateLimitInfo;  // 새로 추가된 필드
 }
-
 interface FollowUp {
   choices: {
     message: {
@@ -112,6 +120,8 @@ export default function Page() {
   const [showUFO, setShowUFO] = useState(false);
   const mainContentRef = useRef(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isChatRateLimited, setIsChatRateLimited] = useState(false);
+  const [rateLimitInfo, setRateLimitInfo] = useState<RateLimitInfo | null>(null);
 
   const randomQuestions = useMemo(() => {
     const shuffled = [...initialQuestions].sort(() => 0.5 - Math.random());
@@ -215,8 +225,19 @@ export default function Page() {
           if (messageIndex !== -1) { 
             const currentMessage = messagesCopy[messageIndex];
 
-            currentMessage.status = typedMessage.status === 'rateLimitReached' ? 'rateLimitReached' : currentMessage.status;
 
+
+            if (typedMessage.status === 'ChatRateLimitReached') {
+              currentMessage.status = 'ChatRateLimitReached';
+              setIsChatRateLimited(true);
+              if (typedMessage.rateLimitInfo) {
+                setRateLimitInfo(typedMessage.rateLimitInfo);
+              }
+            } else {
+              currentMessage.status = typedMessage.status || currentMessage.status;
+            }
+
+            
             if (typedMessage.llmResponse && typedMessage.llmResponse !== lastAppendedResponse) {
               currentMessage.content += typedMessage.llmResponse;
               lastAppendedResponse = typedMessage.llmResponse;
@@ -574,6 +595,9 @@ export default function Page() {
                 </Dialog>
               </header>
               <div className="flex-1 overflow-y-auto">
+              {isChatRateLimited ? (
+              <ChatRateLimit rateLimitInfo={rateLimitInfo!} />
+            ) : (
                 <BottomChatBar 
                   isOpen={true}
                   setIsOpen={() => {}}
@@ -588,11 +612,15 @@ export default function Page() {
                   extractedQuestions={extractedQuestions}
                   randomQuestions={randomQuestions}  
                 />
-              </div>
-            </motion.div>
-          </>
-        )}
-        {!isDesktop && (
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+      {!isDesktop && (
+        isChatRateLimited ? (
+          <ChatRateLimit rateLimitInfo={rateLimitInfo!} />
+        ) : (
           <BottomChatBar 
             isOpen={isChatOpen} 
             setIsOpen={setIsChatOpen}
@@ -607,7 +635,8 @@ export default function Page() {
             extractedQuestions={extractedQuestions}
             randomQuestions={randomQuestions} 
           />
-        )}
+        )
+      )}
       </div>
       <LeftSidebar 
         ref={sidebarRef}
