@@ -542,7 +542,7 @@ export default function Page() {
             )}
           </main>
           <footer className="p-2 text-center">
-            <span className="text-[8px] text-gray-400">created by human</span>
+            <span className="text-[8px] text-gray-400">created by King Bob</span>
           </footer>
         </div>
         {isDesktop && (

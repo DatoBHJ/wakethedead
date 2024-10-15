@@ -18,7 +18,7 @@ let ratelimit: Ratelimit | undefined;
 if (config.useRateLimiting) {
   ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(30, "10 m") // 30 requests per 10 minutes
+    limiter: Ratelimit.slidingWindow(1, "10 m") // 30 requests per 10 minutes
   });
 }
 

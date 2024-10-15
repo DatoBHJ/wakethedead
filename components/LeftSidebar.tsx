@@ -214,13 +214,13 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
             asChild
             className="text-muted-foreground hover:text-foreground transition-colors duration-200"
           >
-            <a
+            {/* <a
               target="_blank"
               href="https://github.com/DatoBHJ/wakethedead"
               rel="noopener noreferrer"
             >
               <IconGitHub className="h-5 w-5" />
-            </a>
+            </a> */}
           </Button>
         </div>
       </div>
