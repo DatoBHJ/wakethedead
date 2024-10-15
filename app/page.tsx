@@ -517,7 +517,7 @@ export default function Page() {
                           type="text"
                           value={inputLinks}
                           onChange={(e) => setInputLinks(e.target.value)}
-                          placeholder="Paste in your link"
+                          placeholder="Paste your link"
                           className="w-full rounded-none pb-2 pl-7 bg-transparent border-b-[1px] placeholder-blue-500 dark:placeholder-blue-400 border-gray-300 dark:border-gray-600 text-black dark:text-white"
                         />
                         <div className="absolute bottom-0 left-0 w-full border-b border-gray-200 dark:border-gray-700 opacity-50"></div>
