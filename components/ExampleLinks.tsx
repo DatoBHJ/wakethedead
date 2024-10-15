@@ -15,6 +15,7 @@ const exampleLinks = [
   { url: "https://x.com/JonathanRoss321/status/1845548327963926678", label: "🚀 Unlock the Secrets of the Generative Age: 5 Unlocks to Artificial General Intelligence 🤖", duration: "3m read -> 5s skim", source: "x.com" },
   { url: "https://www.summitdetox.com/blog/what-is-lean-drink/#:~:text=Lean%20consists%20of%20a%20combination,to%20give%20it%20more%20flavor.", label: "🫗 What is Lean Drink?", duration: "12m read -> 30s skim", source: "summitdetox.com" },
   { url: "https://www.nytimes.com/athletic/5739705/2024/10/13/footballers-esports-david-beckham-neymar-casemiro/", label: "⚽ Footballers are investing in esport 🎮", duration: "7m read -> 11s skim", source: "nytimes.com" },
+  { url: "https://aws.amazon.com/ko/blogs/machine-learning/vision-use-cases-with-llama-3-2-11b-and-90b-models-from-meta/", label: "👀 Vision Use Cases with Llama 3.2 11B and 90B Models", duration: "14m read -> 16s skim", source: "aws.amazon.com" },
 ];
 
 const ExampleLinks = ({ onAddLink }) => {
