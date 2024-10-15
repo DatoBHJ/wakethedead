@@ -200,7 +200,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
           >
             <a
               target="_blank"
-              href="https://buymeacoffee.com/dbhyperdrive"
+              href="https://buymeacoffee.com/KingBob"
               rel="noopener noreferrer"
               title="Buy Me a Coffee"
             >
