@@ -143,7 +143,7 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 //       {
 //         role: "system",
 //         content: `
-//         You're casually watching a YouTube video and scribbling down quick, messy, informal short notes filled with emojis.
+//         You're casually watching a YouTube video and scribbling down quick, messy, casual short notes filled with emojis.
 //         Use everyday language, be super casual - like real handwritten notes.
 //         Always respond in the user's preferred language, which is ${selectedLanguage}.
 //         Your response must include all required 4 elements.`
@@ -159,7 +159,7 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 //         3. Casual short summary scribble, maximum 3-8 concise key points that have timestamps at the beginning of each point.\n
 //           * Timestamps should be in [HH:MM:SS] or [MM:SS] format with square brackets.\n
 //           * Avoid directly quoting or listing the transcript CHUNK.\n
-//           * Be short, casual and informal. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
+//           * Be short, casual and casual. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
 //         4. 1 follow-up question which starts with a blockquote (>).\n
 //           * Each question should be self-contained and clearly indicate what it's about without needing context.\n
 //           * Avoid questions that rely on personal opinions or subjective experiences of the LLM.\n
@@ -192,7 +192,7 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 //     messages: [
 //       {
 //         role: "system",
-//         content: `You're casually skimming an article and scribbling down quick, messy, informal short notes filled with emojis.
+//         content: `You're casually skimming an article and scribbling down quick, messy, casual short notes filled with emojis.
 //         Use everyday language, be super casual - like real handwritten notes.
 //         Always respond in the user's preferred language, which is ${selectedLanguage}.
 //         Your response must include all required 4 elements.`
@@ -207,7 +207,7 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 //           For example, if a specific data, number, score, or event is mentioned, ALWAYS include it.\n\n
 //         3. Casual short summary scribble, maximum 3-8 key points.\n
 //           * Avoid directly quoting or listing the article content.\n
-//           * Be short, casual and informal. Use arrows (->), squiggles (~), and other doodles.\n\n
+//           * Be short, casual and casual. Use arrows (->), squiggles (~), and other doodles.\n\n
 //         4. 1 follow-up question which starts with a blockquote (>).\n
 //           * Each question should be self-contained and clearly indicate what it's about without needing context.\n
 //           * Avoid questions that rely on personal opinions or subjective experiences of the LLM.\n
@@ -235,6 +235,48 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 //   return response;
 // }
   
+
+// async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+//   const formattedChunk = convertTimestamps(chunk);
+//   console.log('selectedModel:', selectedModel);
+//   const response = await openai.chat.completions.create({
+//     model: selectedModel,
+//     messages: [
+//       {
+//         role: "system",
+//         content: `Create casual, emoji-rich notes for a YouTube video in ${selectedLanguage}. Be informative and visually appealing.`
+//       },
+//       {
+//         role: "user",
+//         content: `Summarize part ${chunkNumber}/${totalChunks} of "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+        
+//         Format:
+//         # Part ${chunkNumber}/${totalChunks}
+//         ## [Immediate 1-2 sentence summary with content-specific emojis]
+//         [3-5 concise key points with timestamps and content-related emojis]
+//         > [Standalone follow-up question with emojis]
+
+//         Guidelines:
+//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+//         2. A level 2 heading (##), Start summary immediately after ##. No separate title.
+//         3. Use many content-specific emojis, not format-related ones.
+//         4. Key points should be free-form, concise (3-7 words each), and include timestamps.
+//         5. Ensure the summary and key points are specific and informative. Don't quote directly.
+//         6. Include a standalone question that encourages further exploration. Make sure it starts with >.
+
+//         Transcript chunk:
+//         ${formattedChunk}`
+//       }
+//     ],
+//     temperature: 0.3,
+//     stream: true,
+//     max_tokens: 500,
+//   });
+
+//   return response;
+// }
+
+
 async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   const formattedChunk = convertTimestamps(chunk);
   console.log('selectedModel:', selectedModel);
@@ -243,37 +285,87 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
     messages: [
       {
         role: "system",
-        content: `Create casual, emoji-rich notes for a YouTube video in ${selectedLanguage}. Be informative and visually appealing.`
+        content: `
+        You're a SUPER EXCITED fan watching your absolute FAVORITE topic video! 🤩✨
+        Respond in ${selectedLanguage} and go CRAZY with emojis and symbols to show your excitement!!!
+        Use CAPS and exclamation marks like you're SCREAMING at a concert!!!
+        Your enthusiasm should be OFF THE CHARTS for every little detail!!!
+        `
       },
       {
         role: "user",
-        content: `Summarize part ${chunkNumber}/${totalChunks} of "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+        content: `
+        Scribble down super casual short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+        Respond in ${selectedLanguage}.
         
+        Your note MUST include these 4 elements: 
+        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
+        2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##. 
+        3. Highlighting a few key moments with timestamps (be concise, 7-10 words each). Use **bold** to emphasize key words. 
+        4. 1 standalone question that starts with a blockquote (>). Example: > Who is the main character in the movie star wars?
+
         Format:
         # Part ${chunkNumber}/${totalChunks}
-        ## [Immediate 1-2 sentence summary with content-specific emojis]
-        [3-5 concise key points with timestamps and content-related emojis]
-        > [Standalone follow-up question with emojis]
+        ## [summary]
+        [Key moments] & > question
 
-        Guidelines:
-        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-        2. A level 2 heading (##), Start summary immediately after ##. No separate title.
-        3. Use many content-specific emojis, not format-related ones.
-        4. Key points should be free-form, concise (3-7 words each), and include timestamps.
-        5. Ensure the summary and key points are specific and informative. Don't quote directly.
-        6. Include a standalone question that encourages further exploration. Make sure it starts with >.
+        Important Guidelines:
+        - Answer in MARKDOWN format. 
+        - The summary should be visually appealing with emojis and symbols. 
+        - User knows the video title and author, so don't repeat them.
+        - Be super casual and excited, like you're at a concert! 🎉🎉🎉
 
-        Transcript chunk:
+        Transcript chunk
         ${formattedChunk}`
       }
     ],
-    temperature: 0.3,
+    temperature: 0.6,
     stream: true,
     max_tokens: 500,
   });
 
   return response;
 }
+
+
+// async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+//   console.log('selectedModel:', selectedModel);
+//   const response = await openai.chat.completions.create({
+//     model: selectedModel,
+//     messages: [
+//       {
+//         role: "system",
+//         content: `Create casual, emoji-rich notes for an article in ${selectedLanguage}. Be informative and visually appealing.`
+//       },
+//       {
+//         role: "user",
+//         content: `Summarize part ${chunkNumber}/${totalChunks} of "${articleInfo.title || ''}". 
+        
+//         Format:
+//         # Part ${chunkNumber}/${totalChunks}
+//         ## [Immediate 1-2 sentence summary with content-specific emojis]
+//         [3-5 concise key points with content-related emojis]
+//         > [Standalone follow-up question with emojis]
+
+//         Guidelines:
+//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
+//         2. A level 2 heading (##), Start summary immediately after ##. No separate title.
+//         3. Use many content-specific emojis, not format-related ones.
+//         4. Key points should be free-form, concise (3-7 words each).
+//         5. Ensure the summary and key points are specific and informative. Don't quote directly.
+//         6. Include a standalone question that encourages further exploration. Make sure it starts with >.
+
+//         Article chunk:
+//         ${chunk}`
+//       }
+//     ],
+//     temperature: 0.5,
+//     stream: true,
+//     max_tokens: 500,
+//   });
+
+//   return response;
+// }
 
 async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   console.log('selectedModel:', selectedModel);
@@ -282,25 +374,34 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
     messages: [
       {
         role: "system",
-        content: `Create casual, emoji-rich notes for an article in ${selectedLanguage}. Be informative and visually appealing.`
+        content: `
+        You're an ENTHUSIASTIC reader totally OBSESSED with the topic! 🤓📚
+        Respond in ${selectedLanguage} and use LOTS of emojis and symbols to show your excitement!!!
+        Use CAPS and exclamation marks to emphasize important points!!!
+        Your enthusiasm should be THROUGH THE ROOF for every detail!!!
+        `
       },
       {
         role: "user",
-        content: `Summarize part ${chunkNumber}/${totalChunks} of "${articleInfo.title || ''}". 
+        content: `
+        Jot down super casual summary notes for part ${chunkNumber}/${totalChunks} of this article: "${articleInfo.title || ''}". 
+        Respond in ${selectedLanguage}.
         
+        Your note MUST include these 4 elements: 
+        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
+        2. A 1-2 sentence summary, including crucial information or major points, starting with ##. 
+        3. Key points (be concise, 7-10 words each).  Use **bold** to emphasize key words. 
+        4. 1 standalone question that starts with a blockquote (>). Example: > What did darth vader say to luke skywalker in star wars?
+
         Format:
         # Part ${chunkNumber}/${totalChunks}
-        ## [Immediate 1-2 sentence summary with content-specific emojis]
-        [3-5 concise key points with content-related emojis]
-        > [Standalone follow-up question with emojis]
+        ## [summary]
+        [Key points] & > question
 
-        Guidelines:
-        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-        2. A level 2 heading (##), Start summary immediately after ##. No separate title.
-        3. Use many content-specific emojis, not format-related ones.
-        4. Key points should be free-form, concise (3-7 words each).
-        5. Ensure the summary and key points are specific and informative. Don't quote directly.
-        6. Include a standalone question that encourages further exploration. Make sure it starts with >.
+        Important Guidelines:
+        - Answer in MARKDOWN format. 
+        - The summary should be visually appealing with emojis and symbols. 
+        - Be super casual and excited, like you're at a concert! 🎉🎉🎉
 
         Article chunk:
         ${chunk}`
@@ -313,7 +414,7 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
 
   return response;
 }
-  
+
 export async function POST(request: Request) {
   const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
 
