@@ -491,7 +491,7 @@ export default function Page() {
                   className="w-full max-w-xl justify-center p-4 flex flex-col item-center sm:items-start"
                 >
                   <h1 className="text-4xl sm:text-5xl font-bold mt-5 mb-5 text-center sm:text-left text-blue-500 w-full px-6">
-                    Skim. Ask. <br /> Move on.
+                    Skim. Search. <br /> Move on.
                   </h1>
                   <p className="text-xs text-center sm:text-left sm:text-sm text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
                   No need to save for later. Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
