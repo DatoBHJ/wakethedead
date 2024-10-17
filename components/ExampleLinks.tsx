@@ -10,6 +10,7 @@ const exampleLinks = [
   { url: "https://www.youtube.com/watch?v=MRtg6A1f2Ko", label: "📱 Marques Brownlee dives into the iPhone 16 and 16 Pro", duration: "21m video -> 39s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=qTmHuavOXNg", label: "🎵 Kendrick Lamar - To Pimp A Butterfly ALBUM REVIEW", duration: "22m video -> 33s skim", source: "youtube.com" },
   
+  { url: "https://www.chipstrat.com/p/groqs-business-model-part-1-inference", label: "🧠 Groq's Business Model: Part 1 - Inference", duration: "14m read -> 12s skim", source: "chipstrat.com" },
   { url: "https://www.nytimes.com/athletic/5739705/2024/10/13/footballers-esports-david-beckham-neymar-casemiro/", label: "⚽ Footballers are investing in esport 🎮", duration: "7m read -> 11s skim", source: "nytimes.com" },
   { url: "https://www.deeplearning.ai/the-batch/issue-264/", label: "🤖 AI Roundup: Pricing, Breakthroughs, Lobbying, and Models", duration: "14m read -> 32s skim", source: "deeplearning.ai" },
   { url: "https://www.psychiatrictimes.com/view/are-we-overdiagnosing-and-overtreating-adhd", label: "💊 Are We Overdiagnosing and Overtreating ADHD?", duration: "11m read -> 20s skim", source: "psychiatrictimes.com" },

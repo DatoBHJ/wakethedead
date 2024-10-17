@@ -42,6 +42,7 @@ export const initialQuestions = [
 "netflix password sharing 📺",
 "nasa mars pics 🚀",
 "amazon prime deals 🛒",
+"groq",
 
     "How do I make lean 🫗",
     "how do i make crack cocaine ❄️",
