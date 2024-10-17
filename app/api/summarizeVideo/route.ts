@@ -302,7 +302,7 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
         2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##. 
         3. Highlighting a few key moments with timestamps (be concise, 7-10 words each). Use **bold** to emphasize key words. 
-        4. 1 standalone question that starts with a blockquote (>). Example: > Who is the main character in the movie star wars?
+        4. 1 standalone question that starts with a blockquote (>). 
 
         Format:
         # Part ${chunkNumber}/${totalChunks}
@@ -391,7 +391,7 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
         2. A 1-2 sentence summary, including crucial information or major points, starting with ##. 
         3. Key points (be concise, 7-10 words each).  Use **bold** to emphasize key words. 
-        4. 1 standalone question that starts with a blockquote (>). Example: > What did darth vader say to luke skywalker in star wars?
+        4. 1 standalone question that starts with a blockquote (>). 
 
         Format:
         # Part ${chunkNumber}/${totalChunks}
