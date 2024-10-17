@@ -6,7 +6,7 @@ import { type AI } from './action';
 import CombinedYoutubeComponent from '@/components/answer/CombinedYoutubeComponent';
 import LeftSidebar from '@/components/LeftSidebar';
 import BottomChatBar from '@/components/BottomChatBar';
-import { List, ArrowRight, Gear } from "@phosphor-icons/react";
+import { List, ArrowRight, Gear, Coffee } from "@phosphor-icons/react";
 import { motion } from 'framer-motion';
 import { IconMessage } from '@/components/ui/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -18,6 +18,7 @@ import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import ExampleLinks from '@/components/ExampleLinks';
 import { initialQuestions } from '@/components/initialQuestions';
 import ChatRateLimit from '@/components/answer/ChatRateLimit';
+
 
 interface UserDataResult {
   title: string;
@@ -430,12 +431,19 @@ export default function Page() {
             >
               <List size={24} />
             </button>
-            <a href="/" className=" hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4">
-              {/* Wake The Dead */}
+            <a href="/" className="hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4">
               {isDesktop ? 'Wake The Dead' : 'WTD'}
             </a>
             {!isDesktop && (
               <div className="flex items-center space-x-4 ml-auto">
+                <a
+                  href="https://buymeacoffee.com/KingBob"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                >
+                  <Coffee size={24} />
+                </a>
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                   <DialogTrigger asChild>
                     <button 
@@ -559,7 +567,15 @@ export default function Page() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
-              <header className="flex justify-end items-center p-4">
+              <header className="flex justify-end items-center p-4 space-x-4">
+                <a
+                  href="https://buymeacoffee.com/KingBob"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                >
+                  <Coffee size={24} />
+                </a>
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                   <DialogTrigger asChild>
                     <button 
