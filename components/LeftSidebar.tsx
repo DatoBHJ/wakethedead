@@ -152,7 +152,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
           </div>
         </form> */}
         <form onSubmit={handleAddLink} className="flex flex-col mb-5">
-          <div className="flex relative items-center pb-2 border-b-[1px] bg-transparent border-gray-200 dark:border-gray-800">
+          <div className="flex relative items-center pb-2 border-b-[.5px] bg-transparent border-gray-200 dark:border-gray-700">
             <button 
               type="submit" 
               className="absolute left-0 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
@@ -165,7 +165,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               value={newLink}
               onChange={(e) => setNewLink(e.target.value)}
               placeholder="Paste more links here!"
-              className="flex-grow pl-6 rounded-non focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
+              className="flex-grow pl-6 bg-background text-black dark:text-white"
             />
                   <button 
               type="submit" 
