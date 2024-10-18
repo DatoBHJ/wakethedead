@@ -230,7 +230,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, setSelecte
                       <div className="px-7">
                         {typeof model === 'string' ? model : model.name}
                         {typeof model !== 'string' && (
-                          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          <div className="text-xs text-gray-500 mt-1">
                             {model.description}
                           </div>
                         )}
