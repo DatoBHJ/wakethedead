@@ -331,23 +331,6 @@ export default function Page() {
       setIsChatOpen(true);
     }
   }, [handleFollowUpClick, isDesktop]);
-
-  const memoizedCombinedYoutubeComponent = useMemo(() => (
-    <CombinedYoutubeComponent 
-      youtubeLinks={youtubeLinks} 
-      currentIndex={currentYoutubeIndex}
-      setCurrentIndex={setCurrentYoutubeIndex}
-      selectedModel={selectedModel}
-      selectedLanguage={selectedLanguage}
-      cards={cards}
-      onLinkClick={handleLinkClick}
-      onExtractQuestions={handleExtractQuestions}
-      onQuestionSelected={handleQuestionSelected} 
-      setIsChatOpen={setIsChatOpen}
-
-    />
-  ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick, handleExtractQuestions, handleQuestionSelected]);
-
   
   const handleAddLink = useCallback((link: string) => {
     setYoutubeLinks(prevLinks => {
@@ -367,6 +350,25 @@ export default function Page() {
       setShowUFO(false);
     }
   }, [youtubeLinks]);
+  
+  const memoizedCombinedYoutubeComponent = useMemo(() => (
+    <CombinedYoutubeComponent 
+      youtubeLinks={youtubeLinks} 
+      currentIndex={currentYoutubeIndex}
+      setCurrentIndex={setCurrentYoutubeIndex}
+      selectedModel={selectedModel}
+      selectedLanguage={selectedLanguage}
+      cards={cards}
+      onLinkClick={handleLinkClick}
+      onExtractQuestions={handleExtractQuestions}
+      onQuestionSelected={handleQuestionSelected} 
+      setIsChatOpen={setIsChatOpen}
+      onAddLink={handleAddLink}
+
+    />
+  ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick, handleExtractQuestions, handleQuestionSelected]);
+
+
 
   const handleRefresh = useCallback(async (index: number) => {
     const messageToRefresh = messages[index];

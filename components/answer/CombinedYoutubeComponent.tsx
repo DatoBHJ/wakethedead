@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import ExtractedQuestionsModal from './ExtractedQuestionsModal';
 import ReadingTime from './ReadingTime'; // 새로 추가된 import
 import RateLimit from '@/components/answer/RateLimit';
+import SimilarContent from './SimilarContent'; // Import the new component
 
 interface YouTubeCard {
   id: string;
@@ -31,6 +32,7 @@ interface CombinedYoutubeComponentProps {
   onExtractQuestions: (questions: string[]) => void;
   onQuestionSelected: (question: string) => void; // Add this new prop
   setIsChatOpen: (isOpen: boolean) => void;
+  onAddLink: (link: string) => void;
 
 }
 
@@ -45,6 +47,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   onExtractQuestions,
   onQuestionSelected, // Add this new prop
   setIsChatOpen,
+  onAddLink,
 
 }) => {
   const { toast } = useToast();
@@ -322,6 +325,11 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
           isEditing={isEditing}
         />
+<SimilarContent 
+  title={cards[currentIndex]?.title || ''}
+  currentUrl={cards[currentIndex]?.link || ''}
+  onAddLink={onAddLink}
+/>
       </>
     );
   };

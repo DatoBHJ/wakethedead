@@ -174,7 +174,7 @@ export const initialQuestions = [
             "Is time travel possible? ⏳",
             "Media bias: How to spot it 📰",
             "Is legacy media dying, and what will replace it? 📺",
-                "Is global warming real? or is it a hoax? 🌍",
+            "Is global warming real? or is it a hoax? 🌍",
                 "Explain quantum computing 🖥️",
                 "Best coffee brewing methods ☕",
                 "Space tourism updates 🚀",
