@@ -10,6 +10,7 @@ const exampleLinks = [
   { url: "https://www.youtube.com/watch?v=MRtg6A1f2Ko", label: "📱 Marques Brownlee dives into the iPhone 16 and 16 Pro", duration: "21m video -> 39s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=qTmHuavOXNg", label: "🎵 Kendrick Lamar - To Pimp A Butterfly ALBUM REVIEW", duration: "22m video -> 33s skim", source: "youtube.com" },
   
+  { url: "https://www.instagram.com/reel/DA_CMaMhpQr/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", label: "🎉🔩️ The Rigging stage is the most crucial part of the animation process! 🔩️ If you don't get it right, your animation won't be smooth 🤯.", duration: "4m read -> 9s skim", source: "instagram.com" },
   { url: "https://x.com/marionawfal/status/1846670359766225163?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "🚀 Elon's Team Achieves the Impossible! - NVIDIA CEO ", duration: "4m read -> 8s skim", source: "x.com"},
   { url: "https://www.chipstrat.com/p/groqs-business-model-part-1-inference", label: "🧠 Groq's Business Model: Part 1 - Inference", duration: "14m read -> 12s skim", source: "chipstrat.com" },
   { url: "https://www.nytimes.com/athletic/5739705/2024/10/13/footballers-esports-david-beckham-neymar-casemiro/", label: "⚽ Footballers are investing in esport 🎮", duration: "7m read -> 11s skim", source: "nytimes.com" },
