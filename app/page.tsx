@@ -503,10 +503,10 @@ export default function Page() {
                   <h1 className="text-4xl sm:text-5xl font-bold mt-5 mb-5 text-center sm:text-left text-blue-500 w-full px-6">
                     Skim. Search. <br /> Move on.
                   </h1>
-                  <p className="text-xs text-center sm:text-left sm:text-sm text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
-                  No need to save for later. Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
+                  <p className="text-sm text-center sm:text-left sm:text-base font-handwriting text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
+                  Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
                   </p>
-                  <div className="w-full flex flex-col items-start sm:pb-4 px-6">
+                  <div className="w-full flex flex-col items-start sm:pb-4 px-4">
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
                       className="w-full"
@@ -528,7 +528,7 @@ export default function Page() {
                           value={inputLinks}
                           onChange={(e) => setInputLinks(e.target.value)}
                           placeholder="Paste your link"
-                          className="w-full rounded-none pb-2 pl-7 bg-transparent border-b-[1px] placeholder-blue-500 dark:placeholder-blue-400 border-gray-300 dark:border-gray-600 text-black dark:text-white"
+                          className="w-full rounded-none pb-2 pl-7 bg-transparent border-b-[1px]  border-gray-300 dark:border-gray-600 text-black dark:text-white"
                         />
                         <div className="absolute bottom-0 left-0 w-full border-b border-gray-200 dark:border-gray-700 opacity-50"></div>
                          <motion.button 

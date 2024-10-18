@@ -57,20 +57,17 @@ export async function fetchVideoInfo(videoId: string) {
   
   export async function fetchLinkInfo(link: string): Promise<{ title: string; content: string; publishedTime: string }> {
     try {
-      // First, attempt standard scraping
       console.log('Attempting standard scraping method');
       const scrapingResult = await fallbackScraping(link);
       
-      // If scraping is successful, return the result
       if (scrapingResult.title && scrapingResult.content && scrapingResult.content.length > 100) {
         return scrapingResult;
       }
   
-      // If scraping fails or returns incomplete data, try Jina
       console.log('Standard scraping failed or incomplete, attempting Jina.ai');
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15초 타임아웃
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
   
       try {
         const jinaResponse = await fetch(`https://r.jina.ai/${link}`, {
@@ -86,25 +83,32 @@ export async function fetchVideoInfo(videoId: string) {
         if (jinaResponse.ok) {
           const data = await jinaResponse.json();
           if (data.code === 200) {
-            return {
-              title: data.data.title,
-              content: data.data.content,
-              publishedTime: data.data.publishedTime,
-            };
+            // Instagram 링크 처리
+            if (link.includes('instagram.com')) {
+              return {
+                title: '',  // Instagram의 경우 title을 비워둠
+                content: data.data.title || '',  // data.data.title을 content에 할당
+                publishedTime: data.data.publishedTime || '',
+              };
+            } else {
+              // 다른 링크들의 경우 기존 처리 방식 유지
+              return {
+                title: data.data.title || '',
+                content: data.data.content || '',
+                publishedTime: data.data.publishedTime || '',
+              };
+            }
           }
         }
       } catch (jinaError) {
         console.error('Error with Jina.ai:', jinaError);
-        // Jina.ai 요청 실패 시 로깅만 하고 계속 진행
       }
   
-      // If both methods fail, return the result from standard scraping
       console.log('Both scraping methods failed, returning best available data');
       return scrapingResult;
   
     } catch (error) {
       console.error('Error fetching link info:', error);
-      // If an error occurs, attempt standard scraping as a last resort
       console.log('Error occurred, falling back to standard scraping method');
       return await fallbackScraping(link);
     }
