@@ -325,11 +325,6 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           onEdit={(editedContent) => handleEdit(currentVideoId, editedContent)}
           isEditing={isEditing}
         />
-<SimilarContent 
-  title={cards[currentIndex]?.title || ''}
-  currentUrl={cards[currentIndex]?.link || ''}
-  onAddLink={onAddLink}
-/>
       </>
     );
   };
@@ -348,21 +343,26 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </div>
         </div>
       )}
-      <div className="flex-grow overflow-y-auto">
-        {showQuestionsModal ? (
-          <ExtractedQuestionsModal
-            questions={extractedQuestions}
-            handleFollowUpClick={handleExtractedQuestionClick}
-            setIsChatOpen={setIsChatOpen}
-          />
-        ) : (
-          <div className="py-4 px-2 max-w-4xl mx-auto">
-            <div className="bg-card dark:bg-card text-gray-700 dark:text-gray-400 px-4">
-              {renderContent()}
-            </div>
+       <div className="flex-grow overflow-y-auto">
+        <div className="py-4 px-2 max-w-4xl mx-auto">
+          <div className="bg-card dark:bg-card text-gray-700 dark:text-gray-400 px-4">
+            {showQuestionsModal ? (
+              <ExtractedQuestionsModal
+                questions={extractedQuestions}
+                handleFollowUpClick={handleExtractedQuestionClick}
+                setIsChatOpen={setIsChatOpen}
+              />
+            ) : (
+              renderContent()
+            )}
             {articleError}
           </div>
-        )}
+          <SimilarContent 
+            title={cards[currentIndex]?.title || ''}
+            currentUrl={cards[currentIndex]?.link || ''}
+            onAddLink={onAddLink}
+          />
+        </div>
       </div>
       <div className="flex-shrink-0 flex items-center justify-between pt-5 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
