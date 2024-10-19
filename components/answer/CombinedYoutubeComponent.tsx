@@ -329,6 +329,61 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     );
   };
 
+  const renderButtons = () => {
+    const currentCard = cards[currentIndex];
+    const isSpecialLink = currentCard?.link === 'https://buymeacoffee.com/kingbob';
+
+    return (
+      <div className="flex items-center space-x-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleQuestionsModal}
+          className="text-foreground/70 hover:text-foreground"
+        >
+          {showQuestionsModal ? <TextAlignLeft size={20} /> : <Rows size={20} />}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleVideoVisibility}
+          className="text-foreground/70 hover:text-foreground"
+        >
+          {showVideo ? <Article size={20} /> : <VideoCamera size={20} />}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => handleCopy(currentVideoId)}
+          className="text-foreground/70 hover:text-foreground"
+        >
+          {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
+        </Button>
+        {!isSpecialLink && (
+          <>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleRegenerate(currentVideoId)}
+              className="text-foreground/70 hover:text-foreground"
+            >
+              <ArrowsCounterClockwise size={20} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsEditing(!isEditing)}
+              className="text-foreground/70 hover:text-foreground"
+              disabled={isGenerating[currentVideoId]}
+            >
+              {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
+            </Button>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       {rateLimitError && <RateLimit />}
@@ -391,49 +446,8 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           </Button>
         </div>
 
-        <div className="flex items-center space-x-2">
-        <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleQuestionsModal}
-            className="text-foreground/70 hover:text-foreground"
-          >
-            {showQuestionsModal ? <TextAlignLeft size={20} /> : <Rows size={20} />}
-            </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleVideoVisibility}
-            className="text-foreground/70 hover:text-foreground"
-          >
-            {showVideo ? <Article size={20} /> : <VideoCamera size={20} />}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => handleCopy(currentVideoId)}
-            className="text-foreground/70 hover:text-foreground"
-          >
-            {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => handleRegenerate(currentVideoId)}
-            className="text-foreground/70 hover:text-foreground"
-          >
-            <ArrowsCounterClockwise size={20} />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setIsEditing(!isEditing)}
-            className="text-foreground/70 hover:text-foreground"
-            disabled={isGenerating[currentVideoId]}
-          >
-            {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
-          </Button>
-
+        <div>
+          {renderButtons()}
         </div>
       </div>
     </div>
