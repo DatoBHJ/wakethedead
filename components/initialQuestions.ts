@@ -115,7 +115,7 @@ export const initialQuestions = [
         "PlayStation VR2 games 🎮",
         "SpaceX Starship launch 🚀",
         "Twitter Blue verification ✅",
-        "ChatGPT prmopt leak",
+        "ChatGPT prompt leak",
         "TikTok algorithm change 🤳",
         "Amazon Alexa upgrade 🗣️",
         "Facebook Meta rebrand 👓",
