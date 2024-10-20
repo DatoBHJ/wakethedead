@@ -312,7 +312,7 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
         - Answer in MARKDOWN format. 
         - The summary should be visually appealing with emojis and symbols. 
         - User knows the video title and author, so don't repeat them.
-        - Be super casual and excited, like you're at a concert! 🎉🎉🎉
+        - Be super casual and excited, like you're at a concert! 
 
         Transcript chunk
         ${formattedChunk}`
