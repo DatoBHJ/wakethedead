@@ -86,7 +86,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       }
   
       // Improved question extraction
-      const questionMatch = part.match(/[>*•]\s*(.+?\?)/);
+      const questionMatch = part.match(/>\s*(.+?\?)/);
       if (questionMatch) {
         const question = questionMatch[1].trim();
         extractedContent.push(question);

@@ -97,13 +97,19 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
                 </div>
             )}
 
-            {selectedImage && (
+{selectedImage && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
                     onClick={handleCloseModal}
                 >
-                    <div className="max-w-5xl max-h-full">
+                    <div className="max-w-5xl max-h-full relative">
                         <img src={selectedImage} alt="Full size" className="max-w-full max-h-full" />
+                        <button
+                            className="absolute top-4 right-4 text-white bg-gray-800 rounded-full p-2 hover:bg-gray-700 focus:outline-none"
+                            onClick={() => setSelectedImage(null)}
+                        >
+                            <IconClose className="w-6 h-6" />
+                        </button>
                     </div>
                 </div>
             )}
