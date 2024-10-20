@@ -81,7 +81,7 @@ export const initialQuestions = [
     "How to fake being a social butterfly 🦋",
     "Why is my love life such a dumpster fire 💔",
     "How to look busy when I have no clue what I'm doing 🤯",
-    "How to bullshit my way through a presentation 🎤",
+    "How to bs my way through a presentation 🎤",
     "Why the hell am I always so damn tired? 😴",
     "How to make my shitty resume look decent 📄",
     "Why does my ass hurt from sitting all day? 🪑",
