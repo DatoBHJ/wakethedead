@@ -367,7 +367,6 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
 // }
 
 async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-  console.log('selectedModel:', selectedModel);
   const response = await openai.chat.completions.create({
     model: selectedModel,
     messages: [
@@ -400,7 +399,7 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
         Important Guidelines:
         - Answer in MARKDOWN format. 
         - The summary should be visually appealing with emojis and symbols. 
-        - Be super casual and excited, like you're at a concert! 🎉🎉🎉
+        - Be super casual and excited, like you're at a concert! 
 
         Article chunk:
         ${chunk}`
