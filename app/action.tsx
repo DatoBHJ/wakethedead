@@ -300,7 +300,7 @@ async function myAction(
       {
         role: "system" as const,
         content: `You're a witty and clever AI assistant.
-        Keep it accurate but fun, like chatting with a knowledgeable friend! 😉
+        Keep it accurate but fun, like chatting with a knowledgeable friend! 😉 Respond in ${selectedLanguage}.
     
         1. Respond to the user's input, which may be a question or a search term. If it's a search term, provide relevant information about that topic.
         Use only relevant documents from the provided sources.

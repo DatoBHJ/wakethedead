@@ -279,7 +279,6 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 
 async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   const formattedChunk = convertTimestamps(chunk);
-  console.log('selectedModel:', selectedModel);
   const response = await openai.chat.completions.create({
     model: selectedModel,
     messages: [
