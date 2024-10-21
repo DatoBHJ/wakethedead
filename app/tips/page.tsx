@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image'
 import Link from 'next/link'
 import { House, Coffee, ChatCircleDots, Gear, Globe, Lightning, X } from "@phosphor-icons/react";
+import ReactMarkdown from 'react-markdown'
 
 // Modal component for zoomed image
 const ImageModal = ({ src, alt, onClose }) => (
@@ -43,19 +44,19 @@ const TipsPage = () => {
   ]
 
   const content = {
-    overview:'"Absorb in seconds what use to take minutes." Welcome to Wake The Dead. Redefining content consumption with AI-powered smart skimming, community knowledge, and AI-powered search engine.',
-    skim: "Paste any URL or click on titles with the ⚡ icon in the chat. Our smart reader instantly generates a skimmable version, allowing you to digest content in seconds. Once processed, content is cached globally for immediate access by all users!",
-    community: "Every link you explore or share contributes to our knowledge base. Your curiosity helps both you and others learn faster, as all accessed content serves as relevant sources in chat responses.",
-    qa: "Engage with content through our RAG-powered chatbot. Ask specific questions about what you've skimmed or leverage general LLM-powered search for broader inquiries.",
-    customize: "Tailor the AI to your needs. The default 'llama3-8b-8192' model excels at most tasks, offering a great balance of speed and capability. For more complex, multilingual support, consider switching to other models. Experiment to find your perfect fit. If you encounter rate limits or errors, please wait a moment and try again or switch to a different model.",
-    support: "Wake The Dead operates on donations. If you find value in our service, consider buying us a coffee!",
-  }
+    overview: '> Welcome to **Wake The Dead**! We\'re breathing new life into content consumption with more engaging ways to discover and learn:\n\n- AI-powered smart skimming\n- Community knowledge\n- AI-powered search engine',
+    skim: "🚀 **Smart Skimming in Action**\n\n1. Paste any URL or click titles with the ⚡ icon\n2. Our smart reader generates an instant skimmable version\n3. Digest content in seconds!\n\n*Bonus*: Once processed, content is cached globally for immediate access by all users!",
+    community: "🌐 **Power of Community Knowledge**\n\n**Every link you explore or share enriches our knowledge base**\n- All accessed content becomes relevant sources in chat responses\n- Your interactions help recommend similar content to others\n\n*Your curiosity fuels faster learning for everyone! Together, we build a smarter platform!*",
+    qa: "🤖 **Engage with RAG-Powered Chatbot with internet access**\n\n- Ask specific questions about skimmed content\n- Leverage general LLM-powered search for broader inquiries\n\n*Get answers tailored to your needs!*",
+    customize: "⚙️ **Tailor the AI to Your Needs**\n\n- **Default 'llama3-8b-8192' model: Great for most tasks**\n\n**For Complex Tasks**: \n- Explore other advanced models or models with larger parameters\n\n**Less Restricted Content**: \n- Try the Mixtral model\n\n**Language Options**:\n- Choose between English and your preferred language\n- Note: English typically yields the best results\n\n*Tip*: Experiment to find your perfect fit. Larger models may require more processing time.\n\n⚠️ Rate limits or errors? Wait a moment and retry or switch models.",
+    support: "☕ **Support Wake The Dead**\n\n- We operate solely on donations\n- Find value in our service? Consider buying us a coffee!\n- Every contribution helps keep the project alive and improving\n\n*Your support makes a difference!*",
+  } 
 
   const imageMap = {
     overview: 'Home.png',
     skim: 'smart-skimming.png',
     qa: 'qa-experience.png',
-    customize: 'customize-experience.png',
+    customize: ['customize.png', 'language.png'], 
     support: 'support-mission.png',
     community: 'community.png',
   }
@@ -66,6 +67,10 @@ const TipsPage = () => {
 
   const closeModal = () => {
     setModalImage(null);
+  };
+
+  const getImages = (tab) => {
+    return Array.isArray(imageMap[tab]) ? imageMap[tab] : [imageMap[tab]];
   };
 
   return (
@@ -100,34 +105,48 @@ const TipsPage = () => {
         </div>
         
         <div className="md:w-2/3">
-          <div className="bg-card text-card-foreground rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              {tabs.find(tab => tab.id === activeTab)?.icon && 
-                React.createElement(tabs.find(tab => tab.id === activeTab)!.icon, { size: 24, className: "mr-2" })}
-              {tabs.find(tab => tab.id === activeTab)?.title}
-            </h2>
-            <p className="mb-4 text-muted-foreground">{content[activeTab]}</p>
+        <div className="bg-card text-card-foreground rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            {tabs.find(tab => tab.id === activeTab)?.icon && 
+              React.createElement(tabs.find(tab => tab.id === activeTab)!.icon, { size: 24, className: "mr-2" })}
+            {tabs.find(tab => tab.id === activeTab)?.title}
+          </h2>
+          
+          {getImages(activeTab).map((image, index) => (
             <div 
-              onClick={() => handleImageClick(`/images/${imageMap[activeTab]}`, tabs.find(tab => tab.id === activeTab)?.title || '')}
-              className="cursor-pointer"
+              key={index}
+              onClick={() => handleImageClick(`/images/${image}`, `${tabs.find(tab => tab.id === activeTab)?.title} ${getImages(activeTab).length > 1 ? index + 1 : ''}`)}
+              className="cursor-pointer mb-4"
             >
               <Image
-                src={`/images/${imageMap[activeTab]}`}
-                alt={tabs.find(tab => tab.id === activeTab)?.title || ''}
+                src={`/images/${image}`}
+                alt={`${tabs.find(tab => tab.id === activeTab)?.title} ${getImages(activeTab).length > 1 ? index + 1 : ''}`}
                 width={600}
                 height={400}
                 layout="responsive"
                 className="rounded-lg"
               />
             </div>
-          </div>
+          ))}
+
+          <ReactMarkdown 
+            className="mb-4 text-muted-foreground prose dark:prose-invert"
+            components={{
+              p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+              ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-4" {...props} />,
+              ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-4" {...props} />,
+            }}
+          >
+            {content[activeTab]}
+          </ReactMarkdown>
         </div>
+      </div>
       </div>
 
       <div className="mt-8 p-4 bg-accent text-accent-foreground rounded-lg">
         <h3 className="text-lg font-semibold mb-2">Support Wake The Dead</h3>
-        <p className="text-sm">Every donation helps keep the project alive and improving.</p>
-        <a href="https://buymeacoffee.com/KingBob" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-muted transition-colors">
+        <p className="text-sm">Wake The Dead runs purely on donations. If you find value in our service, consider buying us a coffee!</p>
+        <a href="https://buymeacoffee.com/KingBob" target="_blank" rel="noopener noreferrer" className="inline-block mt-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-muted transition-colors">
           Buy Me A Coffee
         </a>
       </div>
