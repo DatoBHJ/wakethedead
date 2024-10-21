@@ -435,6 +435,7 @@ export default function Page() {
             </button>
             <a href="/" className="hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4">
               {isDesktop ? 'Wake The Dead' : 'WTD'}
+              <span className="ml-1 text-xs font-normal text-blue-500 dark:text-blue-400">beta</span>
             </a>
             {!isDesktop && (
               <div className="flex items-center space-x-4 ml-auto">
