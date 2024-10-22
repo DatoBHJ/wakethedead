@@ -26,6 +26,7 @@ interface SimilarDocument {
   url: string;
 }
 
+
 interface CombinedYoutubeComponentProps {
   youtubeLinks: string[];
   currentIndex: number;
@@ -128,35 +129,77 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     }
   }, [currentIndex, videoIds, editedArticles, articles, streamingContent, onExtractQuestions]);
 
-  // 유사 콘텐츠 검색 useEffect
+  const extractFirstSummary = (content: string): string => {
+    const summaryMatch = content.match(/##\s*(.+?)(?=\n|$)/);
+    return summaryMatch ? summaryMatch[1].trim() : '';
+  };
+
+   // similarDocuments를 링크별로 저장하는 state로 변경
+   const [similarDocumentsByVideo, setSimilarDocumentsByVideo] = useState<{
+    [videoId: string]: SimilarDocument[]
+  }>({});
+  
+  // 로딩 상태도 링크별로 관리
+  const [loadingStatesByVideo, setLoadingStatesByVideo] = useState<{
+    [videoId: string]: boolean
+  }>({});
+  
+  // 에러 상태도 링크별로 관리
+  const [errorStatesByVideo, setErrorStatesByVideo] = useState<{
+    [videoId: string]: string | null
+  }>({});
+
+   // Modified useEffect for fetching similar documents
   useEffect(() => {
     const fetchSimilarDocuments = async () => {
       const currentVideoId = videoIds[currentIndex];
       const currentCard = cards[currentIndex];
       
-      // 이미 검색했거나, 필요한 데이터가 없으면 리턴
-      if (
-        hasSearched[currentVideoId] || 
-        !currentCard?.title || 
-        !firstSummary
-      ) {
+      // 이미 검색했다면 스킵
+      if (hasSearched[currentVideoId]) {
         return;
       }
 
-      setIsSimilarContentLoading(true);
-      setSimilarContentError(null);
+      // 현재 사용 가능한 콘텐츠 확인
+      const currentContent = editedArticles[currentVideoId] || 
+                           articles[currentVideoId] || 
+                           streamingContent[currentVideoId];
+
+      // 콘텐츠가 없으면 스킵
+      if (!currentContent) {
+        return;
+      }
+
+      setLoadingStatesByVideo(prev => ({
+        ...prev,
+        [currentVideoId]: true
+      }));
+      
+      setErrorStatesByVideo(prev => ({
+        ...prev,
+        [currentVideoId]: null
+      }));
       
       try {
+        const summary = extractFirstSummary(currentContent);
+        const currentUrl = currentCard?.link || youtubeLinks[currentIndex];
+        
+        const searchPayload = {
+          title: currentCard?.title || '',
+          summary,
+          currentUrl
+        };
+
+        if (!searchPayload.title && !summary) {
+          throw new Error('No search content available');
+        }
+
         const response = await fetch('/api/similar-content', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ 
-            title: currentCard.title,
-            summary: firstSummary, 
-            currentUrl: currentCard.link || youtubeLinks[currentIndex] 
-          }),
+          body: JSON.stringify(searchPayload),
         });
 
         if (!response.ok) {
@@ -164,29 +207,46 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         }
 
         const data = await response.json();
-        setSimilarDocuments(data);
         
-        // 검색 완료 표시
+        // 현재 콘텐츠의 ID와 다른 문서만 필터링
+        const filteredData = data.filter((doc: SimilarDocument) => {
+          const docId = getYouTubeVideoId(doc.url);
+          return docId !== currentVideoId;
+        });
+        
+        setSimilarDocumentsByVideo(prev => ({
+          ...prev,
+          [currentVideoId]: filteredData
+        }));
+        
         setHasSearched(prev => ({
           ...prev,
           [currentVideoId]: true
         }));
       } catch (err) {
-        setSimilarContentError('Error fetching shared content. Please try again later.');
-        console.error('Error fetching shared content:', err);
+        setErrorStatesByVideo(prev => ({
+          ...prev,
+          [currentVideoId]: 'Error fetching similar content. Please try again later.'
+        }));
+        console.error('Error fetching similar content:', err);
       } finally {
-        setIsSimilarContentLoading(false);
+        setLoadingStatesByVideo(prev => ({
+          ...prev,
+          [currentVideoId]: false
+        }));
       }
     };
 
     fetchSimilarDocuments();
   }, [
-    currentIndex, 
-    cards, 
-    youtubeLinks, 
-    firstSummary, 
-    videoIds, 
-    hasSearched
+    currentIndex,
+    cards,
+    youtubeLinks,
+    videoIds,
+    hasSearched,
+    editedArticles,
+    articles,
+    streamingContent
   ]);
 
   // 인덱스가 변경될 때 검색 상태 초기화
@@ -505,9 +565,9 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             {articleError}
           </div>
           <SimilarContent 
-            documents={similarDocuments}
-            isLoading={isSimilarContentLoading}
-            error={similarContentError}
+            documents={similarDocumentsByVideo[currentVideoId] || []}
+            isLoading={loadingStatesByVideo[currentVideoId] || false}
+            error={errorStatesByVideo[currentVideoId] || null}
             onAddLink={onAddLink}
           />
         </div>

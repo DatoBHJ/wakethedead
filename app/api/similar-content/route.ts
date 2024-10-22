@@ -23,17 +23,19 @@ const index = new Index({
 export async function POST(request: Request) {
   const { title, summary, currentUrl } = await request.json();
 
-  if (!title) {
-    return NextResponse.json({ message: 'Title is required' }, { status: 400 });
-  }
-
   try {
     // 제목과 요약을 결합하여 검색
-    let searchText = summary ? `${title} ${summary}` : title;
-    if (searchText.length > 50) {
-      searchText = searchText.substring(0, 50);
+    let searchText = '';
+
+    if (title) {
+      searchText = summary ? `${title} ${summary}` : title;
+      console.log('Searching for similar content with title and summary:', searchText);
+    } else if (summary) {
+      searchText = summary;
+      console.log('Searching for similar content with summary:', searchText);
+    } else {
+      return NextResponse.json({ message: 'No search content provided' }, { status: 400 });
     }
-    console.log('Searching for similar content:', searchText);
     
     const embeddingResponse = await openai.embeddings.create({
       model: config.embeddingsModel,
