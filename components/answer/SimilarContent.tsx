@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
-
-interface SimilarContentProps {
-  title: string;
-  currentUrl: string;
-  onAddLink: (link: string) => void;
-}
+import React from 'react';
 
 interface SimilarDocument {
   title: string;
   pageContent: string;
   url: string;
+}
+
+interface SimilarContentProps {
+  documents: SimilarDocument[];
+  isLoading: boolean;
+  error: string | null;
+  onAddLink: (link: string) => void;
 }
 
 const decodeHtmlEntities = (text: string): string => {
@@ -25,52 +26,18 @@ const truncateText = (text: string, maxLength: number = 70): string => {
   return text;
 };
 
-const SimilarContent: React.FC<SimilarContentProps> = ({ title, currentUrl, onAddLink }) => {
-  const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSimilarDocuments = async () => {
-      if (!title) {
-        setIsLoading(false);
-        return;
-      }
-      
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('/api/similar-content', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ title, currentUrl }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch similar content');
-        }
-
-        const data = await response.json();
-        setSimilarDocuments(data);
-      } catch (err) {
-        setError('Error fetching shared content. Please try again later.');
-        console.error('Error fetching shared content:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSimilarDocuments();
-  }, [title, currentUrl]);
-
+const SimilarContent: React.FC<SimilarContentProps> = ({ 
+  documents, 
+  isLoading, 
+  error, 
+  onAddLink 
+}) => {
   const handleLinkClick = (e: React.MouseEvent<HTMLDivElement>, url: string) => {
     e.preventDefault();
     onAddLink(url);
   };
 
-  if (isLoading || error || similarDocuments.length === 0) {
+  if (isLoading || error || documents.length === 0) {
     return null;
   }
 
@@ -84,7 +51,7 @@ const SimilarContent: React.FC<SimilarContentProps> = ({ title, currentUrl, onAd
         </div>
       </div>
       <ul className="space-y-6">
-        {similarDocuments.map((doc, index) => (
+        {documents.map((doc, index) => (
           <li key={index} className="group relative">
             <div 
               className="flex items-center cursor-pointer

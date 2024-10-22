@@ -20,6 +20,11 @@ interface YouTubeCard {
   link: string;
 }
 
+interface SimilarDocument {
+  title: string;
+  pageContent: string;
+  url: string;
+}
 
 interface CombinedYoutubeComponentProps {
   youtubeLinks: string[];
@@ -59,6 +64,50 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
   const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
+  const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
+
+  const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
+  const [isSimilarContentLoading, setIsSimilarContentLoading] = useState(true);
+  const [similarContentError, setSimilarContentError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSimilarDocuments = async () => {
+      const currentCard = cards[currentIndex];
+      if (!currentCard?.title) {
+        setIsSimilarContentLoading(false);
+        return;
+      }
+      
+      setIsSimilarContentLoading(true);
+      setSimilarContentError(null);
+      try {
+        const response = await fetch('/api/similar-content', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            title: currentCard.title, 
+            currentUrl: currentCard.link || youtubeLinks[currentIndex] 
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch similar content');
+        }
+
+        const data = await response.json();
+        setSimilarDocuments(data);
+      } catch (err) {
+        setSimilarContentError('Error fetching shared content. Please try again later.');
+        console.error('Error fetching shared content:', err);
+      } finally {
+        setIsSimilarContentLoading(false);
+      }
+    };
+
+    fetchSimilarDocuments();
+  }, [currentIndex, cards, youtubeLinks]);
 
   const { 
     articles, 
@@ -69,8 +118,6 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     generateArticle 
   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
-  const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
-  
   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
     const extractedContent: string[] = [];
@@ -413,8 +460,9 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
             {articleError}
           </div>
           <SimilarContent 
-            title={cards[currentIndex]?.title || ''}
-            currentUrl={cards[currentIndex]?.link || ''}
+            documents={similarDocuments}
+            isLoading={isSimilarContentLoading}
+            error={similarContentError}
             onAddLink={onAddLink}
           />
         </div>
