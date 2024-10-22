@@ -21,16 +21,23 @@ const index = new Index({
 });
 
 export async function POST(request: Request) {
-  const { title, currentUrl } = await request.json();
+  const { title, summary, currentUrl } = await request.json();
 
   if (!title) {
     return NextResponse.json({ message: 'Title is required' }, { status: 400 });
   }
 
   try {
+    // 제목과 요약을 결합하여 검색
+    let searchText = summary ? `${title} ${summary}` : title;
+    if (searchText.length > 50) {
+      searchText = searchText.substring(0, 50);
+    }
+    console.log('Searching for similar content:', searchText);
+    
     const embeddingResponse = await openai.embeddings.create({
       model: config.embeddingsModel,
-      input: title,
+      input: searchText,
     });
 
     const queryEmbedding = embeddingResponse.data[0].embedding;
@@ -50,7 +57,7 @@ export async function POST(request: Request) {
         result.metadata.title &&
         result.metadata.content &&
         result.metadata.link &&
-        result.metadata.link !== currentUrl // 현재 URL과 다른 결과만 포함
+        result.metadata.link !== currentUrl
       )
       .reduce((acc, result) => {
         const title = result.metadata.title as string;
@@ -64,9 +71,10 @@ export async function POST(request: Request) {
         }
         return acc;
       }, [] as Array<{title: string, pageContent: string, url: string}>)
-      .slice(0, config.numberOfSimilarityResults); // 가장 첫 4개만 보여주도록 수정
+      .slice(0, config.numberOfSimilarityResults);
+    
+    console.log('Found similar content:', similarDocuments);
 
-    console.log('similarDocuments:', similarDocuments);
     return NextResponse.json(similarDocuments);
   } catch (error) {
     console.error('Error processing similar content request:', error);

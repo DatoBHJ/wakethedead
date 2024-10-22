@@ -9,6 +9,8 @@
 // import { useToast } from "@/components/ui/use-toast";
 // import ExtractedQuestionsModal from './ExtractedQuestionsModal';
 // import ReadingTime from './ReadingTime'; // 새로 추가된 import
+// import RateLimit from '@/components/answer/RateLimit';
+// import SimilarContent from './SimilarContent'; // Import the new component
 
 // interface YouTubeCard {
 //   id: string;
@@ -18,6 +20,11 @@
 //   link: string;
 // }
 
+// interface SimilarDocument {
+//   title: string;
+//   pageContent: string;
+//   url: string;
+// }
 
 // interface CombinedYoutubeComponentProps {
 //   youtubeLinks: string[];
@@ -30,6 +37,7 @@
 //   onExtractQuestions: (questions: string[]) => void;
 //   onQuestionSelected: (question: string) => void; // Add this new prop
 //   setIsChatOpen: (isOpen: boolean) => void;
+//   onAddLink: (link: string) => void;
 
 // }
 
@@ -44,6 +52,7 @@
 //   onExtractQuestions,
 //   onQuestionSelected, // Add this new prop
 //   setIsChatOpen,
+//   onAddLink,
 
 // }) => {
 //   const { toast } = useToast();
@@ -55,17 +64,60 @@
 //   const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
 //   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
 //   const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
+//   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
+
+//   const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
+//   const [isSimilarContentLoading, setIsSimilarContentLoading] = useState(true);
+//   const [similarContentError, setSimilarContentError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const fetchSimilarDocuments = async () => {
+//       const currentCard = cards[currentIndex];
+//       if (!currentCard?.title) {
+//         setIsSimilarContentLoading(false);
+//         return;
+//       }
+      
+//       setIsSimilarContentLoading(true);
+//       setSimilarContentError(null);
+//       try {
+//         const response = await fetch('/api/similar-content', {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify({ 
+//             title: currentCard.title, 
+//             currentUrl: currentCard.link || youtubeLinks[currentIndex] 
+//           }),
+//         });
+
+//         if (!response.ok) {
+//           throw new Error('Failed to fetch similar content');
+//         }
+
+//         const data = await response.json();
+//         setSimilarDocuments(data);
+//       } catch (err) {
+//         setSimilarContentError('Error fetching shared content. Please try again later.');
+//         console.error('Error fetching shared content:', err);
+//       } finally {
+//         setIsSimilarContentLoading(false);
+//       }
+//     };
+
+//     fetchSimilarDocuments();
+//   }, [currentIndex, cards, youtubeLinks]);
 
 //   const { 
 //     articles, 
 //     streamingContent, 
 //     isGenerating, 
 //     error: articleError, 
+//     rateLimitError,
 //     generateArticle 
 //   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
-//   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
-  
 //   const extractQuestionsFromContent = (content: string): string[] => {
 //     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
 //     const extractedContent: string[] = [];
@@ -81,15 +133,10 @@
 //       }
   
 //       // Improved question extraction
-//       const questionMatches = part.match(/^>\s*(.+?)(?:\n|$)/gm);
-//       if (questionMatches) {
-//         questionMatches.forEach(match => {
-//           const question = match.replace(/^>\s*/, '').trim();
-//           // Check if it's a question or ends with emojis
-//           if (question.endsWith('?') || /[\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]$/u.test(question)) {
-//             extractedContent.push(question);
-//           }
-//         });
+//       const questionMatch = part.match(/>\s*(.+?\?)/);
+//       if (questionMatch) {
+//         const question = questionMatch[1].trim();
+//         extractedContent.push(question);
 //       }
 //     });
   
@@ -329,8 +376,64 @@
 //     );
 //   };
 
+//   const renderButtons = () => {
+//     const currentCard = cards[currentIndex];
+//     const isSpecialLink = currentCard?.link === 'https://buymeacoffee.com/kingbob';
+
+//     return (
+//       <div className="flex items-center space-x-2">
+//         <Button
+//           variant="outline"
+//           size="icon"
+//           onClick={toggleQuestionsModal}
+//           className="text-foreground/70 hover:text-foreground"
+//         >
+//           {showQuestionsModal ? <TextAlignLeft size={20} /> : <Rows size={20} />}
+//         </Button>
+//         <Button
+//           variant="outline"
+//           size="icon"
+//           onClick={toggleVideoVisibility}
+//           className="text-foreground/70 hover:text-foreground"
+//         >
+//           {showVideo ? <Article size={20} /> : <VideoCamera size={20} />}
+//         </Button>
+//         <Button
+//           variant="outline"
+//           size="icon"
+//           onClick={() => handleCopy(currentVideoId)}
+//           className="text-foreground/70 hover:text-foreground"
+//         >
+//           {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
+//         </Button>
+//         {!isSpecialLink && (
+//           <>
+//             <Button
+//               variant="outline"
+//               size="icon"
+//               onClick={() => handleRegenerate(currentVideoId)}
+//               className="text-foreground/70 hover:text-foreground"
+//             >
+//               <ArrowsCounterClockwise size={20} />
+//             </Button>
+//             <Button
+//               variant="outline"
+//               size="icon"
+//               onClick={() => setIsEditing(!isEditing)}
+//               className="text-foreground/70 hover:text-foreground"
+//               disabled={isGenerating[currentVideoId]}
+//             >
+//               {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
+//             </Button>
+//           </>
+//         )}
+//       </div>
+//     );
+//   };
+
 //   return (
 //     <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
+//       {rateLimitError && <RateLimit />}
 //       {showVideo && (
 //         <div className="w-full px-4 flex-shrink-0">
 //           <div className="max-w-4xl mx-auto">
@@ -342,21 +445,27 @@
 //           </div>
 //         </div>
 //       )}
-//       <div className="flex-grow overflow-y-auto">
-//         {showQuestionsModal ? (
-//           <ExtractedQuestionsModal
-//             questions={extractedQuestions}
-//             handleFollowUpClick={handleExtractedQuestionClick}
-//             setIsChatOpen={setIsChatOpen}
-//           />
-//         ) : (
-//           <div className="py-4 px-2 max-w-4xl mx-auto">
-//             <div className="bg-card dark:bg-card text-gray-700 dark:text-gray-400 px-4">
-//               {renderContent()}
-//             </div>
+//        <div className="flex-grow overflow-y-auto">
+//         <div className="py-4 px-2 max-w-4xl mx-auto">
+//           <div className="bg-card dark:bg-card text-gray-700 dark:text-gray-400 px-4">
+//             {showQuestionsModal ? (
+//               <ExtractedQuestionsModal
+//                 questions={extractedQuestions}
+//                 handleFollowUpClick={handleExtractedQuestionClick}
+//                 setIsChatOpen={setIsChatOpen}
+//               />
+//             ) : (
+//               renderContent()
+//             )}
 //             {articleError}
 //           </div>
-//         )}
+//           <SimilarContent 
+//             documents={similarDocuments}
+//             isLoading={isSimilarContentLoading}
+//             error={similarContentError}
+//             onAddLink={onAddLink}
+//           />
+//         </div>
 //       </div>
 //       <div className="flex-shrink-0 flex items-center justify-between pt-5 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
 //         <div className="flex items-center space-x-1">
@@ -385,49 +494,8 @@
 //           </Button>
 //         </div>
 
-//         <div className="flex items-center space-x-2">
-//         <Button
-//             variant="outline"
-//             size="icon"
-//             onClick={toggleQuestionsModal}
-//             className="text-foreground/70 hover:text-foreground"
-//           >
-//             {showQuestionsModal ? <TextAlignLeft size={20} /> : <Rows size={20} />}
-//             </Button>
-//           <Button
-//             variant="outline"
-//             size="icon"
-//             onClick={toggleVideoVisibility}
-//             className="text-foreground/70 hover:text-foreground"
-//           >
-//             {showVideo ? <Article size={20} /> : <VideoCamera size={20} />}
-//           </Button>
-//           <Button
-//             variant="outline"
-//             size="icon"
-//             onClick={() => handleCopy(currentVideoId)}
-//             className="text-foreground/70 hover:text-foreground"
-//           >
-//             {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
-//           </Button>
-//           <Button
-//             variant="outline"
-//             size="icon"
-//             onClick={() => handleRegenerate(currentVideoId)}
-//             className="text-foreground/70 hover:text-foreground"
-//           >
-//             <ArrowsCounterClockwise size={20} />
-//           </Button>
-//           <Button
-//             variant="outline"
-//             size="icon"
-//             onClick={() => setIsEditing(!isEditing)}
-//             className="text-foreground/70 hover:text-foreground"
-//             disabled={isGenerating[currentVideoId]}
-//           >
-//             {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
-//           </Button>
-
+//         <div>
+//           {renderButtons()}
 //         </div>
 //       </div>
 //     </div>

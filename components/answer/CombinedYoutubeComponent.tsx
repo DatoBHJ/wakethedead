@@ -65,49 +65,9 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
   const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
-
   const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
   const [isSimilarContentLoading, setIsSimilarContentLoading] = useState(true);
   const [similarContentError, setSimilarContentError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSimilarDocuments = async () => {
-      const currentCard = cards[currentIndex];
-      if (!currentCard?.title) {
-        setIsSimilarContentLoading(false);
-        return;
-      }
-      
-      setIsSimilarContentLoading(true);
-      setSimilarContentError(null);
-      try {
-        const response = await fetch('/api/similar-content', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            title: currentCard.title, 
-            currentUrl: currentCard.link || youtubeLinks[currentIndex] 
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch similar content');
-        }
-
-        const data = await response.json();
-        setSimilarDocuments(data);
-      } catch (err) {
-        setSimilarContentError('Error fetching shared content. Please try again later.');
-        console.error('Error fetching shared content:', err);
-      } finally {
-        setIsSimilarContentLoading(false);
-      }
-    };
-
-    fetchSimilarDocuments();
-  }, [currentIndex, cards, youtubeLinks]);
 
   const { 
     articles, 
@@ -118,21 +78,31 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     generateArticle 
   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
+  const [firstSummary, setFirstSummary] = useState<string>('');
+  const [hasSearched, setHasSearched] = useState<{[key: string]: boolean}>({});
+
   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
     const extractedContent: string[] = [];
-  
+    
+    let firstSummaryFound = false;
+    
     parts.forEach((part, index) => {
       const partMatch = content.match(new RegExp(`# Part (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
       const partNumber = partMatch ? partMatch[1] : `${index + 1}/?`;
   
       const summaryMatch = part.match(/##\s*(.+?)(?=\n|$)/);
+      if (summaryMatch && !firstSummaryFound) {
+        const summary = summaryMatch[1].trim();
+        setFirstSummary(summary);
+        firstSummaryFound = true;
+      }
+  
       if (summaryMatch) {
         const summary = summaryMatch[1].trim();
         extractedContent.push(`**Part ${partNumber}: ${summary}**`);
       }
   
-      // Improved question extraction
       const questionMatch = part.match(/>\s*(.+?\?)/);
       if (questionMatch) {
         const question = questionMatch[1].trim();
@@ -142,17 +112,91 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   
     return extractedContent;
   };
-  
+
+  // 기사 내용 추출 useEffect
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
-    const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId] || streamingContent[currentVideoId];
+    const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId];
     
     if (contentToAnalyze) {
-      const extractedQuestions = extractQuestionsFromContent(contentToAnalyze);
-      setExtractedQuestions(extractedQuestions);
-      onExtractQuestions(extractedQuestions);
+      extractQuestionsFromContent(contentToAnalyze);
     }
-  }, [currentIndex, videoIds, editedArticles, articles, streamingContent, onExtractQuestions]);
+  }, [currentIndex, videoIds, editedArticles, articles]);
+
+  // 유사 콘텐츠 검색 useEffect
+  useEffect(() => {
+    const fetchSimilarDocuments = async () => {
+      const currentVideoId = videoIds[currentIndex];
+      const currentCard = cards[currentIndex];
+      
+      // 이미 검색했거나, 필요한 데이터가 없으면 리턴
+      if (
+        hasSearched[currentVideoId] || 
+        !currentCard?.title || 
+        !firstSummary || 
+        isGenerating[currentVideoId] || 
+        (!articles[currentVideoId] && !editedArticles[currentVideoId])
+      ) {
+        return;
+      }
+
+      setIsSimilarContentLoading(true);
+      setSimilarContentError(null);
+      
+      try {
+        const response = await fetch('/api/similar-content', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            title: currentCard.title,
+            summary: firstSummary, 
+            currentUrl: currentCard.link || youtubeLinks[currentIndex] 
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch similar content');
+        }
+
+        const data = await response.json();
+        setSimilarDocuments(data);
+        
+        // 검색 완료 표시
+        setHasSearched(prev => ({
+          ...prev,
+          [currentVideoId]: true
+        }));
+      } catch (err) {
+        setSimilarContentError('Error fetching shared content. Please try again later.');
+        console.error('Error fetching shared content:', err);
+      } finally {
+        setIsSimilarContentLoading(false);
+      }
+    };
+
+    fetchSimilarDocuments();
+  }, [
+    currentIndex, 
+    cards, 
+    youtubeLinks, 
+    firstSummary, 
+    videoIds, 
+    hasSearched, 
+    isGenerating, 
+    articles,
+    editedArticles
+  ]);
+
+  // 인덱스가 변경될 때 검색 상태 초기화
+  useEffect(() => {
+    const currentVideoId = videoIds[currentIndex];
+    if (!hasSearched[currentVideoId]) {
+      setSimilarDocuments([]);
+    }
+  }, [currentIndex, videoIds, hasSearched]);
+
 
   const handleExtractedQuestionClick = (question: string) => {
     // setShowQuestionsModal(false);
