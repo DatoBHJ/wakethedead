@@ -63,7 +63,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   const videoRef = useRef<HTMLIFrameElement>(null);
   const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
-  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
+  // const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
   const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
   const [isSimilarContentLoading, setIsSimilarContentLoading] = useState(true);
@@ -80,6 +80,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   const [firstSummary, setFirstSummary] = useState<string>('');
   const [hasSearched, setHasSearched] = useState<{[key: string]: boolean}>({});
+  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
 
   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
@@ -113,15 +114,19 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     return extractedContent;
   };
 
-  // 기사 내용 추출 useEffect
+  // 콘텐츠에서 요약과 질문을 추출하는 useEffect
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
-    const contentToAnalyze = editedArticles[currentVideoId] || articles[currentVideoId];
+    const contentToAnalyze = editedArticles[currentVideoId] || 
+                            articles[currentVideoId] || 
+                            streamingContent[currentVideoId];
     
     if (contentToAnalyze) {
-      extractQuestionsFromContent(contentToAnalyze);
+      const extractedContent = extractQuestionsFromContent(contentToAnalyze);
+      setExtractedQuestions(extractedContent);
+      onExtractQuestions(extractedContent); // 상위 컴포넌트로 추출된 질문 전달
     }
-  }, [currentIndex, videoIds, editedArticles, articles]);
+  }, [currentIndex, videoIds, editedArticles, articles, streamingContent, onExtractQuestions]);
 
   // 유사 콘텐츠 검색 useEffect
   useEffect(() => {
@@ -133,9 +138,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       if (
         hasSearched[currentVideoId] || 
         !currentCard?.title || 
-        !firstSummary || 
-        isGenerating[currentVideoId] || 
-        (!articles[currentVideoId] && !editedArticles[currentVideoId])
+        !firstSummary
       ) {
         return;
       }
@@ -183,10 +186,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     youtubeLinks, 
     firstSummary, 
     videoIds, 
-    hasSearched, 
-    isGenerating, 
-    articles,
-    editedArticles
+    hasSearched
   ]);
 
   // 인덱스가 변경될 때 검색 상태 초기화
@@ -196,6 +196,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       setSimilarDocuments([]);
     }
   }, [currentIndex, videoIds, hasSearched]);
+
 
 
   const handleExtractedQuestionClick = (question: string) => {
