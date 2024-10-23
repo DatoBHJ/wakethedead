@@ -424,9 +424,9 @@ export default function Page() {
   
   return (
     <>
-      <ThemeBasedVideo />
-    <div className="flex h-screen overflow-hidden bg-background/50">
-    {/* <div className="flex h-screen overflow-hidden bg-background"> */}
+      {/* <ThemeBasedVideo /> */}
+    {/* <div className="flex h-screen overflow-hidden bg-background/50"> */}
+    <div className="flex h-screen overflow-hidden bg-background">
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
         <div className={`${isDesktop ? 'w-1/2' : 'w-full h-full'} flex flex-col overflow-hidden`}>
           <header className="flex justify-start items-center p-4">
