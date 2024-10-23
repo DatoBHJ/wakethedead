@@ -423,10 +423,7 @@ export default function Page() {
   }, [messages, myAction, selectedModel, selectedLanguage]);
   
   return (
-    <>
-      <ThemeBasedVideo />
-    <div className="flex h-screen overflow-hidden bg-background/95 dark:bg-background/90">
-    {/* <div className="flex h-screen overflow-hidden bg-background"> */}
+    <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
         <div className={`${isDesktop ? 'w-1/2' : 'w-full h-full'} flex flex-col overflow-hidden`}>
           <header className="flex justify-start items-center p-4">
@@ -494,7 +491,7 @@ export default function Page() {
           </header>
           <main 
             ref={mainContentRef}
-            className={`flex-1 flex flex-col overflow-y-auto ${isDesktop ? 'pl-48 md:pl-32 py-10 sm:py-0 pr-10' : 'overflow-y-auto'}`}
+            className={`flex-1 flex flex-col overflow-y-auto ${isDesktop ? 'pl-48 md:pl-32 py-10 pr-10' : 'overflow-y-auto'}`}
           >
             {showLinkInput ? (
               <div className="flex-grow flex items-center justify-center w-full">
@@ -676,6 +673,5 @@ export default function Page() {
         mainContentRef={mainContentRef}
       /> */}
     </div>
-    </>
   );
 }
