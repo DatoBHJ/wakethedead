@@ -20,20 +20,27 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
     }
   };
 
-  const formatSummary = (summary: string) => {
-    return summary.replace(/^\*\*|\*\*$/g, '');
+  const formatText = (text: string) => {
+    // 강조 표시된 텍스트를 찾아서 span으로 감싸기
+    return text.split('**').map((part, index) => {
+      // 홀수 인덱스(강조 표시될 부분)인 경우에만 강조 스타일 적용
+      return index % 2 === 1 ? (
+        <span key={index} className="font-bold">{part}</span>
+      ) : (
+        part
+      );
+    });
   };
 
   const renderItem = (item: string, index: number) => {
     const isSummary = item.startsWith('**Part');
-    const formattedItem = isSummary ? formatSummary(item) : item;
     const isClicked = clickedQuestions.has(item);
 
     return (
       <li
         key={index}
         className={`flex items-center p-3 ${isDesktop ? 'my-1 md:my-3' : 'my-1'} ${
-          isSummary ? 'backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6' : 'bg-transparent'
+          isSummary ? 'backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6' : 'bg-transparent'
         } ${isClicked ? 'opacity-70' : ''}`}
       >
         {!isSummary && (
@@ -50,7 +57,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
           isSummary ? 'font-bold text-lg text-gray-700 dark:text-gray-400' : 'text-base text-gray-700 dark:text-gray-400 cursor-pointer'
         } ${isClicked ? 'text-blue-600 dark:text-blue-400' : ''} font-handwriting`}
            onClick={() => !isSummary && handleQuestionClick(item)}>
-          {formattedItem}
+          {formatText(item)}
         </p>
       </li>
     );
@@ -69,7 +76,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
 
   return (
     <div className="h-full flex items-center justify-center px-4">
-      <ul className="w-full max-w-md ">
+      <ul className="w-full max-w-md">
         {groupedItems.map((group, groupIndex) => (
           <React.Fragment key={groupIndex}>
             {group.map(renderItem)}
@@ -81,4 +88,3 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
 };
 
 export default InitialQueries;
-

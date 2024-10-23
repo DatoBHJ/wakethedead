@@ -53,7 +53,7 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
     };
 
     return (
-        <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
+        <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
             <div className="flex items-center mb-4">
                 <h2 className="text-lg font-semibold flex-grow text-black  dark:text-gray-400">Images</h2>
                 <div className="flex justify-center ml-2">

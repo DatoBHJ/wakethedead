@@ -125,6 +125,21 @@ interface SimilarContentProps {
   onAddLink: (link: string) => void;
 }
 
+// HTML 엔티티 디코딩 유틸리티 함수
+const decodeHtmlEntities = (text: string): string => {
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
+};
+
+// 텍스트 길이 제한 함수
+const truncateText = (text: string, maxLength: number = 70): string => {
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + '...';
+  }
+  return text;
+};
+
 const SimilarContent: React.FC<SimilarContentProps> = ({ 
   documents, 
   isLoading, 
@@ -136,13 +151,12 @@ const SimilarContent: React.FC<SimilarContentProps> = ({
     onAddLink(url);
   };
 
-  // 로딩 상태 표시 추가
   if (isLoading) {
     return (
       <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4">
         <div className="flex items-center justify-center">
           <p className="text-muted-foreground">
-          Searching for similar content... 🔍
+            Searching for similar content... 🔍
           </p>
         </div>
       </div>
@@ -172,7 +186,7 @@ const SimilarContent: React.FC<SimilarContentProps> = ({
             >
               <span className="flex-shrink-0 mr-2 mb-1">⚡</span>
               <span className="font-handwriting text-left text-base">
-                {decodeHtmlEntities(doc.title)}
+                {truncateText(decodeHtmlEntities(doc.title))}
               </span>
             </div>
             <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
@@ -183,13 +197,6 @@ const SimilarContent: React.FC<SimilarContentProps> = ({
       </ul>
     </div>
   );
-};
-
-// HTML 엔티티 디코딩 유틸리티 함수
-const decodeHtmlEntities = (text: string): string => {
-  const textArea = document.createElement('textarea');
-  textArea.innerHTML = text;
-  return textArea.value;
 };
 
 export default SimilarContent;

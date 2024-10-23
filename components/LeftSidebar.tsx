@@ -15,7 +15,6 @@ interface YouTubeCard {
   link: string;
 }
 
-
 interface LeftSidebarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -24,7 +23,6 @@ interface LeftSidebarProps {
   onCardClick: (index: number) => void;
   currentIndex: number;
   onCardsUpdate: (cards: YouTubeCard[]) => void;
-
 }
 
 const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({ 
@@ -34,7 +32,6 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
   onCardClick,
   currentIndex,
   onCardsUpdate,
-
 }, ref) => {
   const [cards, setCards] = useState<YouTubeCard[]>([]);
   const [newLink, setNewLink] = useState('');
@@ -132,47 +129,25 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
       </div>
 
       <div className="p-6 mb-8 bg-background dark:bg-background">
-        {/* <form onSubmit={handleAddLink} className="flex flex-col mb-5">
-          <div className="flex relative items-center pb-2">
-            <input
-              id="add-link"
-              type="text"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
-              placeholder="More links? Paste them here!
-              "
-              className="flex-grow pr-1 rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white"
-            />
-            <button 
-              type="submit" 
-              className="flex text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
-            >
-             <IconPlus className='w-5 h-5' />
-            </button>
-          </div>
-        </form> */}
         <form onSubmit={handleAddLink} className="flex flex-col mb-5">
-          <div className="flex relative items-center pb-2 border-b-[.5px] bg-transparent border-gray-200 dark:border-gray-700">
-            <button 
-              type="submit" 
-              className="absolute left-0 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
-            >
-              ⚡
-            </button>
-            <input
-              id="add-link"
-              type="text"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
-              placeholder="Paste more links here!"
-              className="flex-grow pl-6 bg-background text-black dark:text-white"
-            />
-                  <button 
-              type="submit" 
-              className="flex text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
-            >
-                          <ArrowRight size={22} weight="bold" />
-                          </button>
+          <div className="relative w-full">
+            <div className="flex items-center pb-2 border-b-[.5px] bg-transparent border-gray-200 dark:border-gray-700">
+              <span className="flex-shrink-0 text-blue-500 dark:text-blue-400">⚡</span>
+              <input
+                id="add-link"
+                type="text"
+                value={newLink}
+                onChange={(e) => setNewLink(e.target.value)}
+                placeholder="Paste more links here!"
+                className="flex-grow pl-2 pr-8 bg-background text-black dark:text-white w-full"
+              />
+              <button 
+                type="submit" 
+                className="absolute right-0 bottom-2.5 flex text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent transition-colors duration-200"
+              >
+                <ArrowRight size={22} weight="bold" />
+              </button>
+            </div>
           </div>
         </form>
         <div className="flex justify-center space-x-4">

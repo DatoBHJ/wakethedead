@@ -84,13 +84,15 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
 
   const extractQuestionsFromContent = (content: string): string[] => {
-    const parts = content.split(/# Part \d+\/\d+/).filter(Boolean);
+    // Part, PART, part 등 대소문자 구분 없이 매칭되도록 i 플래그 추가
+    const parts = content.split(/# (?:Part|PART) \d+\/\d+/i).filter(Boolean);
     const extractedContent: string[] = [];
     
     let firstSummaryFound = false;
     
     parts.forEach((part, index) => {
-      const partMatch = content.match(new RegExp(`# Part (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
+      // 여기도 마찬가지로 i 플래그 추가
+      const partMatch = content.match(new RegExp(`# (?:Part|PART) (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'));
       const partNumber = partMatch ? partMatch[1] : `${index + 1}/?`;
   
       const summaryMatch = part.match(/##\s*(.+?)(?=\n|$)/);
@@ -114,7 +116,6 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   
     return extractedContent;
   };
-
   // 콘텐츠에서 요약과 질문을 추출하는 useEffect
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];

@@ -77,7 +77,7 @@ const TipsPage = () => {
     <div className={`container mx-auto px-4 py-8 max-w-4xl ${isDarkMode ? 'dark' : ''}`}>
       <div className="flex justify-between items-center mb-6 px-2">
         <h1 className="text-2xl font-bold text-foreground">Wake The Dead Guide</h1>
-        <Link href="/" className="flex items-center space-x-2 text-primary hover:text-primary-foreground transition-colors">
+        <Link href="/" className="flex items-center space-x-2 text-primary hover:bg-primary hover:text-white dark:hover:text-black rounded-lg px-3 py-2 cursor-pointer transition-all">
           <House size={20} />
           <span className="hidden md:inline">Back to Home</span>
         </Link>
@@ -146,7 +146,7 @@ const TipsPage = () => {
       <div className="mt-8 p-4 bg-accent text-accent-foreground rounded-lg">
         <h3 className="text-lg font-semibold mb-2">Support Wake The Dead</h3>
         <p className="text-sm">Wake The Dead runs purely on donations. If you find value in our service, consider buying us a coffee!</p>
-        <a href="https://buymeacoffee.com/KingBob" target="_blank" rel="noopener noreferrer" className="inline-block mt-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-muted transition-colors">
+        <a href="https://buymeacoffee.com/KingBob" target="_blank" rel="noopener noreferrer" className="inline-block mt-4 px-4 py-2 bg-primary rounded text-white dark:text-black hover:bg-white dark:hover:bg-black hover:text-black dark:hover:text-white  transition-colors">
           Buy Me A Coffee
         </a>
       </div>

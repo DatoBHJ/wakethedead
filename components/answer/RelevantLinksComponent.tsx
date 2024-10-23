@@ -63,7 +63,7 @@ const RelevantLinksComponent: React.FC<RelevantLinksComponentProps> = ({
   }
 
   return (
-    <div className="backdrop-blur-sm bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
+    <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
           <h2 className="text-2xl font-bold font-handwriting dark:text-gray-400">

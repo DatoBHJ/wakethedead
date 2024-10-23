@@ -424,9 +424,9 @@ export default function Page() {
   
   return (
     <>
-      {/* <ThemeBasedVideo /> */}
-    {/* <div className="flex h-screen overflow-hidden bg-background/50"> */}
-    <div className="flex h-screen overflow-hidden bg-background">
+       {isDesktop && <ThemeBasedVideo />}
+      <div className="flex h-screen overflow-hidden bg-background/50 dark:bg-background/70 ">
+    {/* <div className="flex h-screen overflow-hidden bg-background"> */}
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
         <div className={`${isDesktop ? 'w-1/2' : 'w-full h-full'} flex flex-col overflow-hidden`}>
           <header className="flex justify-start items-center p-4">
@@ -436,7 +436,7 @@ export default function Page() {
             >
               <List size={24} />
             </button>
-            <a href="/" className="hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4">
+            <a href="/" className="hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4 z-50">
               {isDesktop ? 'Wake The Dead' : 'WTD'}
               <span className="ml-1 text-xs font-normal text-blue-500 dark:text-blue-400">beta</span>
             </a>
@@ -504,10 +504,10 @@ export default function Page() {
                   transition={{ duration: 0.5 }}
                   className="w-full max-w-xl justify-center p-4 flex flex-col item-center sm:items-start"
                 >
-                  <h1 className="text-4xl sm:text-5xl font-bold mt-5 mb-5 text-center sm:text-left text-blue-500 w-full px-6">
+                  <h1 className="font-handwriting text-4xl sm:text-5xl font-bold mt-5 mb-5 text-center sm:text-left text-blue-500 w-full px-6">
                     Skim. Search. <br /> Move on.
                   </h1>
-                  <p className="text-sm text-center sm:text-left sm:text-base font-handwriting text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
+                  <p className="text-sm text-center sm:text-left sm:text-base  text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
                   Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
                   </p>
                   <div className="w-full flex flex-col items-start sm:pb-4 px-4">
@@ -532,7 +532,7 @@ export default function Page() {
                           value={inputLinks}
                           onChange={(e) => setInputLinks(e.target.value)}
                           placeholder="Paste your link"
-                          className="w-full rounded-none pb-2 pl-7 bg-transparent border-b-[1px]  border-gray-300 dark:border-gray-600 text-black dark:text-white"
+                          className="w-full rounded-none pb-2 pl-7 pr-10 sm:pr-12 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 text-black dark:text-white"
                         />
                         <div className="absolute bottom-0 left-0 w-full border-b border-gray-200 dark:border-gray-700 opacity-50"></div>
                          <motion.button 

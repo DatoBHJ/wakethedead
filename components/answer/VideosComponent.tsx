@@ -352,7 +352,7 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
   };
 
   return (
-    <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4 w-full">
+    <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4 w-full">
       <div className="flex items-center mb-4">
         <h2 className="text-lg font-semibold flex-grow text-black  dark:text-gray-400">Videos</h2>
         {videos.length > 3 && (
