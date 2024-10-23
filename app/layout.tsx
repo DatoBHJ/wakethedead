@@ -77,9 +77,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <main className="relative min-h-screen">
-              {children}
-            </main>
+            <div className="flex flex-col flex-1 h-dvh">
+            <main className="flex flex-col h-full">
+              {/* <main className="flex flex-col bg-muted/50 dark:bg-background h-full"> */}
+                {children}
+              </main>
+            </div>
           </Providers>
         </AI>
         <Analytics />
