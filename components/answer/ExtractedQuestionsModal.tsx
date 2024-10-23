@@ -19,7 +19,7 @@ const ExtractedQuestionsModal: React.FC<ExtractedQuestionsModalProps> = ({
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   return (
-    <div className="bg-background dark:bg-background overflow-auto h-full">
+    <div className="overflow-auto h-full">
       <div className={`max-w-4xl mx-auto p-4 ${isDesktop ? 'py-10' : 'py-4'} h-full flex flex-col`}>
         <div className="flex-grow flex items-center justify-center">
           <InitialQueries 
