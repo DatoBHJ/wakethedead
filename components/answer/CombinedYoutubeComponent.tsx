@@ -425,7 +425,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     const isYouTube = currentCard?.isYouTube ?? false;
   
     return (
-      <div className="text-sm text-muted-foreground mt-4 whitespace-normal">
+      <div className="text-sm text-muted-foreground mb-2 whitespace-normal">
         <ReadingTime 
           content={subtitles} 
           inline={true} 
@@ -537,10 +537,10 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-transparent backdrop-blur-xl text-foreground dark:text-foreground rounded-xl">
+    <div className="flex flex-col h-full overflow-hidden bg-background dark:bg-background text-foreground dark:text-foreground">
       {rateLimitError && <RateLimit />}
       {showVideo && (
-        <div className="w-full px-4 sm:px-0 flex-shrink-0">
+        <div className="w-full px-4 flex-shrink-0">
           <div className="max-w-4xl mx-auto">
             <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl">
               <div className="absolute top-0 left-0 w-full h-full">
@@ -551,8 +551,8 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         </div>
       )}
        <div className="flex-grow overflow-y-auto">
-        <div className="px-2 max-w-4xl mx-auto">
-          <div className=" text-gray-700 dark:text-gray-400 px-4">
+        <div className="py-4 px-2 max-w-4xl mx-auto">
+          <div className="bg-card dark:bg-card text-gray-700 dark:text-gray-400 px-4">
             {showQuestionsModal ? (
               <ExtractedQuestionsModal
                 questions={extractedQuestions}
@@ -572,7 +572,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           />
         </div>
       </div>
-      <div className="flex-shrink-0 flex items-center justify-between pt-5 pb-5 sm:py-8 px-4 pl-3 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] text-card-foreground dark:text-card-foreground">
+      <div className="flex-shrink-0 flex items-center justify-between pt-5 px-4 pl-3 bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 
