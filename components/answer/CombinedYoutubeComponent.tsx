@@ -572,7 +572,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           />
         </div>
       </div>
-      <div className="flex-shrink-0 flex items-center justify-between pt-5 pb-5 sm:py-8 px-4 pl-3 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] text-card-foreground dark:text-card-foreground">
+      <div className="flex-shrink-0 flex items-center justify-between pt-5 pb-5 sm:py-8 px-4 pl-3  text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 

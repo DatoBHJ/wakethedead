@@ -5,7 +5,7 @@ const ThemeBasedVideo = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full -z-10">
-      <div className="absolute inset-0 bg-black/30" /> {/* Optional overlay for better contrast */}
+      <div className="absolute inset-0 bg-background/90" /> {/* Optional overlay for better contrast */}
       <video 
         preload="none"
         autoPlay 
