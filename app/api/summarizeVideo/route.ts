@@ -294,7 +294,7 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
       {
         role: "user",
         content: `
-        Scribble down super casual short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+        Scribble down super CASUAL short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
         Respond in ${selectedLanguage}.
         
         Your note MUST include these 4 elements: 
@@ -312,7 +312,7 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
         - Answer in MARKDOWN format. 
         - The summary should be visually appealing with emojis and symbols. 
         - User knows the video title and author, so don't repeat them.
-        - Be super casual and excited, like you're at a concert! 
+        - Be super CASUAL and excited, like you're at a concert! 
 
         Transcript chunk
         ${formattedChunk}`
@@ -382,7 +382,7 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
       {
         role: "user",
         content: `
-        Jot down super casual summary notes for part ${chunkNumber}/${totalChunks} of this article: "${articleInfo.title || ''}". 
+        Jot down super CASUAL summary notes for part ${chunkNumber}/${totalChunks} of this article: "${articleInfo.title || ''}". 
         Respond in ${selectedLanguage}.
         
         Your note MUST include these 4 elements: 
@@ -399,7 +399,7 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
         Important Guidelines:
         - Answer in MARKDOWN format. 
         - The summary should be visually appealing with emojis and symbols. 
-        - Be super casual and excited, like you're at a concert! 
+        - Be super CASUAL and excited, like you're at a concert! 
 
         Article chunk:
         ${chunk}`
