@@ -12,7 +12,7 @@ const ThemeBasedVideo = () => {
         loop  
         muted 
         playsInline
-        className="w-full h-full object-cover opacity-15 dark:opacity-50 "
+        className="w-full h-full object-cover opacity-10 "
         style={{ filter: 'saturate(0%)'  }} // Adjust saturation here
 
       >
