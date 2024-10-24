@@ -424,7 +424,8 @@ export default function Page() {
   
   return (
     <>
-       {isDesktop && <ThemeBasedVideo />}
+      <ThemeBasedVideo />       
+    {/* {isDesktop && <ThemeBasedVideo />} */}
       <div className="flex h-screen overflow-hidden bg-background/50 dark:bg-background/70 ">
     {/* <div className="flex h-screen overflow-hidden bg-background"> */}
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
