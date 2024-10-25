@@ -78,8 +78,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <div className="flex flex-col flex-1 h-dvh">
-            <main className="flex flex-col h-full">
-              {/* <main className="flex flex-col bg-muted/50 dark:bg-background h-full"> */}
+            {/* <main className="flex flex-col h-full"> */}
+              <main className="flex flex-col bg-muted/50 dark:bg-background h-full">
                 {children}
               </main>
             </div>
