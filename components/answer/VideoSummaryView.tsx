@@ -84,9 +84,9 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
   };
 
   const components: Components = {
-    h1: ({ children }) => <h1 className="text-base font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
+    h1: ({ children }) => <h1 className="mt-5 text-base font-handwriting font-bold break-words">{renderWithClickableTimestamps(children)}</h1>,
     // h1: ({ children }) => <h1 className="text-3xl font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
-    h2: ({ children }) => <h2 className="text-gray-700 dark:text-zinc-400 bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-xl font-handwriting font-semibold mt-6 mb-3 break-words">{renderWithClickableTimestamps(children)}</h2>,
+    h2: ({ children }) => <h2 className="mt-5 mb-5 text-gray-700 dark:text-zinc-400 bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-xl font-handwriting font-semibold break-words">{renderWithClickableTimestamps(children)}</h2>,
     h3: ({ children }) => <h3 className="text-xl font-handwriting font-semibold mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
     h4: ({ children }) => <h4 className="text-lg font-handwriting font-semibold mt-3 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h4>,
     h5: ({ children }) => <h5 className="text-base font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h5>,
@@ -115,7 +115,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       });
   
       return (
-        <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
+        <p className="p-4 leading-relaxed break-words font-handwriting text-base">
           {processedChildren}
         </p>
       );
@@ -203,7 +203,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       );
     },
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 my-4 italic break-words font-handwriting text-base">
+      <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 mt-4 mb-10 italic break-words font-handwriting text-base">
         {renderWithClickableTimestamps(children)}
       </blockquote>
     ),

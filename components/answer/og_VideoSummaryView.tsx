@@ -9,6 +9,19 @@
 //   isEditing: boolean;
 // }
 
+// interface CustomLiProps extends React.LiHTMLAttributes<HTMLLIElement> {
+//   depth?: number;
+//   index?: number;
+// }
+
+// interface CustomUlOlProps extends React.HTMLAttributes<HTMLUListElement | HTMLOListElement> {
+//   depth?: number;
+// }
+
+// interface CustomCodeProps extends React.HTMLAttributes<HTMLElement> {
+//   inline?: boolean;
+// }
+
 // const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTimestampClick, onEdit, isEditing }) => {
 //   const [editedContent, setEditedContent] = useState(content);
 //   const [originalContent, setOriginalContent] = useState(content);
@@ -38,22 +51,29 @@
 
 //   const renderWithClickableTimestamps = (children: ReactNode): ReactNode => {
 //     if (typeof children === 'string') {
-//       const regex = /\[(\d{2}:\d{2}:\d{2})\]|\[(\d{2}:\d{2})\]|(\d{2}:\d{2}-\d{2}:\d{2})/g;
+//       const regex = /(\[?\d{1,2}:\d{2}(?::\d{2})?\]?)/g;
 //       const parts = children.split(regex);
 //       return parts.map((part, index) => {
-//         if (part && (part.match(/^\d{2}:\d{2}:\d{2}$/) || part.match(/^\d{2}:\d{2}$/) || part.match(/^\d{2}:\d{2}-\d{2}:\d{2}$/))) {
-//           const seconds = parseTimestamp(part.split('-')[0]);
+//         if (part.match(regex)) {
+//           const timestamp = part.replace(/^\[|\]$/g, '');
+//           const seconds = parseTimestamp(timestamp);
 //           return (
-//             <span
-//               key={index}
-//               className="text-blue-500 cursor-pointer"
-//               onClick={() => onTimestampClick && onTimestampClick(seconds)}
-//             >
-//               {part.includes('-') ? part : `[${part}]`}
-//             </span>
+//             <React.Fragment key={index}>
+//               <span
+//                 className="text-blue-500 cursor-pointer"
+//                 onClick={() => onTimestampClick && onTimestampClick(seconds)}
+//               >
+//                 {part}
+//               </span>
+//               {' '}
+//             </React.Fragment>
 //           );
 //         }
-//         return part;
+//         return (
+//           <React.Fragment key={index}>
+//             {part}
+//           </React.Fragment>
+//         );
 //       });
 //     } else if (Array.isArray(children)) {
 //       return children.map((child, index) => 
@@ -64,47 +84,139 @@
 //   };
 
 //   const components: Components = {
-//     h1: ({ children }) => <h1 className="text-3xl font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
-//     h2: ({ children }) => <h2 className="text-2xl font-handwriting font-bold mt-6 mb-3 break-words">{renderWithClickableTimestamps(children)}</h2>,
+//     h1: ({ children }) => <h1 className="text-base font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
+//     // h1: ({ children }) => <h1 className="text-3xl font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
+//     h2: ({ children }) => <h2 className="text-gray-700 dark:text-zinc-400 bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-xl font-handwriting font-semibold mt-6 mb-3 break-words">{renderWithClickableTimestamps(children)}</h2>,
 //     h3: ({ children }) => <h3 className="text-xl font-handwriting font-semibold mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
+//     h4: ({ children }) => <h4 className="text-lg font-handwriting font-semibold mt-3 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h4>,
+//     h5: ({ children }) => <h5 className="text-base font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h5>,
+//     h6: ({ children }) => <h6 className="text-sm font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h6>,
 //     p: ({ children }) => {
-//       return <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">{renderWithClickableTimestamps(children)}</p>;
+//       const processedChildren = React.Children.map(children, child => {
+//         if (typeof child === 'string') {
+//           // Check for heading patterns
+//           const headingMatch = child.match(/^([^\S\r\n]*[^\w\s#]*[^\S\r\n]*)(#{1,6})\s*(.+)$/);
+//           if (headingMatch) {
+//             const level = headingMatch[2].length;
+//             const headingText = headingMatch[3];
+//             const HeadingComponent = components[`h${level}` as keyof Components] as React.ComponentType<{ children: React.ReactNode }>;
+//             return <HeadingComponent>{renderWithClickableTimestamps(headingText)}</HeadingComponent>;
+//           }
+  
+//           // If not a heading, process as normal paragraph content
+//           return child.split('\n').map((line, index) => (
+//             <React.Fragment key={index}>
+//               {index > 0 && <br />}
+//               {renderWithClickableTimestamps(line)}
+//             </React.Fragment>
+//           ));
+//         }
+//         return renderWithClickableTimestamps(child);
+//       });
+  
+//       return (
+//         <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
+//           {processedChildren}
+//         </p>
+//       );
 //     },
-//     ul: ({ children }) => <ul className="list-none my-4 space-y-2 font-handwriting text-base">{children}</ul>,
-//     ol: ({ children }) => <ol className="list-none my-4 space-y-2 font-handwriting text-base">{children}</ol>,
-//     li: ({ children }) => {
+//     // p: ({ children }) => {
+//     //   const processedChildren = React.Children.map(children, child => {
+//     //     if (typeof child === 'string') {
+//     //       return child.split('\n').map((line, index) => (
+//     //         <React.Fragment key={index}>
+//     //           {index > 0 && <br />}
+//     //           {renderWithClickableTimestamps(line)}
+//     //         </React.Fragment>
+//     //       ));
+//     //     }
+//     //     return renderWithClickableTimestamps(child);
+//     //   });
+//     //   return (
+//     //     <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
+//     //       {processedChildren}
+//     //     </p>
+//     //   );
+//     // },
+//     ul: ({ children, ...props }: CustomUlOlProps) => {
+//       const depth = props.depth || 0;
+//       return (
+//         <ul className={`list-none my-2 space-y-2 font-handwriting text-base ${depth > 0 ? 'ml-4' : ''}`}>
+//           {React.Children.map(children, (child) => 
+//             React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<CustomLiProps>, { depth: depth + 1 }) : child
+//           )}
+//         </ul>
+//       );
+//     },
+//     ol: ({ children, ...props }: CustomUlOlProps) => {
+//       const depth = props.depth || 0;
+//       return (
+//         <ol className={`list-none my-2 space-y-2 font-handwriting text-base ${depth > 0 ? 'ml-4' : ''}`}>
+//           {React.Children.map(children, (child, index) => 
+//             React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<CustomLiProps>, { depth: depth + 1, index: index + 1 }) : child
+//           )}
+//         </ol>
+//       );
+//     },
+//     li: ({ children, ...props }: CustomLiProps) => {
+//       const depth = props.depth || 0;
+//       const index = props.index;
 //       const childrenArray = React.Children.toArray(children);
 //       const firstChild = childrenArray[0];
-//       if (typeof firstChild === 'string' && firstChild.startsWith('- ')) {
-//         return (
-//           <li className="flex items-start space-x-2 ml-4 break-words font-handwriting">
-//             <span className="mt-1.5">•</span>
-//             <span>{renderWithClickableTimestamps(firstChild.slice(2))}</span>
-//           </li>
-//         );
-//       } else if (typeof firstChild === 'string' && firstChild.startsWith('→ ')) {
-//         return (
-//           <li className="flex items-start space-x-2 ml-8 break-words font-handwriting">
-//             <span className="mt-1.5">→</span>
-//             <span>{renderWithClickableTimestamps(firstChild.slice(2))}</span>
-//           </li>
-//         );
+//       let bulletPoint = '•';
+//       let extraClasses = '';
+//       let contentClasses = '';
+
+//       if (typeof firstChild === 'string') {
+//         if (firstChild.startsWith('[ ] ') || firstChild.startsWith('[x] ')) {
+//           bulletPoint = firstChild.startsWith('[x] ') ? '☑' : '☐';
+//           childrenArray[0] = firstChild.slice(4);
+//           extraClasses = 'flex items-start space-x-2';
+//           contentClasses = 'flex-1';
+//         } else if (firstChild.startsWith('- ')) {
+//           childrenArray[0] = firstChild.slice(2);
+//         } else if (firstChild.startsWith('→ ')) {
+//           bulletPoint = '→';
+//           childrenArray[0] = firstChild.slice(2);
+//         } else if (firstChild.startsWith('* ')) {
+//           bulletPoint = '•';
+//           childrenArray[0] = firstChild.slice(2);
+//         } else if (index !== undefined) {
+//           bulletPoint = `${index}.`;
+//         }
 //       }
-//       return <li className="ml-4 break-words font-handwriting">{renderWithClickableTimestamps(children)}</li>;
+
+//       const indentClass = `ml-${depth * 4}`;
+
+//       return (
+//         <li className={`${indentClass} ${extraClasses} break-words font-handwriting flex items-start mb-2`}>
+//           <span className="mr-2 inline-block min-w-[1em] text-center flex-shrink-0 mt-1">{bulletPoint}</span>
+//           <span className={`${contentClasses} flex-grow`}>
+//             {childrenArray.map((child, index) => (
+//               <React.Fragment key={index}>
+//                 {index > 0 && typeof child === 'string' && child.trim() === '' && <br />}
+//                 {renderWithClickableTimestamps(child)}
+//               </React.Fragment>
+//             ))}
+//           </span>
+//         </li>
+//       );
 //     },
 //     blockquote: ({ children }) => (
-//       <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 my-4 italic break-words font-handwriting text-base">{renderWithClickableTimestamps(children)}</blockquote>
+//       <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 my-4 italic break-words font-handwriting text-base">
+//         {renderWithClickableTimestamps(children)}
+//       </blockquote>
 //     ),
-//     code: ({ node, className, children, ...props }) => {
+//     code: ({ className, children, ...props }: CustomCodeProps) => {
 //       const match = /language-(\w+)/.exec(className || '')
-//       return match ? (
+//       return !props.inline && match ? (
 //         <pre className="bg-gray-100 dark:bg-gray-800 rounded p-2 my-2 overflow-x-auto max-w-full">
-//           <code className={`${className} whitespace-pre-wrap break-words`} {...props}>
+//           <code className={`${className} text-sm`} {...props}>
 //             {children}
 //           </code>
 //         </pre>
 //       ) : (
-//         <code className="bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5 break-words" {...props}>
+//         <code className="bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5 text-sm break-words" {...props}>
 //           {children}
 //         </code>
 //       )
@@ -122,11 +234,30 @@
 //       </a>
 //     ),
 //     hr: () => <hr className="my-4 border-0 h-px bg-gray-200 dark:bg-gray-700 opacity-50" />,
-
+//     table: ({ children }) => (
+//       <div className="overflow-x-auto my-4">
+//         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+//           {children}
+//         </table>
+//       </div>
+//     ),
+//     thead: ({ children }) => <thead className="bg-gray-50 dark:bg-gray-800">{children}</thead>,
+//     tbody: ({ children }) => <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">{children}</tbody>,
+//     tr: ({ children }) => <tr>{children}</tr>,
+//     th: ({ children }) => (
+//       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+//         {children}
+//       </th>
+//     ),
+//     td: ({ children }) => (
+//       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+//         {renderWithClickableTimestamps(children)}
+//       </td>
+//     ),
 //   };
 
 //   return (
-//     <div className="w-full overflow-hidden px-2">
+//     <div className="w-full overflow-hidden">
 //       {isEditing ? (
 //         <textarea
 //           value={editedContent}
