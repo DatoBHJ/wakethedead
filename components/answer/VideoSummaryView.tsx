@@ -86,7 +86,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
   const components: Components = {
     h1: ({ children }) => <h1 className="text-base font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
     // h1: ({ children }) => <h1 className="text-3xl font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
-    h2: ({ children }) => <h2 className="bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-3 px-6 text-xl font-handwriting font-semibold mt-6 mb-3 break-words">{renderWithClickableTimestamps(children)}</h2>,
+    h2: ({ children }) => <h2 className="text-gray-700 dark:text-zinc-400 bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-xl font-handwriting font-semibold mt-6 mb-3 break-words">{renderWithClickableTimestamps(children)}</h2>,
     h3: ({ children }) => <h3 className="text-xl font-handwriting font-semibold mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
     h4: ({ children }) => <h4 className="text-lg font-handwriting font-semibold mt-3 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h4>,
     h5: ({ children }) => <h5 className="text-base font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h5>,

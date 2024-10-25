@@ -40,7 +40,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
       <li
         key={index}
         className={`flex items-center p-3 ${isDesktop ? 'my-1 md:my-3' : 'my-1'} ${
-          isSummary ? 'backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6' : 'bg-transparent'
+          isSummary ? 'backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl px-6' : 'bg-transparent'
         } ${isClicked ? 'opacity-70' : ''}`}
       >
         {!isSummary && (
@@ -54,7 +54,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
           </span>
         )}
         <p className={`${
-          isSummary ? 'font-bold text-lg text-gray-700 dark:text-gray-400' : 'text-base text-gray-700 dark:text-gray-400 cursor-pointer'
+          isSummary ? 'font-bold text-lg text-gray-700 dark:text-zinc-400' : 'text-base text-gray-700 dark:text-zinc-400 cursor-pointer'
         } ${isClicked ? 'text-blue-600 dark:text-blue-400' : ''} font-handwriting`}
            onClick={() => !isSummary && handleQuestionClick(item)}>
           {formatText(item)}
