@@ -553,7 +553,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
       )}
        <div className="flex-grow overflow-y-auto">
         <div className="px-2 max-w-4xl mx-auto">
-          <div className=" text-gray-700 dark:text-zinc-400 px-4">
+          <div className=" text-gray-700 dark:text-zinc-300 px-4">
             {showQuestionsModal ? (
               <ExtractedQuestionsModal
                 questions={extractedQuestions}

@@ -21,7 +21,7 @@ const FollowUpComponent = ({ followUp, handleFollowUpClick }: { followUp: Follow
     return (
         <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4 transition-all duration-300">
             <div className="flex items-center mb-4">
-                <h2 className="text-2xl font-bold font-handwriting dark:text-zinc-400 ">Related Questions 🤔</h2>
+                <h2 className="text-2xl font-bold font-handwriting dark:text-zinc-300 ">Related Questions 🤔</h2>
             </div>
             <ul className="space-y-3">
                 {followUp.choices[0].message.content && JSON.parse(followUp.choices[0].message.content).followUp.map((question: string, index: number) => (
@@ -37,7 +37,7 @@ const FollowUpComponent = ({ followUp, handleFollowUpClick }: { followUp: Follow
                                 <IconPlus className="h-5 w-5 text-zinc-400  group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors duration-200" />
                             )}
                         </div>
-                        <p className={`text-base flex-1 ${clickedQuestions.has(question) ? 'text-gray-500' : 'text-card-foreground dark:text-zinc-400  group-hover:text-purple-700 dark:group-hover:text-purple-300'} transition-colors duration-200`}>
+                        <p className={`text-base flex-1 ${clickedQuestions.has(question) ? 'text-gray-500' : 'text-card-foreground dark:text-zinc-300  group-hover:text-purple-700 dark:group-hover:text-purple-300'} transition-colors duration-200`}>
                             {question}
                         </p>
                         {clickedQuestions.has(question) && (

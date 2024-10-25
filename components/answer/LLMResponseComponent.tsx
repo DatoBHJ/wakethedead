@@ -108,7 +108,7 @@ const LLMResponseComponent = ({ llmResponse, currentLlmResponse, index, isolated
         <div className={isolatedView ? 'flex flex-col max-w-[800px] mx-auto' : ''}>
             {(hasLlmResponse || hasCurrentLlmResponse) && !isRefreshing ? (
                 <div className="mt-4 backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl px-6 pb-6 transition-all duration-300">
-                    <div className="text-card-foreground dark:text-zinc-400 leading-relaxed">
+                    <div className="text-card-foreground dark:text-zinc-300 leading-relaxed">
                         <ChatView 
                             content={llmResponse} 
                             onAddLink={onAddLink}
