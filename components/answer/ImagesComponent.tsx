@@ -55,10 +55,10 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
     return (
         <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4">
             <div className="flex items-center mb-4">
-                <h2 className="text-lg font-semibold flex-grow text-black  dark:text-gray-400">Images</h2>
+                <h2 className="text-lg font-semibold flex-grow text-black  dark:text-zinc-400 ">Images</h2>
                 <div className="flex justify-center ml-2">
                     <button
-                        className="text-black  dark:text-gray-400 focus:outline-none"
+                        className="text-black  dark:text-zinc-400  focus:outline-none"
                         onClick={handleExpand}>
                         {isExpanded ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
                     </button>
@@ -89,7 +89,7 @@ const ImagesComponent: React.FC<ImagesComponentProps> = ({ images }) => {
             {isExpanded && visibleImages < images.length && (
                 <div className="flex justify-center mt-4">
                     <button
-                        className="py-2 text-center text-xs sm:text-sm text-gray-400 dark:text-gray-400"
+                        className="py-2 text-center text-xs sm:text-sm text-gray-400 dark:text-zinc-400 "
                         onClick={handleShowMore}
                     >
                         Show More

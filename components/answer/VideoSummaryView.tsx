@@ -250,7 +250,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       </th>
     ),
     td: ({ children }) => (
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-zinc-400 ">
         {renderWithClickableTimestamps(children)}
       </td>
     ),

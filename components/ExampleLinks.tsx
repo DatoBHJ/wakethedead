@@ -132,7 +132,7 @@ const ExampleLinks = ({ onAddLink }) => {
               {getLogo(link.source).logo}
               <span className="ml-1 sm:ml-2">{link.source}</span>
             </div>
-            <div className="text-xs sm:text-sm font-handwriting text-gray-700 dark:text-gray-400 line-clamp-2 mt-5 sm:mt-7">
+            <div className="text-xs sm:text-sm font-handwriting text-gray-700 dark:text-zinc-400  line-clamp-2 mt-5 sm:mt-7">
               {link.label}
             </div>
             <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
