@@ -10,6 +10,8 @@ const exampleLinks = [
   { url: "https://www.youtube.com/watch?v=MRtg6A1f2Ko", label: "📱 Marques Brownlee dives into the iPhone 16 and 16 Pro", duration: "21m video -> 39s skim", source: "youtube.com" },
   { url: "https://www.youtube.com/watch?v=qTmHuavOXNg", label: "🎵 Kendrick Lamar - To Pimp A Butterfly ALBUM REVIEW", duration: "22m video -> 33s skim", source: "youtube.com" },
   
+  { url: "https://wakethedead.vercel.app/tips", label: "🌟 Wake The Dead", duration: "3m read -> 12s skim", source: "wakethedead.ai" },
+  
   { url: "https://arxiv.org/pdf/1904.00605v1", label: "📄 Relative Attributing Propagation (RAP)", duration: "38m read -> 53s skim", source: "arxiv.org/pdf" },
   { url: "https://en.m.wikipedia.org/wiki/Lionel_Messi", label: "🐐 ⚽ Lionel Messi's Wikipedia page", duration: "2h 16m read -> 3m skim", source: "wikipedia.org" },
   { url: "https://buymeacoffee.com/kingbob", label: "👑 Meet King Bob, the Creator of Wake The Dead!! 🤔💡", duration: "3m read -> 4s skim", source: "buymeacoffee.com" },
