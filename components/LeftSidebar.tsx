@@ -5,7 +5,7 @@ import EmailContactButton from '@/components/ui/EmailContactButton';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
 import { Button } from '@/components/ui/button';
-import { List, ArrowRight, Gear } from "@phosphor-icons/react";
+import { List, ArrowRight, Gear, Coffee } from "@phosphor-icons/react";
 
 interface YouTubeCard {
   id: string;
@@ -178,6 +178,20 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
               rel="noopener noreferrer"
             >
               <IconGitHub className="h-5 w-5" />
+            </a>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            asChild
+            className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+          >
+            <a
+              target="_blank"
+              href="https://buymeacoffee.com/KingBob"
+              rel="noopener noreferrer"
+            >
+              <Coffee size={22} />
             </a>
           </Button>
         </div>
