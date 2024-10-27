@@ -120,24 +120,6 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
         </p>
       );
     },
-    // p: ({ children }) => {
-    //   const processedChildren = React.Children.map(children, child => {
-    //     if (typeof child === 'string') {
-    //       return child.split('\n').map((line, index) => (
-    //         <React.Fragment key={index}>
-    //           {index > 0 && <br />}
-    //           {renderWithClickableTimestamps(line)}
-    //         </React.Fragment>
-    //       ));
-    //     }
-    //     return renderWithClickableTimestamps(child);
-    //   });
-    //   return (
-    //     <p className="mt-2 mb-4 leading-relaxed px-2 break-words font-handwriting text-base">
-    //       {processedChildren}
-    //     </p>
-    //   );
-    // },
     ul: ({ children, ...props }: CustomUlOlProps) => {
       const depth = props.depth || 0;
       return (

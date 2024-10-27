@@ -294,28 +294,28 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
       {
         role: "user",
         content: `
-        Scribble down super CASUAL short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-        Respond in ${selectedLanguage}.
-        
-        Your note MUST include these 4 elements: 
-        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-        2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##. 
-        3. Highlighting a few key moments with timestamps (be concise, 7-10 words each). Use **bold** to emphasize key words. 
-        4. 1 standalone question that starts with a blockquote (>). 
+Scribble down super CASUAL short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+Respond in ${selectedLanguage}.
 
-        Format:
-        # Part ${chunkNumber}/${totalChunks}
-        ## [summary]
-        [Key moments] & > question
+Your note MUST include these 4 elements: 
+1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
+2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##. 
+3. Highlighting a few key moments with timestamps (be concise, 7-10 words each). Use **bold** to emphasize key words. 
+4. 1 standalone question that starts with a blockquote (>). 
 
-        Important Guidelines:
-        - Answer in MARKDOWN format. 
-        - The summary should be visually appealing with emojis and symbols. 
-        - User knows the video title and author, so don't repeat them.
-        - Be super CASUAL and excited, like you're at a concert! 
+Format:
+# Part ${chunkNumber}/${totalChunks}
+## [summary]
+[Key moments] & > question
 
-        Transcript chunk
-        ${formattedChunk}`
+Important Guidelines:
+- Answer in MARKDOWN format. 
+- The summary should be visually appealing with emojis and symbols. 
+- User knows the video title and author, so don't repeat them.
+- Be super CASUAL and excited, like you're at a concert! 
+
+Transcript chunk
+${formattedChunk}`
       }
     ],
     temperature: 0.6,

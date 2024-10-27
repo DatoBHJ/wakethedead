@@ -110,8 +110,8 @@ export default function Page() {
   const [currentLlmResponse, setCurrentLlmResponse] = useState('');
   const [youtubeLinks, setYoutubeLinks] = useState<string[]>([]);
   const [currentYoutubeIndex, setCurrentYoutubeIndex] = useState(0);
-  // const [selectedModel, setSelectedModel] = useState('llama-3.1-8b-instant');
-  const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');
+  const [selectedModel, setSelectedModel] = useState('llama-3.1-8b-instant');
+  // const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isInitialMessage, setIsInitialMessage] = useState(true);
@@ -619,6 +619,7 @@ export default function Page() {
               </header>
               <div className="flex-1 overflow-y-auto">
               {isChatRateLimited ? (
+                console.log('rateLimitInfo', rateLimitInfo),
               <ChatRateLimit rateLimitInfo={rateLimitInfo!} />
             ) : (
                 <BottomChatBar 
