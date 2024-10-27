@@ -110,7 +110,8 @@ export default function Page() {
   const [currentLlmResponse, setCurrentLlmResponse] = useState('');
   const [youtubeLinks, setYoutubeLinks] = useState<string[]>([]);
   const [currentYoutubeIndex, setCurrentYoutubeIndex] = useState(0);
-  const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');
+  const [selectedModel, setSelectedModel] = useState('llama-3.1-8b-instant');
+  // const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isInitialMessage, setIsInitialMessage] = useState(true);
@@ -432,11 +433,11 @@ export default function Page() {
           <header className="flex justify-start items-center p-4">
             <button 
               onClick={toggleSidebar}
-              className="sidebar-toggle-button text-foreground/70 z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
+              className="sidebar-toggle-button text-foreground/70 dark:text-zinc-300  z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
             >
               <List size={24} />
             </button>
-            <a href="/" className="hover:text-blue-600 text-foreground/70 dark:hover:text-blue-300 font-semibold px-4 z-50">
+            <a href="/" className="hover:text-blue-600 text-foreground/70 dark:text-zinc-300  dark:hover:text-blue-300 font-semibold px-4 z-50">
               {isDesktop ? 'Wake The Dead' : 'WTD'}
               <span className="ml-1 text-xs font-normal text-blue-500 dark:text-blue-400">beta</span>
             </a>
@@ -446,7 +447,7 @@ export default function Page() {
                   href="https://buymeacoffee.com/KingBob"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                  className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
                 >
                   <Coffee size={24} />
                 </a>
@@ -454,7 +455,7 @@ export default function Page() {
                   <DialogTrigger asChild>
                     <button 
                       ref={settingsButtonRef}
-                      className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                      className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
                     >
                       <Gear size={24} />
                     </button>
@@ -485,7 +486,7 @@ export default function Page() {
                 </Dialog>
                 <button 
                   onClick={() => setIsChatOpen(!isChatOpen)}
-                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
+                  className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
                 >
                   <IconMessage className="w-6 h-6" />
                 </button>
@@ -578,7 +579,7 @@ export default function Page() {
                   href="https://buymeacoffee.com/KingBob"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                  className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
                 >
                   <Coffee size={24} />
                 </a>
@@ -586,7 +587,7 @@ export default function Page() {
                   <DialogTrigger asChild>
                     <button 
                       ref={settingsButtonRef}
-                      className="text-foreground/70 hover:text-foreground transition-colors duration-200 focus:outline-none"
+                      className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
                     >
                       <Gear size={24} />
                     </button>

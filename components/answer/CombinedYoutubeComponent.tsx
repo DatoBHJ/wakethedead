@@ -512,7 +512,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         >
           {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
         </Button>
-        {!isSpecialLink && (
+        {/* {!isSpecialLink && ( */}
           <>
             <Button
               variant="outline"
@@ -532,7 +532,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
               {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
             </Button>
           </>
-        )}
+        {/* )} */}
       </div>
     );
   };

@@ -64,7 +64,7 @@ export const useArticleGenerator = (
       }
     } catch (error) {
       console.error('Error generating article:', error);
-      setError(`Article generation failed for video ${videoId}. ${error.message}`);
+      setError(`Article generation failed for ${videoId}.`);
     } finally {
       setIsGenerating(prev => ({ ...prev, [videoId]: false }));
     }
