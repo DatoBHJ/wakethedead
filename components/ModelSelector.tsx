@@ -30,7 +30,7 @@ const modelGroups = {
     },
     {
       name: 'llama-3.1-8b-instant',
-      displayName: '⭐ llama-3.1-8b'
+      displayName: 'llama-3.1-8b'
     },
     {
       name: 'llama3-70b-8192',
