@@ -133,149 +133,6 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
     });
   }
 
-// async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-//   const formattedChunk = convertTimestamps(chunk);
-//   // console.log('formattedChunk:', formattedChunk);
-//   console.log('selectedModel:', selectedModel);
-//   const response = await openai.chat.completions.create({
-//     model: selectedModel,
-//     messages: [
-//       {
-//         role: "system",
-//         content: `
-//         You're casually watching a YouTube video and scribbling down quick, messy, casual short notes filled with emojis.
-//         Use everyday language, be super casual - like real handwritten notes.
-//         Always respond in the user's preferred language, which is ${selectedLanguage}.
-//         Your response must include all required 4 elements.`
-//       },
-//       {
-//         role: "user",
-//         content: `Scribble down some casual notes for part ${chunkNumber} of ${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-//         I speak ${selectedLanguage}, so respond in that language.\n\n
-//         Sprinkle in LOTS of relevant emojis! Your response MUST include these 4 elements:\n
-//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-//         2. A level 2 heading (##) that has a summary with 1-2 sentences, including ANY crucial information or major conclusions, even if briefly mentioned.
-//           For example, if a specific data, number, score, or event is mentioned, ALWAYS include it.\n\n
-//         3. Casual short summary scribble, maximum 3-8 concise key points that have timestamps at the beginning of each point.\n
-//           * Timestamps should be in [HH:MM:SS] or [MM:SS] format with square brackets.\n
-//           * Avoid directly quoting or listing the transcript CHUNK.\n
-//           * Be short, casual and casual. Use emojis, arrows (->), squiggles (~), and other doodles.\n\n
-//         4. 1 follow-up question which starts with a blockquote (>).\n
-//           * Each question should be self-contained and clearly indicate what it's about without needing context.\n
-//           * Avoid questions that rely on personal opinions or subjective experiences of the LLM.\n
-//           * Focus on questions that can be answered based on factual information, analysis, or interpretation of known events/works.\n\n
-
-//         Follow this format:\n
-//         # Part ${chunkNumber}/${totalChunks}\n
-//         ## [Summary with 1-2 sentences]\n
-//         [casual short summary scribble with key points that have timestamps]\n
-//         > [Follow-up question]\n\n
-
-//         Base your scribbles on this CHUNK:\n
-//         ${formattedChunk}\n\n
-
-//         Remember, always to answer in MARKDOWN with emojis and do not include any notes or explanations about the format in your response.
-//         `
-//       }
-//     ],
-//     temperature: 0.6,
-//     stream: true,
-//     max_tokens: 500,
-//   });
-
-//   return response;
-// }
-
-// async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-//   const response = await openai.chat.completions.create({
-//     model: selectedModel,
-//     messages: [
-//       {
-//         role: "system",
-//         content: `You're casually skimming an article and scribbling down quick, messy, casual short notes filled with emojis.
-//         Use everyday language, be super casual - like real handwritten notes.
-//         Always respond in the user's preferred language, which is ${selectedLanguage}.
-//         Your response must include all required 4 elements.`
-//       },
-//       {
-//         role: "user",
-//         content: `Scribble down some casual, messy notes for part ${chunkNumber} of ${totalChunks} of this article: "${articleInfo.title || ''}". 
-//         I speak ${selectedLanguage}, so respond in that language.\n\n
-//         Sprinkle in LOTS of relevant emojis! Your response MUST include these 4 elements:\n
-//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-//         2. A level 2 heading (##) that has a summary with 1-2 sentences, including ANY crucial information or major conclusions, even if briefly mentioned.
-//           For example, if a specific data, number, score, or event is mentioned, ALWAYS include it.\n\n
-//         3. Casual short summary scribble, maximum 3-8 key points.\n
-//           * Avoid directly quoting or listing the article content.\n
-//           * Be short, casual and casual. Use arrows (->), squiggles (~), and other doodles.\n\n
-//         4. 1 follow-up question which starts with a blockquote (>).\n
-//           * Each question should be self-contained and clearly indicate what it's about without needing context.\n
-//           * Avoid questions that rely on personal opinions or subjective experiences of the LLM.\n
-//           * Focus on questions that can be answered based on factual information, analysis, or interpretation of known events/works.\n\n
-
-//         Follow this format:\n
-//         # Part ${chunkNumber}/${totalChunks}\n
-//         ## [Summary with 1-2 sentences]\n
-//         [casual short summary scribble with key points]\n
-//         > [Follow-up question]\n\n
-
-//         Base your scribbles on this:\n
-//         Chunk: ${chunk}\n\n
-        
-//         Remember, always to answer in MARKDOWN and do not include any notes or explanations about the format in your response.
-//         If the chunk seems unrelated to the article title or contains ads, just write "🤔 Unrelated content..." or "📢 Possible advertisement?" and move on.
-//         `
-//       }
-//     ],
-//     temperature: 0.7,
-//     stream: true,
-//     max_tokens: 500,
-//   });
-
-//   return response;
-// }
-  
-
-// async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-//   const formattedChunk = convertTimestamps(chunk);
-//   console.log('selectedModel:', selectedModel);
-//   const response = await openai.chat.completions.create({
-//     model: selectedModel,
-//     messages: [
-//       {
-//         role: "system",
-//         content: `Create casual, emoji-rich notes for a YouTube video in ${selectedLanguage}. Be informative and visually appealing.`
-//       },
-//       {
-//         role: "user",
-//         content: `Summarize part ${chunkNumber}/${totalChunks} of "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
-        
-//         Format:
-//         # Part ${chunkNumber}/${totalChunks}
-//         ## [Immediate 1-2 sentence summary with content-specific emojis]
-//         [3-5 concise key points with timestamps and content-related emojis]
-//         > [Standalone follow-up question with emojis]
-
-//         Guidelines:
-//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-//         2. A level 2 heading (##), Start summary immediately after ##. No separate title.
-//         3. Use many content-specific emojis, not format-related ones.
-//         4. Key points should be free-form, concise (3-7 words each), and include timestamps.
-//         5. Ensure the summary and key points are specific and informative. Don't quote directly.
-//         6. Include a standalone question that encourages further exploration. Make sure it starts with >.
-
-//         Transcript chunk:
-//         ${formattedChunk}`
-//       }
-//     ],
-//     temperature: 0.3,
-//     stream: true,
-//     max_tokens: 500,
-//   });
-
-//   return response;
-// }
-
 
 async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   const formattedChunk = convertTimestamps(chunk);
@@ -299,7 +156,7 @@ Respond in ${selectedLanguage}.
 
 Your note MUST include these 4 elements: 
 1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##. 
+2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##, without any spaces or line breaks.
 3. Highlighting a few key moments with timestamps (be concise, 7-10 words each). Use **bold** to emphasize key words. 
 4. 1 standalone question that starts with a blockquote (>). 
 
@@ -326,46 +183,6 @@ ${formattedChunk}`
   return response;
 }
 
-
-// async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
-//   console.log('selectedModel:', selectedModel);
-//   const response = await openai.chat.completions.create({
-//     model: selectedModel,
-//     messages: [
-//       {
-//         role: "system",
-//         content: `Create casual, emoji-rich notes for an article in ${selectedLanguage}. Be informative and visually appealing.`
-//       },
-//       {
-//         role: "user",
-//         content: `Summarize part ${chunkNumber}/${totalChunks} of "${articleInfo.title || ''}". 
-        
-//         Format:
-//         # Part ${chunkNumber}/${totalChunks}
-//         ## [Immediate 1-2 sentence summary with content-specific emojis]
-//         [3-5 concise key points with content-related emojis]
-//         > [Standalone follow-up question with emojis]
-
-//         Guidelines:
-//         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}"\n\n
-//         2. A level 2 heading (##), Start summary immediately after ##. No separate title.
-//         3. Use many content-specific emojis, not format-related ones.
-//         4. Key points should be free-form, concise (3-7 words each).
-//         5. Ensure the summary and key points are specific and informative. Don't quote directly.
-//         6. Include a standalone question that encourages further exploration. Make sure it starts with >.
-
-//         Article chunk:
-//         ${chunk}`
-//       }
-//     ],
-//     temperature: 0.5,
-//     stream: true,
-//     max_tokens: 500,
-//   });
-
-//   return response;
-// }
-
 async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   const response = await openai.chat.completions.create({
     model: selectedModel,
@@ -387,7 +204,7 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
         
         Your note MUST include these 4 elements: 
         1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-        2. A 1-2 sentence summary, including crucial information or major points, starting with ##. 
+        2. A 1-2 sentence summary, including crucial information or major points, starting with ##, without any spaces or line breaks.
         3. Key points (be concise, 7-10 words each).  Use **bold** to emphasize key words. 
         4. 1 standalone question that starts with a blockquote (>). 
 
