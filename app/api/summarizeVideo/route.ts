@@ -45,6 +45,8 @@ if (config.useOllamaEmbeddings) {
   });
 }
 
+const MINIMUM_CHUNK_SIZE = config.MINIMUM_CHUNK_SIZE; // characters
+
 // Set up Upstash Vector Index for embeddings
 const UPSTASH_VECTOR_REST_URL = process.env.UPSTASH_REDIS_REST_URL_2;
 const UPSTASH_VECTOR_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN_2;
@@ -136,6 +138,7 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 
 async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   const formattedChunk = convertTimestamps(chunk);
+  console.log('formattedChunk:', { formattedChunk });
   const response = await openai.chat.completions.create({
     model: selectedModel,
     messages: [
@@ -312,22 +315,28 @@ export async function POST(request: Request) {
     const customStream = new ReadableStream({
       async start(controller) {
         let accumulatedResponse = "";
-
-        for (let i = 0; i < chunks.length; i++) {
-          console.log(`Processing chunk ${i + 1} of ${chunks.length}`);
-          const chunk = chunks[i];
+        let validChunksCount = 0;
+  
+        // 사전에 유효한 청크만 필터링
+        const validChunks = chunks.filter(chunk => chunk.length >= MINIMUM_CHUNK_SIZE);
+        const totalValidChunks = validChunks.length;
+  
+        for (const chunk of validChunks) {
+          validChunksCount++;
+          console.log(`Processing chunk ${validChunksCount} of ${totalValidChunks}`);
+          
           try {
             const summaryStream = isYouTube
-              ? await generateCasualSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language)
-              : await generateArticleSummary(chunk, contentInfo, selectedModel, i + 1, chunks.length, language);
-
+              ? await generateCasualSummary(chunk, contentInfo, selectedModel, validChunksCount, totalValidChunks, language)
+              : await generateArticleSummary(chunk, contentInfo, selectedModel, validChunksCount, totalValidChunks, language);
+  
             for await (const part of summaryStream) {
               const content = part.choices[0]?.delta?.content || '';
               controller.enqueue(encoder.encode(content));
               accumulatedResponse += content;
             }
-
-            if (i < chunks.length - 1) {
+  
+            if (validChunksCount < totalValidChunks) {
               controller.enqueue(encoder.encode('\n\n---\n\n'));
               accumulatedResponse += '\n\n---\n\n';
             }
@@ -342,8 +351,8 @@ export async function POST(request: Request) {
             }
           }
         }
-
-        // Cache the complete generated summary with title, link, and timestamp
+  
+        // Cache the complete generated summary
         const cacheData = {
           content: accumulatedResponse,
           title: contentInfo.title || '',
@@ -357,6 +366,7 @@ export async function POST(request: Request) {
         controller.close();
       },
     });
+  
 
     return new NextResponse(customStream, {
       headers: {

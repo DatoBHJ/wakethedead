@@ -17,5 +17,6 @@ export const config = {
     numberOfSimilarityResults: 4, 
     numberOfVideosToScan: 6,
     numberOfImagesToScan: 9,
+    MINIMUM_CHUNK_SIZE: 300,
 }
 
