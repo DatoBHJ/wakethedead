@@ -201,7 +201,7 @@
 // export default VideosComponent;
 
 import React, { useState, useEffect, useRef } from 'react';
-import { IconPlay, IconClock, IconChevronUpDown, IconClose, IconCheck, IconArrowRight } from '@/components/ui/icons';
+import { IconPlay, IconClock, IconChevronUpDown, IconClose, IconCheck } from '@/components/ui/icons';
 
 interface Video {
   title: string;
@@ -219,11 +219,15 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
   const [isExpanded, setIsExpanded] = useState(false);
   const [visibleVideos, setVisibleVideos] = useState(3);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<boolean[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [addedLinks, setAddedLinks] = useState<Set<string>>(new Set());
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const [previousState, setPreviousState] = useState({ isExpanded: false, visibleVideos: 3 });
+  
+  const videoListRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     setLoadedImages(Array(videos.length).fill(false));
@@ -235,10 +239,9 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', checkDarkMode);
 
-    // Add ESC key listener for modal
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && selectedVideo) {
-        setSelectedVideo(null);
+        closeVideo();
       }
     };
 
@@ -250,18 +253,6 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
     };
   }, [videos, selectedVideo]);
 
-  // Disable body scroll when modal is open
-  useEffect(() => {
-    if (selectedVideo) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [selectedVideo]);
-
   const handleImageLoad = (index: number) => {
     setLoadedImages((prevLoadedImages) => {
       const updatedLoadedImages = [...prevLoadedImages];
@@ -270,15 +261,35 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
     });
   };
 
-  const handleVideoClick = (video: Video) => {
+  const handleVideoClick = (video: Video, index: number) => {
+    // 현재 상태 저장
+    setPreviousState({
+      isExpanded,
+      visibleVideos
+    });
+
+    // 필요한 경우 자동으로 확장
+    if (!isExpanded || visibleVideos <= index + 1) {
+      setIsExpanded(true);
+      setVisibleVideos(Math.min(index + 6, videos.length));
+    }
+
     setSelectedVideo(video);
-    // Scroll to top of page when modal opens
-    window.scrollTo(0, 0);
+    setSelectedVideoIndex(index);
+  };
+
+  const closeVideo = () => {
+    setSelectedVideo(null);
+    setSelectedVideoIndex(null);
+    
+    // 이전 상태로 복원
+    setIsExpanded(previousState.isExpanded);
+    setVisibleVideos(previousState.visibleVideos);
   };
 
   const handleCloseModal = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
-      setSelectedVideo(null);
+      closeVideo();
     }
   };
 
@@ -290,10 +301,12 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
   };
 
   const handleExpand = () => {
-    setIsExpanded(!isExpanded);
-    if (!isExpanded) {
+    const newExpandedState = !isExpanded;
+    setIsExpanded(newExpandedState);
+    if (newExpandedState) {
       setVisibleVideos(6);
     } else {
+      closeVideo(); // 축소할 때 영상 닫기
       setVisibleVideos(3);
     }
   };
@@ -318,97 +331,33 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
     </>
   );
 
-  const renderVideos = () => {
-    return videos.slice(0, visibleVideos).map((video, index) => (
-      <div
-        key={index}
-        className="w-full p-1 cursor-pointer"
-        onClick={() => handleVideoClick(video)}
-      >
-        <div className="relative group flex items-center">
-          <div className="w-2/5 overflow-hidden rounded-lg">
-            {!loadedImages[index] && (
-              <div className="w-full h-24 bg-gray-300 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-            )}
-            <img
-              src={video.imageUrl}
-              alt={video.title}
-              className={`w-full h-auto object-center object-cover aspect-video rounded-lg ${loadedImages[index] ? 'block' : 'hidden'}`}
-              onLoad={() => handleImageLoad(index)}
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-lg">
-              <IconPlay className="w-12 h-12 text-white" />
-            </div>
-          </div>
-          <div className="w-3/5 pl-2 text-black dark:text-zinc-400">
-            <h3 className="font-medium text-sm line-clamp-2">{video.title}</h3>
-            {video.duration && (
-              <div className="flex items-center mt-1 text-xs">
-                <IconClock className="w-3 h-3 mr-1" />
-                <span>{video.duration}</span>
-              </div>
-            )}
-            {addedLinks.has(video.link) && (
-              <IconCheck className="w-4 h-4 text-green-500 ml-2" />
-            )}
-          </div>
-        </div>
-      </div>
-    ));
-  };
+  const renderVideoPlayer = () => {
+    if (!selectedVideo || selectedVideoIndex === null) return null;
 
-  return (
-    <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4 w-full">
-      <div className="flex items-center mb-4">
-        <h2 className="text-lg font-semibold flex-grow text-black dark:text-zinc-400">Videos</h2>
-        {videos.length > 3 && (
-          <button
-            className="text-black dark:text-zinc-400 focus:outline-none"
-            onClick={handleExpand}
-          >
-            {isExpanded ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
-          </button>
-        )}
-      </div>
-      <div className={`flex flex-col -mx-1 ${isExpanded ? '' : 'max-h-[250px]'} overflow-hidden`}>
-        {videos.length === 0 ? <VideosSkeleton /> : renderVideos()}
-      </div>
-      {isExpanded && visibleVideos < videos.length && (
-        <div className="flex justify-center mt-4">
-          <button
-            className="py-2 text-center text-xs sm:text-sm text-gray-400 dark:text-zinc-400"
-            onClick={handleShowMore}
-          >
-            Show More
-          </button>
-        </div>
-      )}
-      {selectedVideo && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 overflow-y-auto"
-          onClick={handleCloseModal}
-        >
-          <div 
-            ref={modalRef}
-            className="relative w-full max-w-[90vw] aspect-video bg-black rounded-lg shadow-lg my-auto"
-          >
+    const positionClass = "relative w-full my-4";
+    
+    return (
+      <div className={positionClass}>
+        <div className="relative w-full bg-black rounded-lg shadow-lg overflow-hidden">
+          <div className="relative w-full pt-[56.25%]">
             <iframe
               src={`https://www.youtube.com/embed/${getYouTubeVideoId(selectedVideo.link)}?autoplay=1`}
               title="YouTube Video"
               allowFullScreen
-              className="w-full h-full rounded-lg"
+              className="absolute inset-0 w-full h-full"
               allow="autoplay"
-            ></iframe>
+            />
             
-            {/* Close button */}
             <button
               className="absolute top-2 left-2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/75 text-white focus:outline-none flex items-center justify-center"
-              onClick={() => setSelectedVideo(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                closeVideo();
+              }}
             >
               <IconClose className="w-6 h-6" />
             </button>
 
-            {/* Add link button */}
             <button
               className="absolute top-2 right-2 w-10 h-10 rounded-full bg-white hover:bg-gray-200 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none group flex items-center justify-center"
               onClick={(e) => {
@@ -426,6 +375,84 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
               </span>
             </button>
           </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderVideos = () => {
+    return videos.slice(0, visibleVideos).map((video, index) => {
+      const isSelected = selectedVideo?.link === video.link;
+      
+      return (
+        <React.Fragment key={index}>
+          <div
+            ref={el => { videoRefs.current[index] = el; }}
+            className="w-full p-1 cursor-pointer"
+            onClick={() => handleVideoClick(video, index)}
+          >
+            <div className="relative group flex items-center">
+              <div className="w-2/5 overflow-hidden rounded-lg">
+                {!loadedImages[index] && (
+                  <div className="w-full h-24 bg-gray-300 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                )}
+                <img
+                  src={video.imageUrl}
+                  alt={video.title}
+                  className={`w-full h-auto object-center object-cover aspect-video rounded-lg ${loadedImages[index] ? 'block' : 'hidden'}`}
+                  onLoad={() => handleImageLoad(index)}
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-lg">
+                  <IconPlay className="w-12 h-12 text-white" />
+                </div>
+              </div>
+              <div className="w-3/5 pl-2 text-black dark:text-zinc-400">
+                <h3 className="font-medium text-sm line-clamp-2">{video.title}</h3>
+                {video.duration && (
+                  <div className="flex items-center mt-1 text-xs">
+                    <IconClock className="w-3 h-3 mr-1" />
+                    <span>{video.duration}</span>
+                  </div>
+                )}
+                {addedLinks.has(video.link) && (
+                  <IconCheck className="w-4 h-4 text-green-500 ml-2" />
+                )}
+              </div>
+            </div>
+          </div>
+          {isSelected && renderVideoPlayer()}
+        </React.Fragment>
+      );
+    });
+  };
+
+  return (
+    <div className="backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/5 shadow-lg rounded-lg p-4 mt-4 w-full">
+      <div className="flex items-center mb-4">
+        <h2 className="text-lg font-semibold flex-grow text-black dark:text-zinc-400">Videos</h2>
+        {videos.length > 3 && (
+          <button
+            className="text-black dark:text-zinc-400 focus:outline-none"
+            onClick={handleExpand}
+          >
+            {isExpanded ? <IconClose className="w-6 h-6" /> : <IconChevronUpDown className="w-6 h-6" />}
+          </button>
+        )}
+      </div>
+      <div 
+        ref={videoListRef}
+        className={`flex flex-col -mx-1 ${isExpanded ? '' : 'max-h-[250px]'} overflow-hidden`}
+      >
+        {videos.length === 0 ? <VideosSkeleton /> : renderVideos()}
+      </div>
+      {isExpanded && visibleVideos < videos.length && (
+        <div className="flex justify-center mt-4">
+          <button
+            className="py-2 text-center text-xs sm:text-sm text-gray-400 dark:text-zinc-400"
+            onClick={handleShowMore}
+          >
+            Show More
+          </button>
         </div>
       )}
     </div>
