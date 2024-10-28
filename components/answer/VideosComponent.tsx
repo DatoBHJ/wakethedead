@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IconPlay, IconClock, IconChevronUpDown, IconClose, IconCheck, IconArrowRight } from '@/components/ui/icons';
+import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 
 interface Video {
   title: string;
@@ -215,9 +216,9 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
   );
 };
 
-const getYouTubeVideoId = (url: string) => {
-  const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(?:embed\/)?(?:v\/)?(?:shorts\/)?(?:\S+)/);
-  return match ? match[0].split('/').pop()?.split('=').pop() : '';
-};
+// const getYouTubeVideoId = (url: string) => {
+//   const match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(?:embed\/)?(?:v\/)?(?:shorts\/)?(?:\S+)/);
+//   return match ? match[0].split('/').pop()?.split('=').pop() : '';
+// };
 
 export default VideosComponent;
