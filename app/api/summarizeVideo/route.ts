@@ -238,7 +238,7 @@ export async function POST(request: Request) {
 
   const language = selectedLanguage || 'en';
   const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
-  
+  console.log('cacheKey:', cacheKey);
   const { exists, article } = await checkCachedArticle(cacheKey);
 
   if (!forceRegenerate && exists && article) {
