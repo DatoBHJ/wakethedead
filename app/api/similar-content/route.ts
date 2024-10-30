@@ -24,7 +24,6 @@ export async function POST(request: Request) {
   const { title, summary, currentUrl } = await request.json();
 
   try {
-    // 제목과 요약을 결합하여 검색
     let searchText = '';
 
     if (title) {
@@ -63,12 +62,26 @@ export async function POST(request: Request) {
       )
       .reduce((acc, result) => {
         const title = result.metadata.title as string;
-        if (!seenTitles.has(title)) {
+        let link = result.metadata.link as string;
+        
+        // URL과 제목 변경 로직
+        if (link === 'https://wakethedead.vercel.app/tips') {
+          link = 'https://buymeacoffee.com/kingbob';
+          // 이미 변경된 제목이 있다면 그것을 사용하지 않음
+          if (!seenTitles.has('King Bob - Creator of Wake The Dead')) {
+            acc.push({
+              title: 'King Bob - Creator of Wake The Dead',
+              pageContent: result.metadata.content as string,
+              url: link,
+            });
+            seenTitles.add('King Bob - Creator of Wake The Dead');
+          }
+        } else if (!seenTitles.has(title)) {
           seenTitles.add(title);
           acc.push({
             title: title,
             pageContent: result.metadata.content as string,
-            url: result.metadata.link as string,
+            url: link,
           });
         }
         return acc;

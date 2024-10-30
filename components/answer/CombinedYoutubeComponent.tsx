@@ -532,7 +532,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
               {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
             </Button>
           </>
-        )}  
+      )}   
       </div>
     );
   };
