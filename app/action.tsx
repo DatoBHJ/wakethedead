@@ -94,7 +94,8 @@ async function getUserSharedDocument(userMessage: string, embeddings: OllamaEmbe
       title: result.metadata.title as string,
       pageContent: result.metadata.content as string,
       url: result.metadata.link as string,
-      score: result.score
+      score: result.score,
+      id: result.id
     }));
 }
 
@@ -257,7 +258,7 @@ async function myAction(
       isRefresh ? null : performImageSearch(userMessage),
       isRefresh ? null : performVideoSearch(userMessage)
     ]);
-
+    console.log('relevantDocuments:', relevantDocuments);
     // Immediately update streamable with available results
     streamable.update({
       relevantDocuments,

@@ -13,7 +13,7 @@ export const config = {
     timeout: 700, 
     embedTimeout: 15000, // 15 seconds
     similarityThreshold: 0.6,
-    ArticleSimilarityThreshold:0.3,
+    ArticleSimilarityThreshold:0.0,
     numberOfSimilarityResults: 4, 
     numberOfVideosToScan: 6,
     numberOfImagesToScan: 9,
