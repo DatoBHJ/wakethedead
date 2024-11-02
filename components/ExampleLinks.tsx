@@ -25,7 +25,7 @@ const exampleLinks = [
   { url: "https://summitdetox.com/blog/what-is-lean-drink/#:~:text=Lean%20consists%20of%20a%20combination,to%20give%20it%20more%20flavor.", label: "🫗 What is Lean Drink?", duration: "12m read -> 30s skim", source: "summitdetox.com" },
   { url: "https://aws.amazon.com/ko/blogs/machine-learning/vision-use-cases-with-llama-3-2-11b-and-90b-models-from-meta/", label: "👀 Vision Use Cases with Llama 3.2 11B and 90B Models", duration: "14m read -> 16s skim", source: "aws.amazon.com" },
   // { url: "https://arxiv.org/pdf/2405.04828", label: "📄 CHUXIN: 1.6B TECHNICAL REPORT", duration: "26m read -> 28s skim", source: "arxiv.org/pdf" },
-  { url: "https://www.arxiv.org/pdf/2409.19924", label: "📄 Planning Abilities of OpenAI’s o1 Models", duration: "43m read -> 41s skim", source: "arxiv.org/pdf" },
+  // { url: "https://www.arxiv.org/pdf/2409.19924", label: "📄 Planning Abilities of OpenAI’s o1 Models", duration: "43m read -> 41s skim", source: "arxiv.org/pdf" },
   { url: "https://x.com/smokeawayyy/status/1841215305751937156?s=46&t=MxpeeAIbwxH0FrxYoc0KFA", label: "OpenAI's issues 🚨: No DevDay livestream + compromised accounts 🤔", duration: "2m read -> 4s skim", source: "x.com" },
 ];
 
