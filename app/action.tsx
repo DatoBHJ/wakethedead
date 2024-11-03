@@ -245,7 +245,7 @@ async function myAction(
     const userMessageWithTimestamp = `Today's date:${currentTimestamp} - ${userMessage}`;
 
     const isNewsQuery = (query: string): boolean => {
-      const newsKeywords = ['news', 'headline', 'breaking', 'latest', 'today'];
+      const newsKeywords = ['news', 'headline', 'breaking', 'latest', 'today', 'current', 'these days', 'recent', 'new', 'update' ];
       return newsKeywords.some(keyword => query.toLowerCase().includes(keyword));
     };
 
