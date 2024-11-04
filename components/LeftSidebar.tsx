@@ -132,7 +132,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
         <form onSubmit={handleAddLink} className="flex flex-col mb-5">
           <div className="relative w-full">
             <div className="flex items-center pb-2 border-b-[.5px] bg-transparent border-gray-200 dark:border-gray-700">
-              <span className="flex-shrink-0 text-blue-500 dark:text-blue-400">⚡</span>
+              <span className="flex-shrink-0 text-blue-500 dark:text-blue-400">🍌</span>
               <input
                 id="add-link"
                 type="text"
