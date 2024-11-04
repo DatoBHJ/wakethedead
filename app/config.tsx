@@ -7,11 +7,11 @@ export const config = {
     textChunkOverlap: 200, 
     nonOllamaBaseURL: 'https://api.groq.com/openai/v1', 
     useSemanticCache: true, 
-    useRateLimiting: true, // Uses Upstash rate limiting to limit the number of requests per user
+    useRateLimiting: true, 
     startIndexOfPagesToScan: 0,
     numberOfPagesToScan: 7,
     timeout: 700, 
-    embedTimeout: 15000, // 15 seconds
+    embedTimeout: 15000, 
     similarityThreshold: 0.6,
     ArticleSimilarityThreshold:0.0,
     numberOfSimilarityResults: 4, 

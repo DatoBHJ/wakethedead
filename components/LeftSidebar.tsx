@@ -1,11 +1,11 @@
 import React, { useState, useEffect, forwardRef } from 'react';
-import { X, Plus } from "@phosphor-icons/react";
-import { IconGitHub, IconPlus, IconTwitter, IconBuyMeACoffee } from '@/components/ui/icons';
+import { X } from "@phosphor-icons/react";
+import { IconGitHub, IconTwitter } from '@/components/ui/icons';
 import EmailContactButton from '@/components/ui/EmailContactButton';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
 import { Button } from '@/components/ui/button';
-import { List, ArrowRight, Gear, Coffee } from "@phosphor-icons/react";
+import { ArrowRight, Coffee } from "@phosphor-icons/react";
 
 interface YouTubeCard {
   id: string;

@@ -13,7 +13,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import ModelSelector from '@/components/ModelSelector';
 import LanguageSelector from '@/components/LanguageSelector';
 import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
-import UserSharedLinks from '@/components/UserSharedLinks';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import ExampleLinks from '@/components/ExampleLinks';
 import { initialQuestions } from '@/components/initialQuestions';
@@ -84,7 +83,7 @@ interface StreamMessage {
   SearchResult?: SearchResult[];
   images?: Image[];
   videos?: Video[];
-  rateLimitInfo?: RateLimitInfo;  // 새로 추가된 필드
+  rateLimitInfo?: RateLimitInfo; 
 }
 interface FollowUp {
   choices: {
@@ -672,11 +671,6 @@ export default function Page() {
         currentIndex={currentYoutubeIndex}
         onCardsUpdate={handleCardsUpdate}
       />
-      {/* <UserSharedLinks 
-        onAddLink={handleAddLink} 
-        showUFO={showUFO}
-        mainContentRef={mainContentRef}
-      /> */}
     </div>
     </>
   );

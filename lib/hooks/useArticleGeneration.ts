@@ -15,7 +15,7 @@ export function useArticleGeneration() {
     videoUrl: string,
     videoId: string,
     index: number,
-    selectedModel: string  // 새로운 매개변수 추가
+    selectedModel: string  
   ): Promise<ArticleStatus> => {
     try {
       const response = await fetch('/api/generate-article', {

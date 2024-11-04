@@ -85,7 +85,6 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
 
   const components: Components = {
     h1: ({ children }) => <h1 className="mt-5 text-base font-handwriting font-bold break-words">{renderWithClickableTimestamps(children)}</h1>,
-    // h1: ({ children }) => <h1 className="text-3xl font-handwriting font-bold my-4 break-words">{renderWithClickableTimestamps(children)}</h1>,
     h2: ({ children }) => <h2 className="mt-5 mb-5 text-gray-700 dark:text-zinc-300 bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-xl font-handwriting font-semibold break-words">{renderWithClickableTimestamps(children)}</h2>,
     h3: ({ children }) => <h3 className="text-xl font-handwriting font-semibold mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
     h4: ({ children }) => <h4 className="text-lg font-handwriting font-semibold mt-3 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h4>,
@@ -94,7 +93,6 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
     p: ({ children }) => {
       const processedChildren = React.Children.map(children, child => {
         if (typeof child === 'string') {
-          // Check for heading patterns
           const headingMatch = child.match(/^([^\S\r\n]*[^\w\s#]*[^\S\r\n]*)(#{1,6})\s*(.+)$/);
           if (headingMatch) {
             const level = headingMatch[2].length;
@@ -103,7 +101,6 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
             return <HeadingComponent>{renderWithClickableTimestamps(headingText)}</HeadingComponent>;
           }
   
-          // If not a heading, process as normal paragraph content
           return child.split('\n').map((line, index) => (
             <React.Fragment key={index}>
               {index > 0 && <br />}

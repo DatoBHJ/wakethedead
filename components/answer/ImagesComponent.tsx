@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { IconPlus, IconClose, IconChevronUpDown } from '@/components/ui/icons';
-import { performWebSearch, performImageSearch, performVideoSearch } from '@/app/tools/Providers';
+import { IconClose, IconChevronUpDown } from '@/components/ui/icons';
 
 interface Image {
     link: string;

@@ -1,5 +1,3 @@
-// /utils/cacheUtils.ts
-
 import { SemanticCache } from "@upstash/semantic-cache";
 import { Index } from "@upstash/vector";
 import { config } from '@/app/config';

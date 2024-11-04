@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { type AI } from '../../app/action';
-import { useActions } from 'ai/rsc';
-import Markdown from 'react-markdown';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { Copy, Check, ArrowsCounterClockwise } from "@phosphor-icons/react";
 import 'react-tooltip/dist/react-tooltip.css'
-import { Tooltip } from 'react-tooltip'
 import ChatView from './ChatView';
-import { IconAI } from '@/components/ui/icons';
 
 interface LLMResponseComponentProps {
     llmResponse: string;

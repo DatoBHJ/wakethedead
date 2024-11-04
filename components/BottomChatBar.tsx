@@ -14,7 +14,6 @@ import VideosComponent from '@/components/answer/VideosComponent';
 import ImagesComponent from '@/components/answer/ImagesComponent';
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
-// import RateLimit from '@/components/answer/RateLimit';
 
 interface BottomChatBarProps {
   isOpen: boolean;
@@ -28,7 +27,7 @@ interface BottomChatBarProps {
   onAddLink: (link: string) => void;
   onRefresh: (index: number) => void;
   extractedQuestions: string[];
-  randomQuestions: string[];  // 새로 추가된 prop
+  randomQuestions: string[];  
 }
 
 const BottomChatBar: React.FC<BottomChatBarProps> = ({
@@ -43,7 +42,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
   onAddLink,
   onRefresh,
   extractedQuestions,
-  randomQuestions,  // 새로 추가된 prop
+  randomQuestions,  
 }) => {
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -122,7 +121,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                         onAddLink={handleAddLink}
                         setIsChatOpen={setIsOpen}
                         addedLinks={addedLinks}
-                        currentLlmResponse={currentLlmResponse} // isLoading 대신 currentLlmResponse를 전달
+                        currentLlmResponse={currentLlmResponse} 
 
                       />
                     )}

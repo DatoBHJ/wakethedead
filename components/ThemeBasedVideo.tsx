@@ -5,7 +5,7 @@ const ThemeBasedVideo = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full -z-10 ">
-      <div className="absolute inset-0" /> {/* Optional overlay for better contrast */}
+      <div className="absolute inset-0" /> 
       <video 
         preload="none"
         autoPlay 
@@ -13,7 +13,7 @@ const ThemeBasedVideo = () => {
         muted 
         playsInline
         className="w-full h-full object-cover opacity-10 "
-        style={{ filter: 'saturate(0%)'  }} // Adjust saturation here
+        style={{ filter: 'saturate(0%)'  }} 
 
       >
         <source src={videoSource} type="video/mp4" />

@@ -8,9 +8,9 @@ import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera
 import { useArticleGenerator } from './useYoutubeHooks';
 import { useToast } from "@/components/ui/use-toast";
 import ExtractedQuestionsModal from './ExtractedQuestionsModal';
-import ReadingTime from './ReadingTime'; // 새로 추가된 import
+import ReadingTime from './ReadingTime'; 
 import RateLimit from '@/components/answer/RateLimit';
-import SimilarContent from './SimilarContent'; // Import the new component
+import SimilarContent from './SimilarContent';
 
 interface YouTubeCard {
   id: string;
@@ -36,7 +36,7 @@ interface CombinedYoutubeComponentProps {
   cards: YouTubeCard[];
   onLinkClick: (link: string) => void;
   onExtractQuestions: (questions: string[]) => void;
-  onQuestionSelected: (question: string) => void; // Add this new prop
+  onQuestionSelected: (question: string) => void;
   setIsChatOpen: (isOpen: boolean) => void;
   onAddLink: (link: string) => void;
 
@@ -51,7 +51,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   cards,
   onLinkClick,
   onExtractQuestions,
-  onQuestionSelected, // Add this new prop
+  onQuestionSelected,
   setIsChatOpen,
   onAddLink,
 
@@ -64,11 +64,8 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   const videoRef = useRef<HTMLIFrameElement>(null);
   const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
-  // const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
   const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
-  const [isSimilarContentLoading, setIsSimilarContentLoading] = useState(true);
-  const [similarContentError, setSimilarContentError] = useState<string | null>(null);
 
   const { 
     articles, 
@@ -261,7 +258,6 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
 
   const handleExtractedQuestionClick = (question: string) => {
-    // setShowQuestionsModal(false);
     onQuestionSelected(question); // Call this function when a question is selected
   };
 

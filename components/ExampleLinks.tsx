@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { url } from 'inspector';
 
 const exampleLinks = [
   { url: "https://www.youtube.com/watch?v=FNnK1J-BdiM", label: "😂 Marques is checking out the world's largest fake iPhone lol", duration: "55s video -> 9s skim", source: "youtube.com" },

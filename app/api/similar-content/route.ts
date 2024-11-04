@@ -64,10 +64,8 @@ export async function POST(request: Request) {
         const title = result.metadata.title as string;
         let link = result.metadata.link as string;
         
-        // URL과 제목 변경 로직
         if (link === 'https://wakethedead.vercel.app/tips') {
           link = 'https://buymeacoffee.com/kingbob';
-          // 이미 변경된 제목이 있다면 그것을 사용하지 않음
           if (!seenTitles.has('King Bob - Creator of Wake The Dead')) {
             acc.push({
               title: 'King Bob - Creator of Wake The Dead',

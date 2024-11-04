@@ -8,7 +8,6 @@ export async function fetchVideoInfo(videoId: string) {
         title: oEmbedData.title,
         author: oEmbedData.author_name,
         thumbnail: oEmbedData.thumbnail_url,
-        // html: oEmbedData.html, // 비디오 재생을 위한 HTML 코드
       };
     } catch (error) {
       console.error('Error fetching video info:', error);
