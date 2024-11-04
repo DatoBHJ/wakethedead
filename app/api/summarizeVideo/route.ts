@@ -305,6 +305,11 @@ export async function POST(request: Request) {
       embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
     }
   
+    // // forceRegenerate가 true이거나 캐시가 없을 때 임베딩 생성
+    // if (forceRegenerate || !exists) {
+    //   await embedTranscripts(transcript, videoId, contentInfo, videoUrl, cacheKey);
+    // }
+
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 6000,
       chunkOverlap: 0,
