@@ -1,4 +1,4 @@
-import { searchNews, SafeSearchType } from 'duck-duck-scrape';
+import { searchNews, SafeSearchType, SearchTimeType } from 'duck-duck-scrape';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs'
@@ -13,7 +13,8 @@ export async function GET(request: Request) {
 
   try {
     const results = await searchNews(query, {
-      safeSearch: SafeSearchType.OFF
+      safeSearch: SafeSearchType.OFF,
+      time: SearchTimeType.MONTH  // 한 달 동안의 뉴스로 제한
     });
     return NextResponse.json(results);
   } catch (error) {

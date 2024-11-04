@@ -340,16 +340,16 @@ export default function Page() {
       return prevLinks;
     });
   }, []);
-  useEffect(() => {
-    if (youtubeLinks.length === 0) {
-      const timer = setTimeout(() => {
-        setShowUFO(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setShowUFO(false);
-    }
-  }, [youtubeLinks]);
+  // useEffect(() => {
+  //   if (youtubeLinks.length === 0) {
+  //     const timer = setTimeout(() => {
+  //       setShowUFO(true);
+  //     }, 1000);
+  //     return () => clearTimeout(timer);
+  //   } else {
+  //     setShowUFO(false);
+  //   }
+  // }, [youtubeLinks]);
   
   const memoizedCombinedYoutubeComponent = useMemo(() => (
     <CombinedYoutubeComponent 

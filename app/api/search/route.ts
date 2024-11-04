@@ -1,4 +1,4 @@
-import { search, SafeSearchType } from 'duck-duck-scrape';
+import { search, SafeSearchType, SearchTimeType } from 'duck-duck-scrape';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs' 
@@ -14,7 +14,8 @@ export async function GET(request: Request) {
   try {
     const results = await search(query, 
       {
-      safeSearch: SafeSearchType.OFF
+      safeSearch: SafeSearchType.OFF,
+      time: SearchTimeType.YEAR // 최근 1년 동안의 검색 결과로 제한
     }
   );
     return NextResponse.json(results);

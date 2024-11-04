@@ -2,18 +2,21 @@ interface SearchResult {
     title: string;
     url: string;
     pageContent: string;
-  }
+    date?: string;
+}
 
-  interface VideoResult {
+interface VideoResult {
     title: string;
     link: string;
     imageUrl: string;
     duration?: string;
+    date?: string;
 }
 
 interface ImageResult {
   title: string;
   link: string;
+  date?: string;
 }
 
 interface NewsResult {
@@ -35,7 +38,7 @@ interface DuckDuckGoNewsResult {
     isOld: boolean;
   }
   
-export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
+  export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(message)}`;
     
     try {
@@ -50,7 +53,8 @@ export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan,
         const final = responseData.results.map((result: any): SearchResult => ({
             title: result.title,
             pageContent: result.description,
-            url: result.url
+            url: result.url,
+            date: result.date || undefined // 날짜 정보가 없으면 undefined
         }));
         return final
     } catch (error) {
@@ -62,7 +66,8 @@ export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan,
 export async function serperSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = 'https://google.serper.dev/search';
     const data = JSON.stringify({
-        "q": message
+        "q": message,
+        "tbs": "qdr:y", // Time-based search: Past year
     });
     const requestOptions: RequestInit = {
         method: 'POST',
@@ -84,7 +89,8 @@ export async function serperSearch(message: string, startIndexOfPagesToScan, num
         const final = responseData.organic.map((result: any): SearchResult => ({
             title: result.title,
             pageContent: result.snippet,
-            url: result.link
+            url: result.link,
+            date: result.date || undefined // 날짜 정보가 없으면 undefined
         }));
         return final;
     } catch (error) {
@@ -94,10 +100,12 @@ export async function serperSearch(message: string, startIndexOfPagesToScan, num
 }
 
 
+
 export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
     const url = 'https://google.serper.dev/news';
     const data = JSON.stringify({
-        "q": message
+        "q": message,
+        "tbs": "qdr:y", // Time-based search: Past year
     });
     const requestOptions: RequestInit = {
         method: 'POST',
@@ -182,6 +190,7 @@ export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
         try {
             // First, try DuckDuckGo search
             const duckDuckGoResults = await duckDuckGoSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
+            console.log('DuckDuckGo results:', duckDuckGoResults);
             return duckDuckGoResults;
         } catch (error) {
             console.error('DuckDuckGo search error:', error);
@@ -190,6 +199,7 @@ export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
             console.log('Falling back to serperSearch');
             try {
                 const serperResults = await serperSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
+                console.log('Serper results:', serperResults);
                 return serperResults;
             } catch (serperError) {
                 console.error('Serper search error:', serperError);

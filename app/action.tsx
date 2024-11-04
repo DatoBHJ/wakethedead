@@ -60,7 +60,9 @@ interface SearchResult {
   title: string;
   url: string;
   pageContent: string;
+  date?: string;
 }
+
 
 interface ContentResult extends SearchResult {
   html: string;
@@ -158,7 +160,12 @@ async function processAndVectorizeContent(
     if (content.html.length > 0) {
       try {
         const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: textChunkSize, chunkOverlap: textChunkOverlap }).splitText(content.html);
-        const vectorStore = await MemoryVectorStore.fromTexts(splitText, { title: content.title, url: content.url }, embeddings);
+        const metadata = {
+          title: content.title,
+          url: content.url,
+          date: content.date // date가 undefined여도 그대로 전달
+        };
+        const vectorStore = await MemoryVectorStore.fromTexts(splitText, metadata, embeddings);
         const queryEmbedding = await embeddings.embedQuery(query);
         return await vectorStore.similaritySearchVectorWithScore(queryEmbedding, numberOfSimilarityResults);
       } catch (error) {
@@ -179,6 +186,7 @@ async function processAndVectorizeContent(
       title: doc.metadata.title as string,
       pageContent: doc.pageContent,
       url: doc.metadata.url as string,
+      date: doc.metadata.date as string | undefined, // date가 없으면 undefined
       score: score
     }));
 }
@@ -242,7 +250,6 @@ async function myAction(
     }
 
     const currentTimestamp = new Date().toISOString();
-    const userMessageWithTimestamp = `Today's date:${currentTimestamp} - ${userMessage}`;
 
     const isNewsQuery = (query: string): boolean => {
       const newsKeywords = ['news', 'headline', 'breaking', 'latest', 'today', 'current', 'these days', 'recent', 'new', 'update' ];
@@ -258,7 +265,7 @@ async function myAction(
       isRefresh ? null : performImageSearch(userMessage),
       isRefresh ? null : performVideoSearch(userMessage)
     ]);
-    console.log('relevantDocuments:', relevantDocuments);
+    // console.log('relevantDocuments:', relevantDocuments);
     // Immediately update streamable with available results
     streamable.update({
       relevantDocuments,
@@ -268,12 +275,14 @@ async function myAction(
 
     // Process web search results
     let processedResults: SearchResult[] = isNewsSearch
-      ? (webSearchResults as NewsResult[]).map((result): SearchResult => ({
-          title: result.title,
-          pageContent: `${result.snippet} (Source: ${result.source}, Date: ${result.date})`,
-          url: result.link
-        }))
-      : webSearchResults as SearchResult[];
+    ? (webSearchResults as NewsResult[]).map((result): SearchResult => ({
+        title: result.title,
+        pageContent: `${result.snippet} (Source: ${result.source}, Date: ${result.date})`,
+        url: result.link,
+        date: result.date
+      }))
+    : webSearchResults as SearchResult[];
+  
 
     const slicedWebSearchResults = processedResults.slice(config.startIndexOfPagesToScan, config.numberOfPagesToScan);
 
@@ -282,8 +291,7 @@ async function myAction(
     const blueLinksContents = (await Promise.all(contentPromises)).filter((content): content is ContentResult => content !== null);
 
     // Process and vectorize content
-    const processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessageWithTimestamp, embeddings);
-    console.log('Processed web results:', processedWebResults);
+    const processedWebResults = await processAndVectorizeContent(blueLinksContents, userMessage, embeddings);
 
     const uniqueProcessedWebResults = removeDuplicates(
       processedWebResults.length > 0 ? processedWebResults : slicedWebSearchResults,
@@ -295,6 +303,7 @@ async function myAction(
 
     // Prepare final results for LLM prompt
     const promptProcessedWebResults = uniqueProcessedWebResults.slice(0, config.numberOfSimilarityResults);
+    console.log('Prompt processed web results:', promptProcessedWebResults);
 
     // LLM request
     const messages = [
