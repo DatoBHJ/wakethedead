@@ -15,6 +15,9 @@ const config: Config = {
         mono: ['var(--font-geist-mono)', ...fontFamily.mono],
         handwriting: ['Kalam'],
       },
+      fontSize: {
+        'xxs': '0.625rem', // 10px
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',

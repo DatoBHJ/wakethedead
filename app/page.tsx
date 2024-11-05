@@ -6,7 +6,7 @@ import { type AI } from './action';
 import CombinedYoutubeComponent from '@/components/answer/CombinedYoutubeComponent';
 import LeftSidebar from '@/components/LeftSidebar';
 import BottomChatBar from '@/components/BottomChatBar';
-import { List, ArrowRight, Gear, Coffee } from "@phosphor-icons/react";
+import { List, ArrowRight, Gear, Coffee, ChatCircleDots } from "@phosphor-icons/react";
 import { motion } from 'framer-motion';
 import { IconMessage } from '@/components/ui/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -485,9 +485,10 @@ export default function Page() {
                 </Dialog>
                 <button 
                   onClick={() => setIsChatOpen(!isChatOpen)}
-                  className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
+                  className="text-foreground/70 dark:text-zinc-300 hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
                 >
-                  <IconMessage className="w-6 h-6" />
+                  <ChatCircleDots className="w-6 h-6" />
+                  {/* <IconMessage className="w-6 h-6" /> */}
                 </button>
               </div>
             )}
