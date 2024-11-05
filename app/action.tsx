@@ -25,10 +25,23 @@ if (config.useRateLimiting) {
 export const runtime = 'edge';
 
 let openai: OpenAI;
-openai = new OpenAI({
-  baseURL: config.nonOllamaBaseURL,
-  apiKey: config.inferenceAPIKey
-});
+
+function getOpenAIConfig(selectedModel: string) {
+  if (selectedModel === "grok-beta") {
+    return {
+      baseURL: config.xaiBaseURL,
+      apiKey: config.xaiAPIKey
+    };
+  }
+  return {
+    baseURL: config.nonOllamaBaseURL,
+    apiKey: config.inferenceAPIKey
+  };
+}
+
+// Initialize OpenAI with default config
+openai = new OpenAI(getOpenAIConfig(""));
+
 
 let embeddings: OllamaEmbeddings | OpenAIEmbeddings;
 
@@ -232,6 +245,8 @@ async function myAction(
 ): Promise<any> {
   "use server";
   console.log('myAction called with:', { userMessage, selectedModel, selectedLanguage, isRefresh });
+
+  openai = new OpenAI(getOpenAIConfig(selectedModel));
 
   const streamable = createStreamableValue({});
   

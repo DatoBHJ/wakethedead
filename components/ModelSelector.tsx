@@ -50,6 +50,13 @@ const modelGroups = {
       description: 'kinda uncensored compared to other models'
     }
   ],
+  'xAI': [
+    {
+      name: "grok-beta",
+      displayName: "grok-beta",
+      description: 'Comparable performance to Grok 2 but with improved efficiency, speed and capabilities.'
+    }
+  ],
 };
 
 interface ModelSelectorProps {

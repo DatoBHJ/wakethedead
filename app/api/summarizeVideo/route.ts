@@ -23,13 +23,26 @@ if (config.useRateLimiting) {
   });
 }
 
+
+function getOpenAIConfig(selectedModel: string) {
+  if (selectedModel === "grok-beta") {
+    return {
+      baseURL: config.xaiBaseURL,
+      apiKey: config.xaiAPIKey
+    };
+  }
+  return {
+    baseURL: config.nonOllamaBaseURL,
+    apiKey: config.inferenceAPIKey
+  };
+}
+
 let openai: OpenAI;
 let semanticCache: SemanticCache | undefined;
 
-openai = new OpenAI({
-  baseURL: config.nonOllamaBaseURL,
-  apiKey: config.inferenceAPIKey
-});
+// Initialize with default config
+openai = new OpenAI(getOpenAIConfig(""));
+
 
 // Set up embeddings
 let embeddings: OllamaEmbeddings | OpenAIEmbeddings;
@@ -137,6 +150,8 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
 
 
 async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+  openai = new OpenAI(getOpenAIConfig(selectedModel));
+
   const formattedChunk = convertTimestamps(chunk);
   console.log('formattedChunk:', { formattedChunk });
   const response = await openai.chat.completions.create({
@@ -187,6 +202,8 @@ ${formattedChunk}`
 }
 
 async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
+  openai = new OpenAI(getOpenAIConfig(selectedModel));
+
   const response = await openai.chat.completions.create({
     model: selectedModel,
     messages: [
