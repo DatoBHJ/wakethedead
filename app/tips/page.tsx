@@ -50,7 +50,7 @@ const TipsPage = () => {
   
     community: "🌐 **Let's Learn Together!**\n\n**Every link you check out makes our community smarter**\n- All the content you explore helps make AI answers better\n- Your interests help others find cool stuff they might like\n\n*Your curiosity helps everyone learn faster - pretty cool, right?* 🙌",
   
-    qa: "🤖 **Got Questions? We've Got Answers!**\n\n- Ask anything specific about what you're reading\n- Or just use our AI search for general questions\n\n*It's like having a super smart study buddy* 💡",
+    qa: "🤖 **Got Questions? We've Got Answers!**\n\n- Ask anything specific about what you're reading\n- Or just use it as general search engine\n\n*AI answers powered by shared knowledge & web search* 💡",
   
     customize: "⚙️ **Make It Work Just Right for You**\n\n- **Starting with 'llama3-8b'**: Perfect for most stuff you'll do\n\n**Need More Brain Power?** 🧠\n- Try out some of our beefier models\n\n**Want More Freedom?** 🎯\n- Give the Mixtral model a shot\n\nHelpful when other models are being too careful with your questions\n*Switch to mixtral for those spicier questions* 😉\n\n**Language Options** 🌍\n- Pick between English or your favorite language\n- FYI: English usually works best right now\n\n*Pro tip*: Play around and find what works best for you! Just remember, bigger models might take a sec longer.\n\n⚠️ Running into limits or errors? Take a quick break or try a different model!",
   
