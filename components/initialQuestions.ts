@@ -1,3 +1,4 @@
+// AI generated questions & some popular topics
 export const initialQuestions = [
 "stock market today 📈",
 "US election 2024 🇺🇸",

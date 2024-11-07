@@ -1,14 +1,25 @@
-
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import Skeleton, { LoadingIndicator } from './Skeleton';
 import EditableArticleView from './VideoSummaryView';
-import { Copy, Check, ArrowsCounterClockwise, CaretRight, CaretLeft, VideoCamera, Article, Rows, TextAlignLeft, PencilSimple, FloppyDisk } from "@phosphor-icons/react";
+import { 
+  Copy, 
+  Check, 
+  ArrowsCounterClockwise, 
+  CaretRight, 
+  CaretLeft, 
+  VideoCamera, 
+  Article, 
+  Rows, 
+  TextAlignLeft, 
+  PencilSimple, 
+  FloppyDisk 
+} from "@phosphor-icons/react";
 import { useArticleGenerator } from './useYoutubeHooks';
 import { useToast } from "@/components/ui/use-toast";
 import ExtractedQuestionsModal from './ExtractedQuestionsModal';
-import ReadingTime from './ReadingTime'; 
+import ReadingTime from './ReadingTime';
 import RateLimit from '@/components/answer/RateLimit';
 import SimilarContent from './SimilarContent';
 
@@ -26,22 +37,26 @@ interface SimilarDocument {
   url: string;
 }
 
-
 interface CombinedYoutubeComponentProps {
-  youtubeLinks: string[];
-  currentIndex: number;
+  youtubeLinks: string[];          // Array of YouTube video URLs
+  currentIndex: number;            // Current active video index
   setCurrentIndex: (index: number) => void;
-  selectedModel: string;
-  selectedLanguage: string;
-  cards: YouTubeCard[];
+  selectedModel: string;           // Selected AI model for processing
+  selectedLanguage: string;        // Selected language for content
+  cards: YouTubeCard[];           // Array of video metadata
   onLinkClick: (link: string) => void;
   onExtractQuestions: (questions: string[]) => void;
   onQuestionSelected: (question: string) => void;
   setIsChatOpen: (isOpen: boolean) => void;
   onAddLink: (link: string) => void;
-
 }
 
+/**
+ * Combined YouTube Component
+ * 
+ * A comprehensive component that handles YouTube video playback, content generation,
+ * and related functionality like question extraction and similar content discovery.
+ */
 const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.memo(({
   youtubeLinks,
   currentIndex,
@@ -54,19 +69,36 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
   onQuestionSelected,
   setIsChatOpen,
   onAddLink,
-
 }) => {
+  // Hook initializations
   const { toast } = useToast();
+  const videoRef = useRef<HTMLIFrameElement>(null);
 
+  // State management
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({});
   const [showVideo, setShowVideo] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const videoRef = useRef<HTMLIFrameElement>(null);
-  const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
   const [editedArticles, setEditedArticles] = useState<{ [key: string]: string }>({});
-  const [similarDocuments, setSimilarDocuments] = useState<SimilarDocument[]>([]);
+  const [firstSummary, setFirstSummary] = useState<string>('');
+  const [hasSearched, setHasSearched] = useState<{[key: string]: boolean}>({});
+  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
 
+  // Memoized values
+  const videoIds = useMemo(() => youtubeLinks.map(getYouTubeVideoId), [youtubeLinks]);
+
+  // Similar content management
+  const [similarDocumentsByVideo, setSimilarDocumentsByVideo] = useState<{
+    [videoId: string]: SimilarDocument[]
+  }>({});
+  const [loadingStatesByVideo, setLoadingStatesByVideo] = useState<{
+    [videoId: string]: boolean
+  }>({});
+  const [errorStatesByVideo, setErrorStatesByVideo] = useState<{
+    [videoId: string]: string | null
+  }>({});
+
+  // Custom hook for article generation
   const { 
     articles, 
     streamingContent, 
@@ -76,44 +108,54 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     generateArticle 
   } = useArticleGenerator(youtubeLinks, selectedModel, selectedLanguage);
 
-  const [firstSummary, setFirstSummary] = useState<string>('');
-  const [hasSearched, setHasSearched] = useState<{[key: string]: boolean}>({});
-  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
-
-  const extractQuestionsFromContent = (content: string): string[] => {
-    // Part, PART, part 등 대소문자 구분 없이 매칭되도록 i 플래그 추가
+   /**
+   * Extracts questions and summaries from the content
+   * @param content - The article content to analyze
+   * @returns Array of extracted questions and summaries
+   */
+   const extractQuestionsFromContent = (content: string): string[] => {
     const parts = content.split(/# (?:Part|PART) \d+\/\d+/i).filter(Boolean);
     const extractedContent: string[] = [];
-    
     let firstSummaryFound = false;
     
     parts.forEach((part, index) => {
-      // 여기도 마찬가지로 i 플래그 추가
-      const partMatch = content.match(new RegExp(`# (?:Part|PART) (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'));
+      const partMatch = content.match(
+        new RegExp(`# (?:Part|PART) (\\d+/\\d+)${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i')
+      );
       const partNumber = partMatch ? partMatch[1] : `${index + 1}/?`;
   
       const summaryMatch = part.match(/##\s*(.+?)(?=\n|$)/);
       if (summaryMatch && !firstSummaryFound) {
-        const summary = summaryMatch[1].trim();
-        setFirstSummary(summary);
+        setFirstSummary(summaryMatch[1].trim());
         firstSummaryFound = true;
       }
   
       if (summaryMatch) {
-        const summary = summaryMatch[1].trim();
-        extractedContent.push(`**Part ${partNumber}: ${summary}**`);
+        extractedContent.push(`**Part ${partNumber}: ${summaryMatch[1].trim()}**`);
       }
   
       const questionMatch = part.match(/>\s*(.+?\?)/);
       if (questionMatch) {
-        const question = questionMatch[1].trim();
-        extractedContent.push(question);
+        extractedContent.push(questionMatch[1].trim());
       }
     });
   
     return extractedContent;
   };
-  // 콘텐츠에서 요약과 질문을 추출하는 useEffect
+
+  /**
+   * Extracts the first summary from content
+   */
+  const extractFirstSummary = (content: string): string => {
+    const summaryMatch = content.match(/##\s*(.+?)(?=\n|$)/);
+    return summaryMatch ? summaryMatch[1].trim() : '';
+  };
+
+// Effects
+
+  /**
+   * Effect to extract questions and summaries when content changes
+   */
   useEffect(() => {
     const currentVideoId = videoIds[currentIndex];
     const contentToAnalyze = editedArticles[currentVideoId] || 
@@ -123,50 +165,25 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     if (contentToAnalyze) {
       const extractedContent = extractQuestionsFromContent(contentToAnalyze);
       setExtractedQuestions(extractedContent);
-      onExtractQuestions(extractedContent); // 상위 컴포넌트로 추출된 질문 전달
+      onExtractQuestions(extractedContent);
     }
   }, [currentIndex, videoIds, editedArticles, articles, streamingContent, onExtractQuestions]);
 
-  const extractFirstSummary = (content: string): string => {
-    const summaryMatch = content.match(/##\s*(.+?)(?=\n|$)/);
-    return summaryMatch ? summaryMatch[1].trim() : '';
-  };
-
-   // similarDocuments를 링크별로 저장하는 state로 변경
-   const [similarDocumentsByVideo, setSimilarDocumentsByVideo] = useState<{
-    [videoId: string]: SimilarDocument[]
-  }>({});
-  
-  // 로딩 상태도 링크별로 관리
-  const [loadingStatesByVideo, setLoadingStatesByVideo] = useState<{
-    [videoId: string]: boolean
-  }>({});
-  
-  // 에러 상태도 링크별로 관리
-  const [errorStatesByVideo, setErrorStatesByVideo] = useState<{
-    [videoId: string]: string | null
-  }>({});
-
-   // Modified useEffect for fetching similar documents
+  /**
+   * Effect to fetch similar documents for the current video
+   */
   useEffect(() => {
     const fetchSimilarDocuments = async () => {
       const currentVideoId = videoIds[currentIndex];
       const currentCard = cards[currentIndex];
       
-      // 이미 검색했다면 스킵
-      if (hasSearched[currentVideoId]) {
-        return;
-      }
+      if (hasSearched[currentVideoId]) return;
 
-      // 현재 사용 가능한 콘텐츠 확인
       const currentContent = editedArticles[currentVideoId] || 
                            articles[currentVideoId] || 
                            streamingContent[currentVideoId];
 
-      // 콘텐츠가 없으면 스킵
-      if (!currentContent) {
-        return;
-      }
+      if (!currentContent) return;
 
       setLoadingStatesByVideo(prev => ({
         ...prev,
@@ -194,9 +211,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
         const response = await fetch('/api/similar-content', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(searchPayload),
         });
 
@@ -206,7 +221,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
         const data = await response.json();
         
-        // 현재 콘텐츠의 ID와 다른 문서만 필터링
+        // Filter out current video from similar content
         const filteredData = data.filter((doc: SimilarDocument) => {
           const docId = getYouTubeVideoId(doc.url);
           return docId !== currentVideoId;
@@ -247,24 +262,25 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     streamingContent
   ]);
 
-  // 인덱스가 변경될 때 검색 상태 초기화
-  useEffect(() => {
-    const currentVideoId = videoIds[currentIndex];
-    if (!hasSearched[currentVideoId]) {
-      setSimilarDocuments([]);
-    }
-  }, [currentIndex, videoIds, hasSearched]);
+   /**
+   * Effect to generate articles for all videos
+   */
+   useEffect(() => {
+    const generateAllArticles = async () => {
+      for (const videoId of videoIds) {
+        if (!articles[videoId] && !isGenerating[videoId]) {
+          await generateArticle(videoId);
+        }
+      }
+    };
+    generateAllArticles();
+  }, [videoIds, articles, generateArticle, isGenerating]);
 
-
-
-  const handleExtractedQuestionClick = (question: string) => {
-    onQuestionSelected(question); // Call this function when a question is selected
-  };
-
-  const toggleQuestionsModal = () => {
-    setShowQuestionsModal(prev => !prev);
-  };
-
+  /**
+   * Event handler for editing the article content
+   * @param videoId - The video ID of the article
+   * @param editedContent - The edited content
+   */
   const handleEdit = useCallback(async (videoId: string, editedContent: string) => {
     const originalContent = articles[videoId] || streamingContent[videoId];
     
@@ -303,17 +319,11 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     setIsEditing(false);
   }, [articles, streamingContent, selectedModel, selectedLanguage, toast]);
 
-  useEffect(() => {
-    const generateAllArticles = async () => {
-      for (const videoId of videoIds) {
-        if (!articles[videoId] && !isGenerating[videoId]) {
-          await generateArticle(videoId);
-        }
-      }
-    };
-    generateAllArticles();
-  }, [videoIds, articles, generateArticle, isGenerating]);
-
+  // Event handlers
+  /*
+  * Event handler for regenerating the article content
+  * @param videoId - The video ID of the article to regenerate
+  * */
   const handleRegenerate = useCallback((videoId: string) => {
       // Clear the edited article before regenerating
       setEditedArticles(prev => {
@@ -343,10 +353,6 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     }
   }, [currentIndex, setCurrentIndex, youtubeLinks.length]);
 
-  const toggleVideoVisibility = useCallback(() => {
-    setShowVideo(prev => !prev);
-  }, []);
-
   const handleTimestampClick = useCallback((timestamp: number) => {
     if (videoRef.current && videoRef.current.contentWindow) {
       videoRef.current.contentWindow.postMessage(
@@ -360,10 +366,20 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     }
   }, []);
 
+  const toggleVideoVisibility = useCallback(() => {
+    setShowVideo(prev => !prev);
+  }, []);
+  
+  const handleExtractedQuestionClick = (question: string) => {
+    onQuestionSelected(question);
+  };
+
+  const toggleQuestionsModal = () => {
+    setShowQuestionsModal(prev => !prev);
+  };
+
   const currentVideoId = videoIds[currentIndex];
   
-  
-
   const handleThumbnailClick = useCallback((event: React.MouseEvent<HTMLDivElement>, link: string) => {
     event.preventDefault();
     event.stopPropagation();

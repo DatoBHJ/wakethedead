@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   try {
     const results = await searchNews(query, {
       safeSearch: SafeSearchType.OFF,
-      time: SearchTimeType.MONTH  // 한 달 동안의 뉴스로 제한
+      time: SearchTimeType.MONTH 
     });
     return NextResponse.json(results);
   } catch (error) {

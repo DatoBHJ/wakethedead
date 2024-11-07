@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const results = await search(query, 
       {
       safeSearch: SafeSearchType.OFF,
-      time: SearchTimeType.YEAR // 최근 1년 동안의 검색 결과로 제한
+      time: SearchTimeType.YEAR 
     }
   );
     return NextResponse.json(results);

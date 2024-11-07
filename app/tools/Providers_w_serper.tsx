@@ -14,9 +14,9 @@ interface VideoResult {
 }
 
 interface ImageResult {
-  title: string;
-  link: string;
-  date?: string;
+    title: string;
+    link: string;
+    date?: string;
 }
 
 interface NewsResult {
@@ -36,11 +36,12 @@ interface DuckDuckGoNewsResult {
     title: string;
     url: string;
     isOld: boolean;
-  }
-  
-  export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
+}
+
+// Performs a web search using DuckDuckGo API  
+export async function duckDuckGoSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/search?query=${encodeURIComponent(message)}`;
-    
+
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -54,7 +55,7 @@ interface DuckDuckGoNewsResult {
             title: result.title,
             pageContent: result.description,
             url: result.url,
-            date: result.date || undefined // 날짜 정보가 없으면 undefined
+            date: result.date || undefined 
         }));
         return final
     } catch (error) {
@@ -63,6 +64,86 @@ interface DuckDuckGoNewsResult {
     }
 }
 
+
+// Performs a news search using DuckDuckGo API
+export async function duckDuckGoNewsSearch(message: string): Promise<NewsResult[]> {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/news-search?query=${encodeURIComponent(message)}`;
+    
+    try {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Network response was not ok. Status: ${response.status}`);
+    }
+    const responseData = await response.json();
+    if (!responseData.results) {
+        throw new Error('Invalid API response format');
+    }
+    const newsResults = responseData.results.map((result: DuckDuckGoNewsResult): NewsResult => ({
+        title: result.title,
+        link: result.url,
+        snippet: result.excerpt,
+        date: new Date(result.date * 1000).toISOString(),
+        source: result.syndicate
+    }));
+    return newsResults;
+    } catch (error) {
+    console.error('Error fetching DuckDuckGo news search results:', error);
+    throw error;
+    }
+}
+
+
+// Performs a video search using DuckDuckGo API
+export async function duckDuckGoVideo(message: string): Promise<VideoResult[]> {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/video-search?query=${encodeURIComponent(message)}`;
+    
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.results) {
+            throw new Error('Invalid API response format');
+        }
+        const videos = responseData.results.map((result: any): VideoResult => ({
+            title: result.title,
+            link: result.url,
+            imageUrl: result.image,
+            duration: result.duration || 'Unknown' 
+        }));
+        return videos
+    } catch (error) {
+        console.error('Error fetching DuckDuckGo video search results:', error);
+        throw error;
+    }
+}
+
+// Performs an image search using DuckDuckGo API
+export async function duckDuckGoImage(message: string): Promise<ImageResult[]> {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/image-search?query=${encodeURIComponent(message)}`;
+    
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
+        }
+        const responseData = await response.json();
+        if (!responseData.results) {
+            throw new Error('Invalid API response format');
+        }
+        const final =  responseData.results.map((result: any): ImageResult => ({
+            title: result.title,
+            link: result.image
+        }));
+        return final
+    } catch (error) {
+        console.error('Error fetching DuckDuckGo image search results:', error);
+        throw error;
+    }
+  }
+
+// Performs a web search using Serper API
 export async function serperSearch(message: string, startIndexOfPagesToScan, numberOfPagesToScan): Promise<SearchResult[]> {
     const url = 'https://google.serper.dev/search';
     const data = JSON.stringify({
@@ -99,8 +180,7 @@ export async function serperSearch(message: string, startIndexOfPagesToScan, num
     }
 }
 
-
-
+// Performs a news search using Serper API
 export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
     const url = 'https://google.serper.dev/news';
     const data = JSON.stringify({
@@ -138,57 +218,29 @@ export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
     }
 }
 
-    export async function duckDuckGoNewsSearch(message: string): Promise<NewsResult[]> {
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/news-search?query=${encodeURIComponent(message)}`;
-        
-        try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Network response was not ok. Status: ${response.status}`);
-        }
-        const responseData = await response.json();
-        if (!responseData.results) {
-            throw new Error('Invalid API response format');
-        }
-        const newsResults = responseData.results.map((result: DuckDuckGoNewsResult): NewsResult => ({
-            title: result.title,
-            link: result.url,
-            snippet: result.excerpt,
-            date: new Date(result.date * 1000).toISOString(),
-            source: result.syndicate
-        }));
-        return newsResults;
-        } catch (error) {
-        console.error('Error fetching DuckDuckGo news search results:', error);
-        throw error;
-        }
-    }
-  
-  // Update the performWebSearch function
-  export async function performWebSearch(query: string, startIndexOfPagesToScan: number, numberOfPagesToScan: number, isNewsQuery: boolean = false): Promise<SearchResult[] | NewsResult[]> {
+// Performs a web search using multiple providers with fallback
+export async function performWebSearch(query: string, startIndexOfPagesToScan: number, numberOfPagesToScan: number, isNewsQuery: boolean = false): Promise<SearchResult[] | NewsResult[]> {
     if (isNewsQuery) {
-      try {
-        // First, try DuckDuckGo news search
-        const duckDuckGoNewsResults = await duckDuckGoNewsSearch(query);
-        console.log('DuckDuckGo news results:', duckDuckGoNewsResults);
-        return duckDuckGoNewsResults;
-      } catch (error) {
-        console.error('DuckDuckGo news search error:', error);
-        
-        // Fallback to serperNewsSearch
-        console.log('Falling back to serperNewsSearch');
         try {
-          const serperNewsResults = await serperNewsSearch(query);
-          console.log('Serper news results:', serperNewsResults);
-          return serperNewsResults;
+            // Primary: DuckDuckGo news search
+            const duckDuckGoNewsResults = await duckDuckGoNewsSearch(query);
+            console.log('DuckDuckGo news results:', duckDuckGoNewsResults);
+        return duckDuckGoNewsResults;
+        } catch (error) {        
+            // Fallback to serperNewsSearch
+            console.log('Falling back to serperNewsSearch');
+        try {
+            const serperNewsResults = await serperNewsSearch(query);
+            console.log('Serper news results:', serperNewsResults);
+            return serperNewsResults;
         } catch (serperError) {
-          console.error('Serper news search error:', serperError);
-          throw new Error('Both news search methods failed');
+            console.error('Serper news search error:', serperError);
+            throw new Error('Both news search methods failed');
         }
-      }
+        }
     } else {
         try {
-            // First, try DuckDuckGo search
+            // Primary: DuckDuckGo search
             const duckDuckGoResults = await duckDuckGoSearch(query, startIndexOfPagesToScan, numberOfPagesToScan);
             console.log('DuckDuckGo results:', duckDuckGoResults);
             return duckDuckGoResults;
@@ -209,31 +261,8 @@ export async function serperNewsSearch(message: string): Promise<NewsResult[]> {
     }
 }
 
-  export async function duckDuckGoVideo(message: string): Promise<VideoResult[]> {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/video-search?query=${encodeURIComponent(message)}`;
-    
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Network response was not ok. Status: ${response.status}`);
-        }
-        const responseData = await response.json();
-        if (!responseData.results) {
-            throw new Error('Invalid API response format');
-        }
-        const videos = responseData.results.map((result: any): VideoResult => ({
-            title: result.title,
-            link: result.url,
-            imageUrl: result.image,
-            duration: result.duration || 'Unknown' 
-        }));
-        return videos
-    } catch (error) {
-        console.error('Error fetching DuckDuckGo video search results:', error);
-        throw error;
-    }
-}
 
+// Performs a video search using Serper API
 export async function getVideos(message: string): Promise<VideoResult[]> {
     const url = 'https://google.serper.dev/videos';
     const data = JSON.stringify({
@@ -286,14 +315,14 @@ export async function getVideos(message: string): Promise<VideoResult[]> {
     }
 }
 
+// Performs a video search using multiple providers with fallback
 export async function performVideoSearch(query: string): Promise<VideoResult[]> {
     try {
-        // First, try DuckDuckGo video search
-        const duckDuckGoResults = await duckDuckGoVideo(query);
+            // First, try DuckDuckGo video search
+            const duckDuckGoResults = await duckDuckGoVideo(query);
         return duckDuckGoResults
     } catch (error) {
-        console.error('DuckDuckGo video search error:', error);
-        
+        // Fallback to serperSearch (getVideos)
         console.log('Falling back to serper video search');
         try {
             const serperResults = await getVideos(query);
@@ -305,30 +334,7 @@ export async function performVideoSearch(query: string): Promise<VideoResult[]> 
     }
 }
 
-
-export async function duckDuckGoImage(message: string): Promise<ImageResult[]> {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/image-search?query=${encodeURIComponent(message)}`;
-  
-  try {
-      const response = await fetch(url);
-      if (!response.ok) {
-          throw new Error(`Network response was not ok. Status: ${response.status}`);
-      }
-      const responseData = await response.json();
-      if (!responseData.results) {
-          throw new Error('Invalid API response format');
-      }
-      const final =  responseData.results.map((result: any): ImageResult => ({
-          title: result.title,
-          link: result.image
-      }));
-      return final
-  } catch (error) {
-      console.error('Error fetching DuckDuckGo image search results:', error);
-      throw error;
-  }
-}
-
+// Performs an image search using Serper API
 export async function getImages(message: string): Promise<ImageResult[]> {
     const url = 'https://google.serper.dev/images';
     const data = JSON.stringify({
@@ -382,20 +388,18 @@ export async function getImages(message: string): Promise<ImageResult[]> {
     }
   }
 
-
+// Performs an image search using multiple providers with fallback
 export async function performImageSearch(query: string): Promise<ImageResult[]> {
     try {
-        // First, try DuckDuckGo image search
-        const duckDuckGoResults = await duckDuckGoImage(query);
+            // First, try DuckDuckGo image search
+            const duckDuckGoResults = await duckDuckGoImage(query);
         return duckDuckGoResults
-    } catch (error) {
-        console.error('DuckDuckGo image search error:', error);
-        
+    } catch (error) {        
         // Fallback to serperSearch (getImages)
         console.log('Falling back to serper image search');
         try {
             const serperResults = await getImages(query);
-            return serperResults;
+        return serperResults;
         } catch (serperError) {
             console.error('Serper image search error:', serperError);
             throw new Error('Both image search methods failed');

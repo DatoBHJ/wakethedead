@@ -15,15 +15,7 @@ import { headers } from 'next/headers'
 
 export const runtime = 'edge';
 
-let ratelimit: Ratelimit | undefined;
-if (config.useRateLimiting) {
-  ratelimit = new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(10, "10 m") 
-  });
-}
-
-
+// OpenAI configuration handler based on selected model
 function getOpenAIConfig(selectedModel: string) {
   if (selectedModel === "grok-beta") {
     return {
@@ -37,16 +29,21 @@ function getOpenAIConfig(selectedModel: string) {
   };
 }
 
+// Initialize rate limiting if enabled in config
+let ratelimit: Ratelimit | undefined;
+if (config.useRateLimiting) {
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(10, "10 m") 
+  });
+}
+
 let openai: OpenAI;
 let semanticCache: SemanticCache | undefined;
-
-// Initialize with default config
 openai = new OpenAI(getOpenAIConfig(""));
 
 
-// Set up embeddings
 let embeddings: OllamaEmbeddings | OpenAIEmbeddings;
-
 if (config.useOllamaEmbeddings) {
   embeddings = new OllamaEmbeddings({
     model: config.embeddingsModel,
@@ -57,8 +54,6 @@ if (config.useOllamaEmbeddings) {
     modelName: config.embeddingsModel
   });
 }
-
-const MINIMUM_CHUNK_SIZE = config.MINIMUM_CHUNK_SIZE; // characters
 
 // Set up Upstash Vector Index for embeddings
 const UPSTASH_VECTOR_REST_URL = process.env.UPSTASH_REDIS_REST_URL_2;
@@ -89,8 +84,10 @@ if (config.useSemanticCache) {
     token: UPSTASH_VECTOR_REST_TOKEN,
   });
 
-  semanticCache = new SemanticCache({ index, minProximity: 0.99 });
+  semanticCache = new SemanticCache({ index, minProximity: 0.99 }); // Set minProximity to 0.99 for exact match
 }
+
+// Processes and stores transcript embeddings with metadata
 async function embedTranscripts(transcript: string, videoId: string, contentInfo: any, videoUrl: string, cacheKey: string): Promise<void> {
   const textSplitter = new RecursiveCharacterTextSplitter({ 
     chunkSize: config.textChunkSize,
@@ -98,16 +95,17 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
   });
 
   try {
+    // Prepare metadata for embedding storage
     const metadata = {
       title: contentInfo.title || '',
       author: contentInfo.author || '',
       link: videoUrl,
     };
 
+    // Create and store embeddings for each chunk
     const chunks = await textSplitter.createDocuments([transcript], [metadata]);
 
     const embeddingPromises = chunks.map(async (chunk, index) => {
-      // const formattedContent = convertTimestamps(chunk.pageContent);
       const formattedContent = `${convertTimestamps(chunk.pageContent)}\nTitle: ${metadata.title}\nAuthor: ${metadata.author}\nLink: ${metadata.link}`;
       const embedding = await embeddings.embedQuery(formattedContent);
       return embeddingsIndex.upsert([
@@ -130,25 +128,27 @@ async function embedTranscripts(transcript: string, videoId: string, contentInfo
   }
 }
 
-  function formatTimestamp(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-  
-    if (hours > 0) {
-      return `[${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}]`;
-    } else {
-      return `[${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}]`;
-    }
-  }
-  
-  function convertTimestamps(content: string): string {
-    return content.replace(/\[(\d+(?:\.\d+)?)\]/g, (match, seconds) => {
-      return formatTimestamp(parseFloat(seconds));
-    });
-  }
+// Converts raw seconds to formatted timestamp strings
+function convertTimestamps(content: string): string {
+  return content.replace(/\[(\d+(?:\.\d+)?)\]/g, (match, seconds) => {
+    return formatTimestamp(parseFloat(seconds));
+  });
+}
 
+// Formats seconds into HH:MM:SS or MM:SS format
+function formatTimestamp(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
 
+  if (hours > 0) {
+    return `[${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}]`;
+  } else {
+    return `[${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}]`;
+  }
+}
+
+// Generates an enthusiastic video summary in a specified language
 async function generateCasualSummary(chunk: string, videoInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   openai = new OpenAI(getOpenAIConfig(selectedModel));
 
@@ -160,10 +160,10 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
       {
         role: "system",
         content: `
-        You're a SUPER EXCITED fan watching your absolute FAVORITE topic video! 🤩✨
-        Respond in ${selectedLanguage} and go CRAZY with emojis and symbols to show your excitement!!!
-        Use CAPS and exclamation marks like you're SCREAMING at a concert!!!
-        Your enthusiasm should be OFF THE CHARTS for every little detail!!!
+You're a SUPER EXCITED fan watching your absolute FAVORITE topic video! 🤩✨
+Respond in ${selectedLanguage} and go CRAZY with emojis and symbols to show your excitement!!!
+Use CAPS and exclamation marks like you're SCREAMING at a concert!!!
+Your enthusiasm should be OFF THE CHARTS for every little detail!!!
         `
       },
       {
@@ -201,6 +201,7 @@ ${formattedChunk}`
   return response;
 }
 
+// Generates an enthusiastic article summary in a specified language
 async function generateArticleSummary(chunk: string, articleInfo: any, selectedModel: string, chunkNumber: number, totalChunks: number, selectedLanguage: string): Promise<any> {
   openai = new OpenAI(getOpenAIConfig(selectedModel));
 
@@ -210,35 +211,35 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
       {
         role: "system",
         content: `
-        You're an ENTHUSIASTIC reader totally OBSESSED with the topic! 🤓📚
-        Respond in ${selectedLanguage} and use LOTS of emojis and symbols to show your excitement!!!
-        Use CAPS and exclamation marks to emphasize important points!!!
-        Your enthusiasm should be THROUGH THE ROOF for every detail!!!
+You're an ENTHUSIASTIC reader totally OBSESSED with the topic! 🤓📚
+Respond in ${selectedLanguage} and use LOTS of emojis and symbols to show your excitement!!!
+Use CAPS and exclamation marks to emphasize important points!!!
+Your enthusiasm should be THROUGH THE ROOF for every detail!!!
         `
       },
       {
         role: "user",
         content: `
-        Jot down super CASUAL summary notes for part ${chunkNumber}/${totalChunks} of this article: "${articleInfo.title || ''}". 
-        Respond in ${selectedLanguage}.
-        
-        Your note MUST include these 4 elements: 
-        1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-        2. A 1-2 sentence summary, including crucial information or major points, starting with ##, without any spaces or line breaks.
-        3. Key points (be concise, 7-10 words each).  Use **bold** to emphasize key words. 
-        4. 1 standalone question that starts with a blockquote (>). 
+Jot down super CASUAL summary notes for part ${chunkNumber}/${totalChunks} of this article: "${articleInfo.title || ''}". 
+Respond in ${selectedLanguage}.
 
-        Format:
-        # Part ${chunkNumber}/${totalChunks}
-        ## [summary]
-        [Key points] & > question
+Your note MUST include these 4 elements: 
+1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
+2. A 1-2 sentence summary, including crucial information or major points, starting with ##, without any spaces or line breaks.
+3. Key points (be concise, 7-10 words each).  Use **bold** to emphasize key words. 
+4. 1 standalone question that starts with a blockquote (>). 
 
-        Important Guidelines:
-        - Answer in MARKDOWN format. 
-        - The summary should be visually appealing with emojis and symbols. 
-        - Be super CASUAL and excited, like you're at a concert! 
+Format:
+# Part ${chunkNumber}/${totalChunks}
+## [summary]
+[Key points] & > question
 
-        Article chunk:
+Important Guidelines:
+- Answer in MARKDOWN format. 
+- The summary should be visually appealing with emojis and symbols. 
+- Be super CASUAL and excited, like you're at a concert! 
+
+Article chunk:
         ${chunk}`
       }
     ],
@@ -251,15 +252,17 @@ async function generateArticleSummary(chunk: string, articleInfo: any, selectedM
 }
 
 export async function POST(request: Request) {
+  // Extract and validate request parameters
   const { videoId, videoUrl, forceRegenerate, selectedModel, selectedLanguage } = await request.json();
 
   const language = selectedLanguage || 'en';
   const cacheKey = await generateUniqueKey(videoId, selectedModel, language);
-  console.log('cacheKey:', cacheKey);
+
+  // Check cache before proceeding
   const { exists, article } = await checkCachedArticle(cacheKey);
 
   if (!forceRegenerate && exists && article) {
-    console.log('Returning cached summary');
+    console.log('Returning cached summary', cacheKey);
     try {
       const parsedArticle = JSON.parse(article);
       return new NextResponse(parsedArticle.content, {
@@ -281,7 +284,7 @@ export async function POST(request: Request) {
     }
   }
 
-  // Rate limiting 체크 (캐시되지 않은 경우에만)
+  // Handle rate limiting for non-cached requests
   if (config.useRateLimiting && ratelimit && (!exists || forceRegenerate)) {
     const identifier = headers().get('x-forwarded-for') || 
                        headers().get('x-real-ip') || 
@@ -339,13 +342,11 @@ export async function POST(request: Request) {
         let accumulatedResponse = "";
         let validChunksCount = 0;
   
-        // 사전에 유효한 청크만 필터링
-        const validChunks = chunks.filter(chunk => chunk.length >= MINIMUM_CHUNK_SIZE);
+        const validChunks = chunks.filter(chunk => chunk.length >= config.MINIMUM_CHUNK_SIZE);
         const totalValidChunks = validChunks.length;
   
         for (const chunk of validChunks) {
           validChunksCount++;
-          console.log(`Processing chunk ${validChunksCount} of ${totalValidChunks}`);
           
           try {
             const summaryStream = isYouTube
@@ -374,7 +375,6 @@ export async function POST(request: Request) {
           }
         }
   
-        // Cache the complete generated summary
         const cacheData = {
           content: accumulatedResponse,
           title: contentInfo.title || '',
@@ -384,7 +384,9 @@ export async function POST(request: Request) {
         };
         await semanticCache.set(cacheKey, JSON.stringify(cacheData));
         console.log('Summary cached with key:', cacheKey);
-        
+        console.log('Generated article link:', videoUrl);
+        console.log('Generated article content:', accumulatedResponse);
+
         controller.close();
       },
     });
@@ -408,31 +410,31 @@ export async function POST(request: Request) {
   }
 }
   
-  export async function PUT(request: Request) {
-    const { videoId, editedContent, selectedModel, selectedLanguage, title, link } = await request.json();
+export async function PUT(request: Request) {
+  const { videoId, editedContent, selectedModel, selectedLanguage, title, link } = await request.json();
+
+  console.log('PUT request:', { videoId, selectedModel, selectedLanguage });
   
-    console.log('PUT request:', { videoId, selectedModel, selectedLanguage });
-    
-    const cacheKey = await generateUniqueKey(videoId, selectedModel, selectedLanguage);
-  
-    try {
-      if (config.useSemanticCache && semanticCache) {
-        const cacheData = {
-          content: editedContent,
-          title: title || '',
-          link: link,
-          timestamp: Date.now()
-        };
-        await semanticCache.set(cacheKey, JSON.stringify(cacheData));
-        console.log('Edited summary cached with key:', cacheKey);
-      }
-  
-      return new NextResponse(JSON.stringify({ success: true }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 200,
-      });
-    } catch (error) {
-      console.error('Error updating cached summary:', error);
-      return NextResponse.json({ error: 'Failed to update cached summary' }, { status: 500 });
+  const cacheKey = await generateUniqueKey(videoId, selectedModel, selectedLanguage);
+
+  try {
+    if (config.useSemanticCache && semanticCache) {
+      const cacheData = {
+        content: editedContent,
+        title: title || '',
+        link: link,
+        timestamp: Date.now()
+      };
+      await semanticCache.set(cacheKey, JSON.stringify(cacheData));
+      console.log('Edited summary cached with key:', cacheKey);
     }
+
+    return new NextResponse(JSON.stringify({ success: true }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 200,
+    });
+  } catch (error) {
+    console.error('Error updating cached summary:', error);
+    return NextResponse.json({ error: 'Failed to update cached summary' }, { status: 500 });
   }
+}

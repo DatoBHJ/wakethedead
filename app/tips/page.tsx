@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { House, Coffee, ChatCircleDots, Gear, Globe, Lightning, X } from "@phosphor-icons/react";
 import ReactMarkdown from 'react-markdown'
 
-// Modal component for zoomed image
 const ImageModal = ({ src, alt, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="relative">
@@ -52,7 +51,6 @@ const TipsPage = () => {
   
     qa: "🤖 **Got Questions? We've Got Answers!**\n\n- Ask anything specific about what you're reading\n- Or just use it as general search engine\n\n*AI answers powered by shared knowledge & web search* 💡",
   
-    // customize: "⚙️ **Make It Work Just Right for You**\n\n- **Starting with 'llama3-8b'**: Perfect for most stuff you'll do\n\n**Need More Brain Power?** 🧠\n- Try out some of our beefier models\n\n**Want More Freedom?** 🎯\n- Give the Mixtral model a shot\n\nHelpful when other models are being too careful with your questions\n*Switch to mixtral for those spicier questions* 😉\n\n**Language Options** 🌍\n- Pick between English or your favorite language\n- FYI: English usually works best right now\n\n*Pro tip*: Play around and find what works best for you! Just remember, bigger models might take a sec longer.\n\n⚠️ Running into limits or errors? Take a quick break or try a different model!",
     customize: "⚙️ **Make It Work Just Right for You**\n\n- **Starting with 'llama3-8b'**: Perfect for most stuff you'll do\n\n**Need More Brain Power?** 🧠\n- Try out some of our beefier models\n- **Grok-beta**: Best for totally unrestricted conversations\n\n**Want More Freedom?** 🎯\n- Give the Mixtral model a shot\n- **Grok-beta**: For completely uncensored interactions\n\nHelpful when other models are being too careful with your questions\n*Switch to mixtral or grok-beta for those spicier questions* 😉\n\n**Language Options** 🌍\n- Pick between English or your favorite language\n- FYI: English usually works best right now\n\n*Pro tip*: Play around and find what works best for you! Just remember, bigger models might take a sec longer.\n\n⚠️ Running into limits or errors? Take a quick break or try a different model!",
 
     support: "☕ **Help Keep Us Going!**\n\n- We run purely on coffee and good vibes (aka donations)\n- Love what we're doing? Maybe buy us a coffee!\n- Every little bit helps us keep making this thing better\n\n*Your support means the world to us!* 💝"

@@ -9,7 +9,6 @@ export async function GET(request: Request) {
 
   try {
     const results = await searchVideos(query, { safeSearch: SafeSearchType.OFF });
-    // console.log('DuckDuckGo video search results:', results);
     return NextResponse.json(results);
   } catch (error) {
     console.error('DuckDuckGo video search error:', error);

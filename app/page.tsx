@@ -8,22 +8,29 @@ import LeftSidebar from '@/components/LeftSidebar';
 import BottomChatBar from '@/components/BottomChatBar';
 import { List, ArrowRight, Gear, Coffee, ChatCircleDots } from "@phosphor-icons/react";
 import { motion } from 'framer-motion';
-import { IconMessage } from '@/components/ui/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ModelSelector from '@/components/ModelSelector';
 import LanguageSelector from '@/components/LanguageSelector';
-import ThemeBasedVideo from '@/components/ThemeBasedVideo'; 
 import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import ExampleLinks from '@/components/ExampleLinks';
 import { initialQuestions } from '@/components/initialQuestions';
 import ChatRateLimit from '@/components/answer/ChatRateLimit';
 
+// =============================================================================
+// Type Definitions
+// =============================================================================
 
+/**
+ * Represents user data fetched from external sources
+ */
 interface UserDataResult {
   title: string;
   link: string;
 }
 
+/**
+ * Structure for YouTube video card information
+ */
 interface YouTubeCard {
   id: string;
   title: string;
@@ -32,25 +39,41 @@ interface YouTubeCard {
   link: string;
 }
 
+/**
+ * Structure for relevant link information
+ */
 interface RelevantLink {
   title: string;
   url: string;
 }
 
+/**
+ * Structure for search result information
+ */
 interface SearchResult {
   title: string;
   url: string;
   pageContent: string;
 }
 
+/**
+ * Structure for image data
+ */
 interface Image {
   link: string;
 }
+
+/**
+ * Structure for video data
+ */
 interface Video {
   link: string;
   imageUrl: string;
 }
 
+/**
+ * Structure for chat messages
+ */
 interface Message {
   id: number;
   content: string;
@@ -65,13 +88,18 @@ interface Message {
   videos?: Video[];
 }
 
-
+/**
+ * Structure for rate limit information
+ */
 interface RateLimitInfo {
   limit: number;
   reset: number;
   remaining: number;
 }
 
+/**
+ * Structure for streamed message data
+ */
 interface StreamMessage {
   userMessage?: string;
   llmResponse?: string;
@@ -83,8 +111,12 @@ interface StreamMessage {
   SearchResult?: SearchResult[];
   images?: Image[];
   videos?: Video[];
-  rateLimitInfo?: RateLimitInfo; 
+  rateLimitInfo?: RateLimitInfo;
 }
+
+/**
+ * Structure for follow-up messages
+ */
 interface FollowUp {
   choices: {
     message: {
@@ -92,6 +124,16 @@ interface FollowUp {
     };
   }[];
 }
+
+// =============================================================================
+// Utility Functions
+// =============================================================================
+
+/**
+ * Validates if a given string is a valid URL
+ * @param string - The string to validate as URL
+ * @returns boolean indicating if string is valid URL
+ */
 const isValidUrl = (string: string) => {
   try {
     new URL(string);
@@ -101,88 +143,90 @@ const isValidUrl = (string: string) => {
   }
 };
 
-export default function Page() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [currentLlmResponse, setCurrentLlmResponse] = useState('');
-  const [youtubeLinks, setYoutubeLinks] = useState<string[]>([]);
-  const [currentYoutubeIndex, setCurrentYoutubeIndex] = useState(0);
-  // const [selectedModel, setSelectedModel] = useState('llama-3.1-8b-instant');
-  const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isInitialMessage, setIsInitialMessage] = useState(true);
-  const [inputLinks, setInputLinks] = useState('');
-  const [showLinkInput, setShowLinkInput] = useState(true);
-  const [currentLink, setCurrentLink] = useState<string | null>(null);
-  const [cards, setCards] = useState<YouTubeCard[]>([]);
-  const [showUFO, setShowUFO] = useState(false);
-  const mainContentRef = useRef(null);
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const [isChatRateLimited, setIsChatRateLimited] = useState(false);
-  const [rateLimitInfo, setRateLimitInfo] = useState<RateLimitInfo | null>(null);
+// =============================================================================
+// Main Component
+// =============================================================================
 
+
+export default function Page() {
+  // -----------------------------
+  // State Management
+  // -----------------------------
+  
+  // UI State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);          // Controls sidebar visibility
+  const [isChatOpen, setIsChatOpen] = useState(false);                // Controls chat interface visibility
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);        // Controls settings dialog visibility
+  const [isInitialMessage, setIsInitialMessage] = useState(true);     // Tracks if it's user's first message
+  const [showLinkInput, setShowLinkInput] = useState(true);           // Controls link input field visibility
+
+  // Input and Message State
+  const [inputValue, setInputValue] = useState('');                   // Current input field value
+  const [messages, setMessages] = useState<Message[]>([]);            // Chat message history
+  const [currentLlmResponse, setCurrentLlmResponse] = useState('');   // Current LLM response being streamed
+  const [inputLinks, setInputLinks] = useState('');                   // Current link input value
+
+  // YouTube Related State
+  const [youtubeLinks, setYoutubeLinks] = useState<string[]>([]);     // List of added YouTube links
+  const [currentYoutubeIndex, setCurrentYoutubeIndex] = useState(0);  // Index of currently selected YouTube video
+  const [currentLink, setCurrentLink] = useState<string | null>(null); // Currently active link
+  const [cards, setCards] = useState<YouTubeCard[]>([]);              // YouTube video cards data
+
+  // Settings and Configuration State
+  const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');// Selected LLM model
+  const [selectedLanguage, setSelectedLanguage] = useState('en');      // Selected interface language
+
+  // Rate Limiting State
+  const [isChatRateLimited, setIsChatRateLimited] = useState(false); // Tracks if chat is rate limited
+  const [rateLimitInfo, setRateLimitInfo] = useState<RateLimitInfo | null>(null); // Rate limit details
+
+  // Questions State
+  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]); // Questions extracted from content
+
+  // -----------------------------
+  // Refs & Custom Hooks
+  // -----------------------------
+  const inputRef = useRef<HTMLTextAreaElement>(null);         // Reference to input textarea
+  const sidebarRef = useRef<HTMLDivElement>(null);           // Reference to sidebar component
+  const settingsButtonRef = useRef<HTMLButtonElement>(null);  // Reference to settings button
+  const mainContentRef = useRef(null);                       // Reference to main content area
+  
+  const { myAction } = useActions<typeof AI>();              // Custom hook for AI actions
+  const isDesktop = useMediaQuery("(min-width: 1024px)");   // Responsive layout detection
+
+  // Random questions memoization
   const randomQuestions = useMemo(() => {
     const shuffled = [...initialQuestions].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 5);
   }, []);
 
-  // Ref declarations
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const settingsButtonRef = useRef<HTMLButtonElement>(null);
+  // =============================================================================
+  // Callback Handlers Section
+  // Contains all callback functions for user interactions and event handling
+  // =============================================================================
 
-  // Custom hooks
-  const { myAction } = useActions<typeof AI>();
-
-  // question extraction from video/article
-  const [extractedQuestions, setExtractedQuestions] = useState<string[]>([]);
+  /**
+   * Extracts and processes questions from content
+   * @param questions - Array of extracted questions
+   */
   const handleExtractQuestions = useCallback((questions: string[]) => {
     setExtractedQuestions(questions);
   }, []);
-  
-  // Effect to update currentYoutubeIndex when youtubeLinks change
-  useEffect(() => {
-    if (youtubeLinks.length > 0) {
-      setCurrentYoutubeIndex(youtubeLinks.length - 1);
-      setCurrentLink(youtubeLinks[youtubeLinks.length - 1]);
-      setShowLinkInput(false);
-    } else {
-      setCurrentLink(null);
-      setShowLinkInput(true);
-    }
-  }, [youtubeLinks]);
-  
-  // Effect to handle keyboard shortcuts
-  useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === '/') {
-      if (
-        e.target &&
-        ['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).nodeName)
-      ) {
-        return;
-      }
-      e.preventDefault();
-      e.stopPropagation();
-      if (inputRef?.current) {
-        inputRef.current.focus();
-      }
-    }
-  };
-  document.addEventListener('keydown', handleKeyDown);
-  return () => {
-    document.removeEventListener('keydown', handleKeyDown);
-  };
-}, [inputRef]);
 
+  /**
+   * Primary submission handler for user messages
+   * @param payload - Contains message and YouTube links
+   */
   const handleSubmit = async (payload: { message: string; youtubeLinks: string[] }) => {
     if (!payload.message) return;
     await handleUserMessageSubmission(payload);
   };
 
+  /**
+   * Form submission handler for chat input
+   * Processes the input value and creates submission payload
+   * @param e - Form event
+   */
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!inputValue.trim()) return;
@@ -193,10 +237,14 @@ export default function Page() {
       youtubeLinks: youtubeLinks  
     };
   
-    await handleSubmit(payload)
+    await handleSubmit(payload);
   };
-  
 
+  /**
+   * Core message processing and streaming handler
+   * Manages message state updates and AI response streaming
+   * @param payload - Contains message content and related YouTube links
+   */
   const handleUserMessageSubmission = async (payload: {message: string; youtubeLinks: string[]}): Promise<void> => {
     const newMessageId = Date.now();
     const newMessage = {
@@ -226,8 +274,6 @@ export default function Page() {
           if (messageIndex !== -1) { 
             const currentMessage = messagesCopy[messageIndex];
 
-
-
             if (typedMessage.status === 'ChatRateLimitReached') {
               currentMessage.status = 'ChatRateLimitReached';
               setIsChatRateLimited(true);
@@ -238,7 +284,6 @@ export default function Page() {
               currentMessage.status = typedMessage.status || currentMessage.status;
             }
 
-            
             if (typedMessage.llmResponse && typedMessage.llmResponse !== lastAppendedResponse) {
               currentMessage.content += typedMessage.llmResponse;
               lastAppendedResponse = typedMessage.llmResponse;
@@ -260,16 +305,16 @@ export default function Page() {
           setCurrentLlmResponse(llmResponseString);
         }
       }
-
     } catch (error) {
       console.error("Error streaming data for user message:", error);
     }
   };
 
-  useEffect(() => {
-    setShowLinkInput(youtubeLinks.length === 0);
-  }, [youtubeLinks]);
-
+  /**
+   * Handles YouTube link form submissions
+   * Validates and processes new YouTube URLs
+   * @param e - Form event
+   */
   const handleLinksSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isValidUrl(inputLinks)) {
@@ -281,34 +326,52 @@ export default function Page() {
     setIsSidebarOpen(false);
   };
 
-
+  /**
+   * Handles YouTube card selection
+   * Updates the current video index when a card is clicked
+   * @param index - Selected card index
+   */
   const handleCardClick = useCallback((index: number) => {
     setCurrentYoutubeIndex(index);
   }, []);
 
+  /**
+   * Handles clicks outside the sidebar
+   * Closes sidebar when clicking outside its bounds
+   * @param event - Mouse event
+   */
   const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node) && 
+    if (sidebarRef.current && 
+        !sidebarRef.current.contains(event.target as Node) && 
         !(event.target as Element).closest('.sidebar-toggle-button')) {
       setIsSidebarOpen(false);
     }
   }, []);
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [handleClickOutside]);
-
+  /**
+   * Toggles sidebar visibility
+   * Prevents event propagation to avoid handleClickOutside interference
+   * @param event - Mouse event
+   */
   const toggleSidebar = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     setIsSidebarOpen(!isSidebarOpen);
   }, [isSidebarOpen]);
 
+  /**
+   * Updates YouTube card data
+   * Manages the card state when new cards are added or updated
+   * @param updatedCards - Array of new/updated YouTube cards
+   */
   const handleCardsUpdate = useCallback((updatedCards: YouTubeCard[]) => {
     setCards(updatedCards);
   }, []);
 
+  /**
+   * Handles external link clicks
+   * Opens links in new tab with security considerations
+   * @param link - URL to open
+   */
   const handleLinkClick = useCallback((link: string) => {
     if (link) {
       try {
@@ -320,18 +383,33 @@ export default function Page() {
     }
   }, []);
 
+  /**
+   * Processes follow-up question clicks
+   * Submits the selected question as a new message
+   * @param question - Selected follow-up question
+   */
   const handleFollowUpClick = useCallback(async (question: string) => {
     setCurrentLlmResponse('');
     await handleUserMessageSubmission({ message: question, youtubeLinks: []});
   }, []);
-  
+
+  /**
+   * Handles question selection from suggestions
+   * Processes selected questions and manages UI state
+   * @param question - Selected question
+   */
   const handleQuestionSelected = useCallback((question: string) => {
     handleFollowUpClick(question);
     if (!isDesktop) {
       setIsChatOpen(true);
     }
   }, [handleFollowUpClick, isDesktop]);
-  
+
+  /**
+   * Adds new YouTube links to the list
+   * Prevents duplicate links from being added
+   * @param link - YouTube URL to add
+   */
   const handleAddLink = useCallback((link: string) => {
     setYoutubeLinks(prevLinks => {
       if (!prevLinks.includes(link)) {
@@ -340,17 +418,11 @@ export default function Page() {
       return prevLinks;
     });
   }, []);
-  // useEffect(() => {
-  //   if (youtubeLinks.length === 0) {
-  //     const timer = setTimeout(() => {
-  //       setShowUFO(true);
-  //     }, 1000);
-  //     return () => clearTimeout(timer);
-  //   } else {
-  //     setShowUFO(false);
-  //   }
-  // }, [youtubeLinks]);
-  
+
+  /**
+   * Memoizes the YouTube component
+   * Prevents unnecessary re-renders of the complex YouTube component
+   */
   const memoizedCombinedYoutubeComponent = useMemo(() => (
     <CombinedYoutubeComponent 
       youtubeLinks={youtubeLinks} 
@@ -364,16 +436,20 @@ export default function Page() {
       onQuestionSelected={handleQuestionSelected} 
       setIsChatOpen={setIsChatOpen}
       onAddLink={handleAddLink}
-
     />
-  ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, handleLinkClick, handleExtractQuestions, handleQuestionSelected]);
+  ), [youtubeLinks, currentYoutubeIndex, selectedModel, selectedLanguage, cards, 
+      handleLinkClick, handleExtractQuestions, handleQuestionSelected]);
 
-
-
+  /**
+   * Handles message refresh/retry
+   * Reprocesses a specific message with updated parameters
+   * @param index - Index of message to refresh
+   */
   const handleRefresh = useCallback(async (index: number) => {
     const messageToRefresh = messages[index];
     if (!messageToRefresh) return;
 
+    // Reset message state for refresh
     setMessages(prevMessages => {
       const newMessages = [...prevMessages];
       newMessages[index] = {
@@ -387,9 +463,15 @@ export default function Page() {
       return newMessages;
     });
 
+    // Reprocess message
     let lastAppendedResponse = "";
     try {
-      const streamableValue = await myAction(messageToRefresh.userMessage, selectedModel, selectedLanguage, true);
+      const streamableValue = await myAction(
+        messageToRefresh.userMessage, 
+        selectedModel, 
+        selectedLanguage, 
+        true
+      );
       
       let llmResponseString = "";
       for await (const message of readStreamableValue(streamableValue)) {
@@ -421,12 +503,70 @@ export default function Page() {
       console.error("Error streaming data for refreshed message:", error);
     }
   }, [messages, myAction, selectedModel, selectedLanguage]);
+
+ 
+  // =============================================================================
+  // Effect Hooks Section
+  // =============================================================================
+
+  /**
+   * YouTube Link Management Effect
+   * Updates currentYoutubeIndex and UI state when links change
+   */
+  useEffect(() => {
+    if (youtubeLinks.length > 0) {
+      setCurrentYoutubeIndex(youtubeLinks.length - 1);
+      setCurrentLink(youtubeLinks[youtubeLinks.length - 1]);
+      setShowLinkInput(false);
+    } else {
+      setCurrentLink(null);
+      setShowLinkInput(true);
+    }
+  }, [youtubeLinks]);
   
+  /**
+   * Keyboard Shortcuts Effect
+   * Handles global keyboard interactions
+   */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/') {
+        if (e.target && ['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).nodeName)) {
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        if (inputRef?.current) {
+          inputRef.current.focus();
+        }
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [inputRef]);
+
+  /**
+   * Link Input Visibility Effect
+   * Controls link input display based on existing links
+   */
+  useEffect(() => {
+    setShowLinkInput(youtubeLinks.length === 0);
+  }, [youtubeLinks]);
+
+  /**
+   * Click Outside Handler Effect
+   * Manages sidebar closure on outside clicks
+   */
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
+
+
   return (
     <>
-       {/* {isDesktop && <ThemeBasedVideo />} */}
       <div className="flex h-screen overflow-hidden bg-background">
-    {/* <div className="flex h-screen overflow-hidden bg-background"> */}
       <div className={`flex-1 flex ${isDesktop ? 'flex-row' : 'flex-col'} overflow-hidden`}>
         <div className={`${isDesktop ? 'w-1/2' : 'w-full h-full'} flex flex-col overflow-hidden`}>
           <header className="flex justify-start items-center p-4">

@@ -1,3 +1,6 @@
+// trying to keep the cost low by using the free methods first and then falling back to the paid method. 
+// yes this might not be the best way to do it but it works lol.
+
 import TranscriptAPI from 'youtube-transcript-api';
 import { getSubtitles } from 'youtube-captions-scraper';
 import { YoutubeTranscript } from 'youtube-transcript';

@@ -86,8 +86,6 @@ export async function POST(request: Request) {
       }, [] as Array<{title: string, pageContent: string, url: string}>)
       .slice(0, config.numberOfSimilarityResults);
     
-    // console.log('Found similar content:', similarDocuments);
-
     return NextResponse.json(similarDocuments);
   } catch (error) {
     console.error('Error processing similar content request:', error);
