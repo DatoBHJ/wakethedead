@@ -113,7 +113,6 @@ async function fetchTranscriptTertiary(videoId: string): Promise<string> {
       throw new Error('Video does not exist');
     }
     const transcript = await TranscriptAPI.getTranscript(videoId);
-    // clean up the transcript using cleanTranscriptText
 
     return groupTranscriptByApprox10Seconds(transcript);
   } catch (error) {
@@ -123,7 +122,7 @@ async function fetchTranscriptTertiary(videoId: string): Promise<string> {
 }
 
 async function fetchTranscriptSearchAPI(videoId: string, lang: string = 'en'): Promise<string> {
-  const API_KEY = process.env.SEARCH_API_KEY; // SearchAPI 키를 환경 변수에서 가져옵니다.
+  const API_KEY = process.env.SEARCH_API_KEY; 
   if (!API_KEY) {
     throw new Error('SearchAPI key is not set');
   }
