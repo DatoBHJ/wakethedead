@@ -28,10 +28,10 @@ export async function POST(request: Request) {
 
     if (title) {
       searchText = summary ? `${title} ${summary}` : title;
-      console.log('Searching for similar content with title and summary:', searchText);
+      // console.log('Searching for similar content with title and summary:', searchText);
     } else if (summary) {
       searchText = summary;
-      console.log('Searching for similar content with summary:', searchText);
+      // console.log('Searching for similar content with summary:', searchText);
     } else {
       return NextResponse.json({ message: 'No search content provided' }, { status: 400 });
     }
