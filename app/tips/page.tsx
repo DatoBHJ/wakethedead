@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image'
 import Link from 'next/link'
-import { House, Coffee, ChatCircleDots, Gear, Globe, Lightning, X } from "@phosphor-icons/react";
+import { House, Coffee, ChatCircleDots, Gear, Globe, Lightning, X, DeviceMobile } from "@phosphor-icons/react";
 import ReactMarkdown from 'react-markdown'
 
 const ImageModal = ({ src, alt, onClose }) => (
@@ -23,6 +23,17 @@ const ImageModal = ({ src, alt, onClose }) => (
   </div>
 );
 
+const VideoPlayer = ({ src }) => (
+  <video 
+    controls 
+    className="w-full rounded-lg mb-4"
+    playsInline
+  >
+    <source src={src} type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+);
+
 const TipsPage = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -39,6 +50,7 @@ const TipsPage = () => {
     { id: 'community', title: 'Community Knowledge', icon: Globe },
     { id: 'qa', title: 'Ask & Search', icon: ChatCircleDots },
     { id: 'customize', title: 'Customize', icon: Gear },
+    { id: 'pwa', title: 'Install App', icon: DeviceMobile },
     { id: 'support', title: 'Support Us', icon: Coffee },
   ]
 
@@ -52,6 +64,8 @@ const TipsPage = () => {
     qa: "🤖 **Got Questions? We've Got Answers!**\n\n- Ask anything specific about what you're reading\n- Or just use it as general search engine\n\n*AI answers powered by shared knowledge & web search* 💡",
   
     customize: "⚙️ **Make It Work Just Right for You**\n\n- **Starting with 'llama3-8b'**: Perfect for most stuff you'll do\n\n**Need More Brain Power?** 🧠\n- Try out some of our beefier models\n- **Grok-beta**: Best for totally unrestricted conversations\n\n**Want More Freedom?** 🎯\n- Give the Mixtral model a shot\n- **Grok-beta**: For completely uncensored interactions\n\nHelpful when other models are being too careful with your questions\n*Switch to mixtral or grok-beta for those spicier questions* 😉\n\n**Language Options** 🌍\n- Pick between English or your favorite language\n- FYI: English usually works best right now\n\n*Pro tip*: Play around and find what works best for you! Just remember, bigger models might take a sec longer.\n\n⚠️ Running into limits or errors? Take a quick break or try a different model!",
+
+    pwa: "📱 **Use Wake The Dead Like a Native App!**\n\n**Install on Any Device** 🚀\n1. Open your browser's menu\n2. Look for 'Add to Home Screen' or 'Install App'\n3. Follow the prompts to install\n\n**Benefits of Installing** ✨\n- Quick access from your home screen\n- Faster loading times\n- Works offline for some features\n- Full-screen experience\n\n*Watch the video above to see how easy it is!* 👇",
 
     support: "☕ **Help Keep Us Going!**\n\n- We run purely on coffee and good vibes (aka donations)\n- Love what we're doing? Maybe buy us a coffee!\n- Every little bit helps us keep making this thing better\n\n*Your support means the world to us!* 💝"
   }
@@ -116,7 +130,11 @@ const TipsPage = () => {
             {tabs.find(tab => tab.id === activeTab)?.title}
           </h2>
           
-          {getImages(activeTab).map((image, index) => (
+          {activeTab === 'pwa' && (
+            <VideoPlayer src="/videos/pwa_support.mp4" />
+          )}
+
+          {imageMap[activeTab] && getImages(activeTab).map((image, index) => (
             <div 
               key={index}
               onClick={() => handleImageClick(`/images/${image}`, `${tabs.find(tab => tab.id === activeTab)?.title} ${getImages(activeTab).length > 1 ? index + 1 : ''}`)}
