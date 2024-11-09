@@ -1,6 +1,14 @@
-# Wake The Dead 🧠
+# 🧟‍♂️ Wake The Dead
 
-Wake The Dead is an AI-powered knowledge management and learning assistant platform that makes content discovery and learning more efficient and engaging.
+> AI tool that makes reading, watching, and searching easier
+
+Paste any link and:
+- ⚡ Get smart summaries from articles and videos. Skim through them in seconds.
+- 🔍 Find what you actually need
+- 🤝 See what others found useful
+- 🌍 Works in your language
+
+Wake The Dead is an AI-powered platform that makes your content discovery and learning more efficient and engaging.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -28,7 +36,7 @@ Wake The Dead is an AI-powered knowledge management and learning assistant platf
 - Cross-referencing between related content
 
 ### ⚙️ Customization Options
-- Multiple AI model support (including Llama, Grok-beta)
+- Multiple AI model support (including llama, gemma2, mixtral & Grok-beta)
 - Language selection
 - Customizable UI with dark/light mode
 - Progressive Web App (PWA) support
@@ -118,25 +126,15 @@ npm run dev
 - Generates relevant follow-up questions
 - Handles rate limiting and caching
 
-### User Interface (`page.tsx`)
-- Responsive design with dark/light mode
-- Interactive guide and documentation
-- Image modal and video player components
-- PWA installation support
+## 📝 License
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - basically, do whatever you want with it! Just don't blame me if anything goes wrong 😅
 
 ## ☕ Support
 
-If you find this project helpful, consider buying us a coffee!
-
-[Buy Me A Coffee](https://buymeacoffee.com/KingBob)
+If you think this is cool, you can:
+- ⭐ Star this repo
+- ☕ [Buy me a coffee](https://buymeacoffee.com/KingBob) (I run on caffeine)
 
 ## 🙏 Acknowledgments
 
@@ -146,4 +144,10 @@ If you find this project helpful, consider buying us a coffee!
 
 ## 📞 Contact
 
-For questions and support, please open an issue in the GitHub repository.
+- 🐦 DM me on X: [@DatoBHJ](https://x.com/DatoBHJ)
+- 📧 Email me: datobhj@gmail.com
+
+---
+
+Built with 🧠 and ❤️ by someone who drinks too much coffee
+
