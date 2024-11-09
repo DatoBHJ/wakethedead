@@ -1,5 +1,4 @@
 export const config = {
-    useOllamaInference: false,
     useOllamaEmbeddings: false,
     inferenceAPIKey: process.env.GROQ_API_KEY, 
     xaiAPIKey: process.env.XAI_API_KEY,
