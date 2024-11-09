@@ -57,18 +57,32 @@ npm install
 3. Set up environment variables:
 Create a `.env.local` file with the following variables:
 ```env
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-GROQ_API_KEY=your_groq_api_key
-OLLAMA_BASE_URL=http://localhost:11434/v1
-UPSTASH_REDIS_REST_URL_1=your_upstash_url
-UPSTASH_REDIS_REST_TOKEN_1=your_upstash_token
-UPSTASH_REDIS_REST_URL_2=your_upstash_url_2
-UPSTASH_REDIS_REST_TOKEN_2=your_upstash_token_2
-OPENAI_API_KEY=your_openai_api_key
-SERPER_API=your_serper_api_key
-SEARCH_API_KEY=your_search_api_key
-XAI_API_KEY=your_xai_api_key
+# Required API Keys
+GROQ_API_KEY=your_groq_api_key                    # Required: Main LLM API key
+OPENAI_API_KEY=your_openai_api_key                # Required: For chunk embeddings
+UPSTASH_REDIS_REST_URL_1=your_upstash_url        # Required: For article caching
+UPSTASH_REDIS_REST_TOKEN_1=your_upstash_token    # Required: For article caching
+UPSTASH_REDIS_REST_URL_2=your_upstash_url_2      # Required: For chunk embeddings
+UPSTASH_REDIS_REST_TOKEN_2=your_upstash_token_2  # Required: For chunk embeddings
+
+# Optional API Keys
+NEXT_PUBLIC_BASE_URL=http://localhost:3000        # Optional: Default is localhost:3000
+OLLAMA_BASE_URL=http://localhost:11434/v1         # Optional: For local embeddings
+SERPER_API=your_serper_api_key                    # Optional: Alternative search API
+SEARCH_API_KEY=your_search_api_key                # Optional: Alternative search API
+XAI_API_KEY=your_xai_api_key                      # Optional: For xAI model access
 ```
+
+### Rate Limiting Configuration
+
+Rate limiting can be disabled by setting `useRateLimiting` to `false` in `app/config.tsx`:
+
+```typescript
+// app/config.tsx
+export const config = {
+  useRateLimiting: false,  // Set to false to disable rate limiting
+  // ... other configurations
+}
 
 4. Run the development server:
 ```bash
