@@ -53,7 +53,7 @@ const modelGroups = {
   'xAI': [
     {
       name: "grok-beta",
-      displayName: "grok-beta",
+      displayName: "⭐ grok-beta",
       description: 'Uncensored. Comparable performance to Grok 2 but with improved efficiency, speed and capabilities.'
     }
   ],
