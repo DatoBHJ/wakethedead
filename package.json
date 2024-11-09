@@ -2,6 +2,7 @@
   "name": "ai-rsc-demo",
   "private": true,
   "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,37 +1,135 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Wake The Dead 🧠
 
-## Getting Started
+Wake The Dead is an AI-powered knowledge management and learning assistant platform that makes content discovery and learning more efficient and engaging.
 
-First, run the development server:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## 🌟 Features
+
+### ⚡ Smart Skimming
+- AI-powered content summarization for articles, videos, and web pages
+- Global caching system for instant access to previously processed content
+- Multi-language support with dedicated caching per language and AI model
+- YouTube video summarization with timestamp navigation
+- Intelligent chunk processing with overlap for context preservation
+
+### 🔍 Advanced RAG Search Engine
+- Real-time web search integration
+- Semantic similarity search using vector embeddings
+- Community knowledge integration
+- Multi-modal search (text, images, videos)
+- Auto-generated follow-up questions
+- Rate limiting for API stability
+
+### 🌐 Community Knowledge Sharing
+- Collaborative learning environment
+- Knowledge base building through user interactions
+- Semantic caching for shared content
+- Cross-referencing between related content
+
+### ⚙️ Customization Options
+- Multiple AI model support (including Llama, Grok-beta)
+- Language selection
+- Customizable UI with dark/light mode
+- Progressive Web App (PWA) support
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (Latest LTS version)
+- Next.js 13+
+- An Ollama instance running locally (optional, for local embeddings)
+- Various API keys (see Configuration section)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/wakethedead.git
+cd wakethedead
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+Create a `.env.local` file with the following variables:
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+GROQ_API_KEY=your_groq_api_key
+OLLAMA_BASE_URL=http://localhost:11434/v1
+UPSTASH_REDIS_REST_URL_1=your_upstash_url
+UPSTASH_REDIS_REST_TOKEN_1=your_upstash_token
+UPSTASH_REDIS_REST_URL_2=your_upstash_url_2
+UPSTASH_REDIS_REST_TOKEN_2=your_upstash_token_2
+OPENAI_API_KEY=your_openai_api_key
+SERPER_API=your_serper_api_key
+SEARCH_API_KEY=your_search_api_key
+XAI_API_KEY=your_xai_api_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Technology Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Frontend**: Next.js, React, Tailwind CSS
+- **AI/ML**: 
+  - LLM support: OpenAI, Groq, Grok-beta
+  - Embeddings: Ollama, OpenAI
+- **Database**: Upstash Vector Database
+- **Caching**: Semantic Cache with Upstash
+- **APIs**: 
+  - Search: Serper API
+  - Various AI model APIs
+- **Development Tools**: TypeScript, ESLint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 📚 Core Components
 
-## Deploy on Vercel
+### Content Summarization (`route.ts`)
+- Processes URLs and generates AI-powered summaries
+- Supports both article and video content
+- Implements caching and rate limiting
+- Handles multi-language support
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### RAG Search Engine (`action.tsx`)
+- Combines web search with vector similarity
+- Processes and vectorizes content
+- Generates relevant follow-up questions
+- Handles rate limiting and caching
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# wakethedead
+### User Interface (`page.tsx`)
+- Responsive design with dark/light mode
+- Interactive guide and documentation
+- Image modal and video player components
+- PWA installation support
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ☕ Support
+
+If you find this project helpful, consider buying us a coffee!
+
+[Buy Me A Coffee](https://buymeacoffee.com/KingBob)
+
+## 🙏 Acknowledgments
+
+- OpenAI for AI capabilities
+- Upstash for vector database and caching solutions
+- All contributors and supporters of the project
+
+## 📞 Contact
+
+For questions and support, please open an issue in the GitHub repository.
