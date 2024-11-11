@@ -19,7 +19,7 @@ Wake The Dead is an AI-powered platform that makes your content discovery and le
 
 ## 🖼️ Preview
 
-![Website Preview](https://raw.githubusercontent.com/DatoBHJ/wakethedead/main/preview.png)
+![Website Preview](https://github.com/DatoBHJ/wakethedead/blob/main/assets/preview.png?raw=true)
 
 [Try Wake The Dead Now →](https://www.wakethedead.ai)
 
