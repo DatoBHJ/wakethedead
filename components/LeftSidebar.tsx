@@ -166,7 +166,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
             </a>
           </Button>
           <EmailContactButton />
-          {/* <Button 
+          <Button 
             variant="ghost" 
             size="icon"
             asChild
@@ -179,7 +179,7 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
             >
               <IconGitHub className="h-5 w-5" />
             </a>
-          </Button> */}
+          </Button>
           <Button 
             variant="ghost" 
             size="icon"
