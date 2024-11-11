@@ -120,8 +120,7 @@ const TipsPage = () => {
               </li>
             ))}
           </ul>
-        </div>
-        
+        </div>        
         <div className="md:w-2/3">
         <div className="bg-card text-card-foreground rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">

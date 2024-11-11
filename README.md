@@ -1,6 +1,9 @@
 # 🧟‍♂️ Wake The Dead
 
-> You might find some unnecessary or weird line of code but you can modify them. It's just me trying to keep everything as cheap as possible.
+[![Website](https://img.shields.io/badge/Visit-WakeTheDead.ai-blue)](https://www.wakethedead.ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> Try it now: [WakeTheDead.ai](https://www.wakethedead.ai)
 
 ## Perplexity AI 🤝 Link Reader
 
@@ -14,7 +17,11 @@ Paste any link and:
 
 Wake The Dead is an AI-powered platform that makes your content discovery and learning more efficient and engaging.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## 🖼️ Preview
+
+![Website Preview](https://raw.githubusercontent.com/DatoBHJ/wakethedead/main/preview.png)
+
+[Try Wake The Dead Now →](https://www.wakethedead.ai)
 
 ## 🌟 Features
 
@@ -85,17 +92,6 @@ SEARCH_API_KEY=your_search_api_key                # Optional: Alternative search
 XAI_API_KEY=your_xai_api_key                      # Optional: For xAI model access
 ```
 
-### Rate Limiting Configuration
-
-Rate limiting can be disabled by setting `useRateLimiting` to `false` in `app/config.tsx`:
-
-```typescript
-// app/config.tsx
-export const config = {
-  useRateLimiting: false,  // Set to false to disable rate limiting
-  // ... other configurations
-}
-
 4. Run the development server:
 ```bash
 npm run dev
@@ -138,6 +134,7 @@ MIT License - basically, do whatever you want with it! Just don't blame me if an
 
 If you think this is cool, you can:
 - ⭐ Star this repo
+- 🌐 Visit [WakeTheDead.ai](https://www.wakethedead.ai)
 - ☕ [Buy me a coffee](https://buymeacoffee.com/KingBob) (I run on caffeine)
 
 ## 🙏 Acknowledgments
@@ -150,8 +147,8 @@ If you think this is cool, you can:
 
 - 🐦 DM me on X: [@DatoBHJ](https://x.com/DatoBHJ)
 - 📧 Email me: datobhj@gmail.com
+- 🌐 Visit: [WakeTheDead.ai](https://www.wakethedead.ai)
 
 ---
 
 Built with 🧠 and ❤️ by someone who drinks too much coffee
-
