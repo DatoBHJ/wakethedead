@@ -1,5 +1,9 @@
 # 🧟‍♂️ Wake The Dead
 
+> You might find some unnecessary or weird line of code but you can modify them. It's just me trying to keep everything as cheap as possible.
+
+## Perplexity AI 🤝 Link Reader
+
 > AI tool that makes reading, watching, and searching easier
 
 Paste any link and:

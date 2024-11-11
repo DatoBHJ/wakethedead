@@ -1,3 +1,12 @@
+/**
+ * Note: We're using UPSTASH_REDIS_REST_URL_2 (chunk embeddings) to find similar articles
+ * because when this was built, the dimensions of cached article embeddings were different
+ * from user input embeddings. We used chunk embeddings since they matched the dimensions.
+ * If all embeddings (articles, chunks, user inputs) share the same dimensions now,
+ * this separation is no longer necessary and could be simplified.
+ */
+
+
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { Index } from '@upstash/vector';
