@@ -54,7 +54,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
           </span>
         )}
         <p className={`${
-          isSummary ? 'font-bold text-lg text-gray-700 dark:text-zinc-300' : 'text-base text-gray-700 dark:text-zinc-300 cursor-pointer'
+          isSummary ? 'font-bold text-base text-gray-700 dark:text-zinc-400' : 'text-sm sm:text-base text-gray-700 dark:text-zinc-400 cursor-pointer'
         } ${isClicked ? 'text-blue-600 dark:text-blue-400' : ''} font-handwriting`}
            onClick={() => !isSummary && handleQuestionClick(item)}>
           {formatText(item)}
