@@ -115,7 +115,7 @@ const ExampleLinks = ({ onAddLink }) => {
           <motion.button
             key={index}
             onClick={() => onAddLink(link.url)}
-            className="text-left p-3 sm:p-4 rounded-3xl border-[1px] border-solid border-boxlight dark:border-boxdark hover:bg-card-foreground/[10%] dark:hover:bg-backgroundsecond/30 transition-colors duration-200 relative"
+            className="text-left p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-[1px] border-solid border-boxlight dark:border-boxdark hover:bg-card-foreground/[10%] dark:hover:bg-backgroundsecond/30 transition-colors duration-200 relative"
             whileTap={{ scale: 0.98 }}
           >
             <div className="text-xxs sm:text-xs text-secondarylight dark:text-secondarydark absolute top-2 left-3 sm:top-4 sm:left-4 flex items-center"> 
