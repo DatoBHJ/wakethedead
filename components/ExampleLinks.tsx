@@ -105,31 +105,27 @@ const ExampleLinks = ({ onAddLink }) => {
 
   return (
     <motion.div 
-      className="mt-4 pr-1"
+      className="mt-10"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7, duration: 0.5 }}
     >
-      <p className="text-sm text-blue-500 dark:text-blue-400 mb-2 pl-2">
-        {/* Or try these random examples: */}
-      </p>
       <div className="grid grid-cols-2 gap-2">
         {displayLinks.map((link, index) => (
           <motion.button
             key={index}
             onClick={() => onAddLink(link.url)}
-            className="text-left p-3 sm:p-4 rounded-md backdrop-blur-sm bg-card-foreground/[3%] dark:bg-backgroundsecond hover:bg-card-foreground/[10%] dark:hover:bg-backgroundsecond/30 transition-colors duration-200 relative"
-            whileHover={{ scale: 1.02 }}
+            className="text-left p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-[1px] border-solid border-boxlight dark:border-boxdark hover:bg-card-foreground/[10%] dark:hover:bg-backgroundsecond/30 transition-colors duration-200 relative"
             whileTap={{ scale: 0.98 }}
           >
-            <div className="text-xxs sm:text-xs text-gray-400 dark:text-gray-600 absolute top-2 left-3 sm:top-4 sm:left-4 flex items-center"> 
+            <div className="text-xxs sm:text-xs text-secondarylight dark:text-secondarydark absolute top-2 left-3 sm:top-4 sm:left-4 flex items-center"> 
               {getLogo(link.source).logo}
               <span className="ml-1 sm:ml-2">{link.source}</span>
             </div>
             <div className="text-xs sm:text-sm font-handwriting text-gray-700 dark:text-zinc-300 line-clamp-2 mt-5 sm:mt-7 mb-4 sm:mb-6">
               {link.label}
             </div>
-            <div className="text-xxs sm:text-xs text-purple-600 dark:text-purple-400 absolute bottom-2 left-3 sm:bottom-4 sm:left-4">
+            <div className="text-xxs sm:text-xs text-bluelight dark:text-bluedark absolute bottom-2 left-3 sm:bottom-4 sm:left-4">
               {link.duration}
             </div>
           </motion.button>
@@ -137,7 +133,7 @@ const ExampleLinks = ({ onAddLink }) => {
       </div>
       
       <div className="mt-10 sm:mt-16 text-center">
-        <Link href="/tips" className="text-sm text-gray-400 underline hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200">
+        <Link href="/tips" className=" uppercase font-light text-xs text-secondarylight hover:text-secondarydark dark:text-userguidedarktext dark:hover:text-secondarylight transition-colors duration-200 underline underline-offset-4">
           Wake The Dead: User Guide
         </Link>
       </div>
