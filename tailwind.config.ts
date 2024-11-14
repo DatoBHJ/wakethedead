@@ -13,7 +13,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
         mono: ['var(--font-geist-mono)', ...fontFamily.mono],
-        handwriting: ['Kalam'],
+        handwriting: ['Kalam'], // fallback fonts 포함
+        helvetica: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'], // fallback fonts 포함
       },
       fontSize: {
         'xxs': '0.625rem', // 10px
@@ -23,6 +24,15 @@ const config: Config = {
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
+        textlight: '#000000',
+        textdark: '#DEE4EB',
+        bluelight: '#000000',
+        bluedark: '#edece5',
+        secondarylight: '#838383',
+        boxlight: '#C1C1C1',
+        boxdark: '#222329',
+        secondarydark: '#596072',
+        userguidedarktext: '#34353C',
         green: {
           '50': '#f0fdf6',
           '100': '#dbfdec',

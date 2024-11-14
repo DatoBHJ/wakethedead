@@ -438,7 +438,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
     const isYouTube = currentCard?.isYouTube ?? false;
   
     return (
-      <div className="text-sm text-muted-foreground mt-4 whitespace-normal">
+      <div className="text-sm text-secondarylight dark:text-secondarydark mt-4 whitespace-normal">
         <ReadingTime 
           content={subtitles} 
           inline={true} 
@@ -496,7 +496,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   const renderButtons = () => {
     const currentCard = cards[currentIndex];
-    const isSpecialLink = currentCard?.link === 'https://www.wakethedead.ai/tips';
+    // const isSpecialLink = currentCard?.link === 'https://www.wakethedead.ai/tips';
 
     return (
       <div className="flex items-center space-x-2">
@@ -524,7 +524,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         >
           {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
         </Button>
-        {!isSpecialLink && (
+        {/* {!isSpecialLink && ( */}
           <>
             <Button
               variant="outline"
@@ -544,7 +544,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
               {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
             </Button>
           </>
-      )}   
+      {/* )}    */}
       </div>
     );
   };
@@ -585,7 +585,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
           />
         </div>
       </div>
-      <div className="flex-shrink-0 flex items-center justify-between pt-5 pb-0 sm:py-8 px-4 pl-3  text-card-foreground dark:text-card-foreground">
+      <div className="flex-shrink-0 flex items-center justify-between py-2 sm:py-8 px-4 pl-3  text-card-foreground dark:text-card-foreground">
         <div className="flex items-center space-x-1">
           <Button 
             onClick={handlePrevious} 

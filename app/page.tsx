@@ -159,6 +159,7 @@ export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);        // Controls settings dialog visibility
   const [isInitialMessage, setIsInitialMessage] = useState(true);     // Tracks if it's user's first message
   const [showLinkInput, setShowLinkInput] = useState(true);           // Controls link input field visibility
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   // Input and Message State
   const [inputValue, setInputValue] = useState('');                   // Current input field value
@@ -572,13 +573,13 @@ export default function Page() {
           <header className="flex justify-start items-center p-4">
             <button 
               onClick={toggleSidebar}
-              className="sidebar-toggle-button text-foreground/70 dark:text-zinc-300  z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
+              className="sidebar-toggle-button text-textlight dark:text-textdark  z-50 hover:text-foreground transition-colors duration-200 focus:outline-none"
             >
               <List size={24} />
             </button>
-            <a href="/" className="hover:text-blue-600 text-foreground/70 dark:text-zinc-300  dark:hover:text-blue-300 font-semibold px-4 z-50">
+            <a href="/" className=" text-textlight dark:text-textdark font-light uppercase px-4 z-50">
               {isDesktop ? 'Wake The Dead' : 'WTD'}
-              <span className="ml-1 text-xs font-normal text-blue-500 dark:text-blue-400">beta</span>
+              <span className="ml-2 text-xs font-normal text-bluelight dark:text-bluedark">beta</span>
             </a>
             {!isDesktop && (
               <div className="flex items-center space-x-4 ml-auto">
@@ -586,7 +587,7 @@ export default function Page() {
                   href="https://buymeacoffee.com/KingBob"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
+                  className="text-textlight dark:text-textdark  hover:text-foreground transition-colors duration-200 focus:outline-none"
                 >
                   <Coffee size={24} />
                 </a>
@@ -594,7 +595,7 @@ export default function Page() {
                   <DialogTrigger asChild>
                     <button 
                       ref={settingsButtonRef}
-                      className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
+                      className="text-textlight dark:text-textdark  hover:text-foreground transition-colors duration-200 focus:outline-none"
                     >
                       <Gear size={24} />
                     </button>
@@ -625,7 +626,7 @@ export default function Page() {
                 </Dialog>
                 <button 
                   onClick={() => setIsChatOpen(!isChatOpen)}
-                  className="text-foreground/70 dark:text-zinc-300 hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
+                  className="text-textlight dark:text-textdark hover:text-foreground transition-colors duration-200 focus:outline-none pb-0.5"
                 >
                   <ChatCircleDots className="w-6 h-6" />
                   {/* <IconMessage className="w-6 h-6" /> */}
@@ -638,74 +639,77 @@ export default function Page() {
             className={`flex-1 flex flex-col overflow-y-auto ${isDesktop ? 'pl-48 md:pl-32 py-10 sm:py-0 pr-10' : 'overflow-y-auto'}`}
           >
             {showLinkInput ? (
-              <div className="flex-grow flex items-center justify-center w-full">
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="w-full max-w-xl justify-center p-4 flex flex-col item-center sm:items-start"
-                >
-                  <h1 className="font-handwriting text-4xl sm:text-5xl font-bold mt-5 mb-5 text-center sm:text-left text-blue-500 w-full px-6">
-                    Skim. Search. <br /> Move on.
-                  </h1>
-                  <p className="text-sm text-center sm:text-left sm:text-base  text-gray-400 dark:text-gray-600 mb-10 sm:mb-12 px-6">
-                  Absorb in seconds {isDesktop ? null : <br />} what used to take minutes. 
-                  </p>
-                  <div className="w-full flex flex-col items-start sm:pb-4 px-4">
+             <div className="flex-grow flex items-center justify-center w-full">
+             <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 0.5 }}
+               className="w-full max-w-xl justify-center flex flex-col item-center sm:items-start"
+             >
+               <div className="w-full flex flex-col items-start gap-y-8">
+               <motion.div
+                className="p-12 w-40 h-40 sm:w-60 sm:h-60 justify-center mx-auto relative"
+                initial={{ opacity: 1 }}
+                animate={{ 
+                  scale: isInputFocused ? 1.2 : [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: isInputFocused ? 0 : 2,
+                  repeat: isInputFocused ? 0 : Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <div className="w-full h-full rounded-full bg-bluelight dark:bg-bluedark blur-xl" />
+              </motion.div>
+           
+                 <div className="w-full mt-0 sm:mt-16 px-4 sm:px-8">
+                  <div className="max-w-lg mx-auto"> 
                     <motion.form 
                       onSubmit={handleLinksSubmit} 
-                      className="w-full"
+                      className="w-full relative"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6, duration: 0.5 }}
                     >
-                      <div className="relative flex items-center">
-                        <motion.button 
-                          type="submit" 
-                          className="absolute left-0 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          🍌
-                        </motion.button>
-                        <input
+                      <p className='uppercase text-lg font-light pl-8 pb-1'>Paste any link</p>
+                      <div className="relative flex items-center px-6">
+                      <input
                           type="text"
                           value={inputLinks}
-                          onChange={(e) => setInputLinks(e.target.value)}
-                          placeholder="Paste your link"
-                          className="w-full rounded-none pb-2 pl-7 pr-10 sm:pr-12 bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 text-black dark:text-white"
+                          onChange={(e) => {
+                            setInputLinks(e.target.value);
+                            if (e.target.value) {
+                              setIsInputFocused(true);
+                            } else {
+                              setIsInputFocused(false);
+                            }
+                          }}
+                          placeholder=""
+                          className="w-full rounded-none pl-2 pb-2 bg-transparent text-secondarylight dark:text-secondarydark font-light"
                         />
-                        <div className="absolute bottom-0 left-0 w-full border-b border-gray-200 dark:border-gray-700 opacity-50"></div>
-                         <motion.button 
-                          type="submit" 
-                          className="absolute right-3 bottom-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <ArrowRight size={22} weight="bold" />
-                        </motion.button>
+                        <div className="absolute bottom-0 left-6 right-6 bg-transparent border-b-[1px] border-bluelight dark:border-bluedark"></div>
                       </div>
                     </motion.form>
-                    <ExampleLinks onAddLink={handleAddLink} />
                   </div>
-                </motion.div>
-              </div>
+                  <ExampleLinks onAddLink={handleAddLink} />
+                </div>
+               </div>
+             </motion.div>
+           </div>
             ) : (
               <div className="h-full w-full">
                 {memoizedCombinedYoutubeComponent}
               </div>
             )}
           </main>
-          <footer className="p-2 text-center">
-            <span className="text-[8px] text-gray-400">created by King Bob</span>
-          </footer>
+          
         </div>
         {isDesktop && (
           <>
             <motion.div
-              className="w-px bg-gray-200 dark:bg-gray-700 opacity-50 my-20"
+              className="w-px bg-boxlight dark:bg-boxdark my-20"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             />
             <motion.div
@@ -719,7 +723,7 @@ export default function Page() {
                   href="https://buymeacoffee.com/KingBob"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
+                  className="text-textlight dark:text-textdark  hover:text-foreground transition-colors duration-200 focus:outline-none"
                 >
                   <Coffee size={24} />
                 </a>
@@ -727,7 +731,7 @@ export default function Page() {
                   <DialogTrigger asChild>
                     <button 
                       ref={settingsButtonRef}
-                      className="text-foreground/70 dark:text-zinc-300  hover:text-foreground transition-colors duration-200 focus:outline-none"
+                      className="text-textlight dark:text-textdark  hover:text-foreground transition-colors duration-200 focus:outline-none"
                     >
                       <Gear size={24} />
                     </button>

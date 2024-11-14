@@ -21,10 +21,15 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
   };
 
   const formatText = (text: string) => {
+    // ** 가 있는지 확인
+    if (!text.includes('**')) {
+      return text;
+    }
+    
     // 강조 표시된 텍스트를 찾아서 span으로 감싸기
     return text.split('**').map((part, index) => {
       // 홀수 인덱스(강조 표시될 부분)인 경우에만 강조 스타일 적용
-      return index % 2 === 1 ? (
+      return index % 2 === 0 ? (
         <span key={index} className="font-bold">{part}</span>
       ) : (
         part
@@ -47,15 +52,15 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
           <span
             role="img"
             aria-label="link"
-            className="mr-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 cursor-pointer"
+            className="mr-2 text-bluelight dark:text-bluedark cursor-pointer"
             onClick={() => handleQuestionClick(item)}
           >
             {isClicked ? <IconCheck className='flex h-5 w-5 pb-1' /> : <IconPlus className='flex h-5 w-5 pb-1' />}
           </span>
         )}
         <p className={`${
-          isSummary ? 'font-bold text-base text-gray-700 dark:text-zinc-400' : 'text-sm sm:text-base text-gray-700 dark:text-zinc-400 cursor-pointer'
-        } ${isClicked ? 'text-blue-600 dark:text-blue-400' : ''} font-handwriting`}
+          isSummary ? 'text-base text-black dark:text-white' : 'text-sm sm:text-base font-light text-textlight dark:text-boxlight cursor-pointer'
+        } ${isClicked ? 'text-bluelight dark:text-bluedark' : ''} font-handwriting`}
            onClick={() => !isSummary && handleQuestionClick(item)}>
           {formatText(item)}
         </p>

@@ -58,7 +58,7 @@ const SimilarContent: React.FC<SimilarContentProps> = ({
     <div className="bg-card-foreground/[3%] dark:bg-card-foreground/5 rounded-xl p-5 mt-4">
       <div className="flex flex-col mb-3">
         <div className="flex items-center">
-          <h2 className="text-2xl font-bold font-handwriting dark:text-gray-400">
+          <h2 className="text-2xl font-bold font-handwriting text-textlight dark:text-textdark">
             Shared by our users 🤝
           </h2>
         </div>
@@ -68,10 +68,13 @@ const SimilarContent: React.FC<SimilarContentProps> = ({
           <li key={index} className="group relative">
             <div 
               className="flex items-center cursor-pointer
-                         text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300"
+                         text-textlight dark:text-boxlight hover:text-textlight dark:hover:text-textdark"
               onClick={(e) => handleLinkClick(e, doc.url)}
             >
-              <span className="flex-shrink-0 mr-2 mb-1">⚡</span>
+              {/* <span className="flex-shrink-0 mr-2 mb-1">⚡</span> */}
+              <span className="flex-shrink-0 mr-3 mb-1">
+              <div className="flex-shrink-0 w-2 h-2 rounded-full bg-bluelight dark:bg-bluedark animate-pulse" />
+              </span>
               <span className="font-handwriting text-left text-base">
                 {truncateText(decodeHtmlEntities(doc.title))}
               </span>

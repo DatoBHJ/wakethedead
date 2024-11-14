@@ -84,12 +84,12 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
   };
 
   const components: Components = {
-    h1: ({ children }) => <h1 className="mt-5 text-sm sm:text-base font-handwriting font-bold break-words">{renderWithClickableTimestamps(children)}</h1>,
-    h2: ({ children }) => <h2 className="mt-5 mb-5 text-gray-700 dark:text-zinc-400 bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-base sm:text-lg font-handwriting font-semibold break-words">{renderWithClickableTimestamps(children)}</h2>,
-    h3: ({ children }) => <h3 className="text-xl font-handwriting font-semibold mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
-    h4: ({ children }) => <h4 className="text-lg font-handwriting font-semibold mt-3 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h4>,
-    h5: ({ children }) => <h5 className="text-sm sm:text-base font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h5>,
-    h6: ({ children }) => <h6 className="text-sm sm:text-base font-handwriting font-semibold mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h6>,
+    h1: ({ children }) => <h1 className="mt-5 text-sm sm:text-base font-bold break-words">{renderWithClickableTimestamps(children)}</h1>,
+    h2: ({ children }) => <h2 className="font-handwriting mt-5 mb-5 text-black dark:text-white bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl p-3 px-6 text-lg sm:text-xl break-words leading-7">{renderWithClickableTimestamps(children)}</h2>,
+    h3: ({ children }) => <h3 className="text-xl font-helvetica mt-4 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h3>,
+    h4: ({ children }) => <h4 className="text-lg font-helvetica mt-3 mb-2 px-4 break-words">{renderWithClickableTimestamps(children)}</h4>,
+    h5: ({ children }) => <h5 className="text-sm sm:text-base font-helvetica mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h5>,
+    h6: ({ children }) => <h6 className="text-sm sm:text-base font-helvetica mt-2 mb-1 px-4 break-words">{renderWithClickableTimestamps(children)}</h6>,
     p: ({ children }) => {
       const processedChildren = React.Children.map(children, child => {
         if (typeof child === 'string') {
@@ -112,7 +112,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       });
   
       return (
-        <p className="p-4 leading-relaxed break-words font-handwriting text-sm sm:text-base">
+        <p className="p-4 leading-relaxed break-words text-sm sm:text-base ">
           {processedChildren}
         </p>
       );
@@ -120,7 +120,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
     ul: ({ children, ...props }: CustomUlOlProps) => {
       const depth = props.depth || 0;
       return (
-        <ul className={`list-none my-2 space-y-2 font-handwriting text-sm sm:text-base ${depth > 0 ? 'ml-4' : ''}`}>
+        <ul className={`list-none my-2 space-y-2 text-sm sm:text-base ${depth > 0 ? 'ml-4' : ''}`}>
           {React.Children.map(children, (child) => 
             React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<CustomLiProps>, { depth: depth + 1 }) : child
           )}
@@ -130,7 +130,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
     ol: ({ children, ...props }: CustomUlOlProps) => {
       const depth = props.depth || 0;
       return (
-        <ol className={`list-none my-2 space-y-2 font-handwriting text-sm sm:text-base ${depth > 0 ? 'ml-4' : ''}`}>
+        <ol className={`list-none my-2 space-y-2 text-sm sm:text-base ${depth > 0 ? 'ml-4' : ''}`}>
           {React.Children.map(children, (child, index) => 
             React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<CustomLiProps>, { depth: depth + 1, index: index + 1 }) : child
           )}
@@ -168,7 +168,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       const indentClass = `ml-${depth * 4}`;
 
       return (
-        <li className={`${indentClass} ${extraClasses} break-words font-handwriting flex items-start mb-2`}>
+        <li className={`${indentClass} ${extraClasses} break-words font-helvetica flex items-start mb-2`}>
           <span className="mr-2 inline-block min-w-[1em] text-center flex-shrink-0 mt-1">{bulletPoint}</span>
           <span className={`${contentClasses} flex-grow`}>
             {childrenArray.map((child, index) => (
@@ -182,7 +182,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       );
     },
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 mt-4 mb-10  break-words font-handwriting text-sm sm:text-base text-gray-700 dark:text-zinc-400 ">
+      <blockquote className="border-l-4 border-bluelight dark:border-bluedark pl-4 mt-4 mb-10  break-words font-handwriting text-base sm:text-lg text-textlight dark:text-boxlight ">
         {renderWithClickableTimestamps(children)}
       </blockquote>
     ),
@@ -200,7 +200,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
         </code>
       )
     },
-    strong: ({ children }) => <strong className="font-bold break-words font-handwriting">{renderWithClickableTimestamps(children)}</strong>,
+    strong: ({ children }) => <strong className="font-bold break-words">{renderWithClickableTimestamps(children)}</strong>,
     em: ({ children }) => <em className="italic break-words font-handwriting">{renderWithClickableTimestamps(children)}</em>,
     a: ({ href, children }) => (
       <a
@@ -236,15 +236,15 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
   };
 
   return (
-    <div className="w-full overflow-hidden text-gray-700 dark:text-zinc-400">
+    <div className="w-full overflow-hidden text-textlight dark:text-boxlight">
       {isEditing ? (
         <textarea
           value={editedContent}
           onChange={(e) => setEditedContent(e.target.value)}
-          className="w-full h-[calc(100vh-200px)] p-4 border rounded font-handwriting text-sm sm:text-base"
+          className="w-full h-[calc(100vh-200px)] p-4 border rounded text-sm sm:text-base"
         />
       ) : (
-        <article className="prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none font-handwriting">
+        <article className="prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none ">
           <ReactMarkdown components={components} skipHtml>
             {editedContent}
           </ReactMarkdown>

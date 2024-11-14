@@ -150,16 +150,17 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               </div>
             )}
           </div>
-          <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} px-2 bg-gradient-to-t from-background to-[rgba(255,255,255,0)] dark:from-background dark:to-[rgba(23,25,35,0)] pb-4 pt-2`}>
+          <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} `}>
             <div className="mx-auto max-w-xl">
               <form ref={formRef} onSubmit={handleFormSubmit}>
-                <div className="relative px-3 py-4 pt-5">
+                <div className="relative px-6 pb-8 pt-5">
+                <p className='uppercase text-lg font-light pl-2 pb-1'>search</p>
                   <Textarea
                     ref={inputRef}
                     tabIndex={0}
                     onKeyDown={onKeyDown}
-                    placeholder="king bob wake the dead"
-                    className="w-full placeholder:text-md rounded-none bg-transparent border-b-[1px] border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors text-black dark:text-white resize-none overflow-hidden"
+                    placeholder=""
+                    className="w-full placeholder:text-md rounded-none pl-2 bg-transparent text-secondarylight dark:text-secondarydark font-light resize-none overflow-hidden"
                     spellCheck={false}
                     autoComplete="off"
                     autoCorrect="off"
@@ -168,20 +169,8 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                   />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <motion.button 
-                        type="submit" 
-                        className="absolute right-3 bottom-6 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 focus:outline-none bg-transparent"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={inputValue === ''}
-                      >
-                        <ArrowUp size={24} weight="bold" />
-                      </motion.button>
-                    </TooltipTrigger>
-                    <TooltipContent>Send message</TooltipContent>
-                  </Tooltip>
+                  <div className="bg-transparent border-b-[1px] border-bluelight dark:border-bluedark"></div>
+
                 </div>
               </form>
             </div>
