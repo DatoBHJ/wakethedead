@@ -64,7 +64,7 @@ Wake The Dead is an AI-powered platform that makes your content discovery and le
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/wakethedead.git
+git clone https://github.com/datobhj/wakethedead.git
 cd wakethedead
 ```
 
