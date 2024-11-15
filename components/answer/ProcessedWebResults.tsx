@@ -81,7 +81,7 @@ const ProcessedWebResultsComponent: React.FC<ProcessedWebResultsComponentProps> 
                             ${addedLinks.has(linkId) ? 'opacity-70' : ''}`}
                 onClick={() => handleLinkClick(link.url)}
               >
-                <span className="flex-shrink-0 mr-2 mb-1">⚡</span>
+                <span className="flex-shrink-0 mr-2 mb-1">🍌</span>
                 <span className="font-handwriting text-left text-base">
                   {link.title.includes('Something went wrong!') ? link.url : link.title}
                 </span>

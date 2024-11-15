@@ -34,10 +34,10 @@ const FollowUpComponent = ({ followUp, handleFollowUpClick }: { followUp: Follow
                             {clickedQuestions.has(question) ? (
                                 <Check className="w-5 h-5 text-green-500" />
                             ) : (
-                                <IconPlus className="h-5 w-5 text-zinc-400  group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors duration-200" />
+                                <IconPlus className="h-5 w-5 text-textlight dark:text-textdark group-hover:text-blue-500 group-hover:dark:text-blue-400 transition-colors duration-200" />
                             )}
                         </div>
-                        <p className={`text-base flex-1 ${clickedQuestions.has(question) ? 'text-gray-500' : 'text-card-foreground dark:text-zinc-300  group-hover:text-purple-700 dark:group-hover:text-purple-300'} transition-colors duration-200`}>
+                        <p className={`text-base flex-1 ${clickedQuestions.has(question) ? 'text-gray-500' : 'text-card-foreground dark:text-zinc-300  group-hover:text-blue-500 group-hover:dark:text-blue-400'} transition-colors duration-200`}>
                             {question}
                         </p>
                         {clickedQuestions.has(question) && (

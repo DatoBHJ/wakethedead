@@ -105,7 +105,7 @@ const VideosComponent: React.FC<VideosComponentProps> = ({ videos, onAddLink }) 
           {addedLinks.has(video.link) ? (
             <IconCheck className="w-6 h-6 text-green-500" />
           ) : (
-            <span className="text-2xl">⚡️</span>
+            <span className="text-2xl">🍌</span>
           )}
           <span className="absolute bottom-full right-0 transform translate-y-[-10px] bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
             {addedLinks.has(video.link) ? 'Video beamed up!⚡️' : 'Beam me up! 🚀'}
