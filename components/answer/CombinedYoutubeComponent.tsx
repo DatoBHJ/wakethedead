@@ -496,10 +496,10 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
 
   const renderButtons = () => {
     const currentCard = cards[currentIndex];
-    // const isSpecialLink = currentCard?.link === 'https://www.wakethedead.ai/tips';
+    const isSpecialLink = currentCard?.link === 'https://www.wakethedead.ai/tips';
 
     return (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 pb-3">
         <Button
           variant="outline"
           size="icon"
@@ -524,7 +524,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
         >
           {copiedStates[currentVideoId] ? <Check size={20} /> : <Copy size={20} />}
         </Button>
-        {/* {!isSpecialLink && ( */}
+        {!isSpecialLink && (
           <>
             <Button
               variant="outline"
@@ -544,7 +544,7 @@ const CombinedYoutubeComponent: React.FC<CombinedYoutubeComponentProps> = React.
               {isEditing ? <FloppyDisk size={20} /> : <PencilSimple size={20} />}
             </Button>
           </>
-      {/* )}    */}
+      )}
       </div>
     );
   };

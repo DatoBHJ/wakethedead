@@ -6,6 +6,7 @@ import { getYouTubeVideoId } from '@/lib/youtube-transcript';
 import { fetchVideoInfo } from '@/lib/utils/fetchinfo';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Coffee } from "@phosphor-icons/react";
+import { motion } from 'framer-motion';
 
 interface YouTubeCard {
   id: string;
@@ -128,20 +129,26 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
         ))}
       </div>
 
-      <div className="p-6 mb-8 bg-background dark:bg-background">
+      <div className="p-6 bg-background dark:bg-background">
         <form onSubmit={handleAddLink} className="flex flex-col mb-5">
           <div className="relative w-full">
             <div className="flex items-center pb-2">
-              <span className="flex-shrink-0 text-blue-500 dark:text-blue-400">🍌</span>
+              <span className="flex-shrink-0">🍌</span>
               <input
                 id="add-link"
                 type="text"
                 value={newLink}
                 onChange={(e) => setNewLink(e.target.value)}
                 placeholder="Paste more links here!"
-                className="flex-grow pl-2 pr-8 bg-background text-black dark:text-white w-full"
+                className="flex-grow pl-2 bg-background text-black dark:text-white w-full"
               />
-              <div className="absolute bottom-0 left-6 right-6 bg-transparent border-b-[1px] border-bluelight dark:border-bluedark"></div>
+              <div className="absolute bottom-0 left-6 right-0 bg-transparent border-b-[1px] border-bluelight dark:border-bluedark"></div>
+              <motion.button 
+                type="submit" 
+                className=" text-textlight dark:text-textdark "
+              >
+                <ArrowRight size={22} weight="bold" />
+              </motion.button>
             </div>
           </div>
         </form>
@@ -191,6 +198,9 @@ const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(({
           </Button>
         </div>
       </div>
+      <footer className="p-2 text-center">
+            <span className="text-[8px] text-gray-400">created by King Bob</span>
+          </footer>
     </div>
   );
 });

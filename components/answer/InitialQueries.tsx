@@ -45,7 +45,7 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
       <li
         key={index}
         className={`flex items-center p-3 ${isDesktop ? 'my-1 md:my-3' : 'my-1'} ${
-          isSummary ? 'backdrop-blur-xl bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl px-6' : 'bg-transparent'
+          isSummary ? 'bg-card-foreground/[3%] dark:bg-card-foreground/[7%] rounded-xl px-6' : 'bg-transparent'
         } ${isClicked ? 'opacity-70' : ''}`}
       >
         {!isSummary && (

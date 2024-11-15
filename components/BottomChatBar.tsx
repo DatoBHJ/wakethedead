@@ -92,7 +92,7 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
             </button>
           )}
-          <div className={`flex-1 overflow-y-auto ${isDesktop ? 'py-10' : 'py-4'} pb-20 sm:pb-0 flex flex-col`}>
+          <div className={`flex-1 overflow-y-auto ${isDesktop ? 'py-10' : 'py-4'} pb-4 flex flex-col`}>
             {messages.length === 0 && !inputValue ? (
               <div className="flex-grow flex items-center justify-center pr-0 sm:pr-36 md:pr-0">
                 <InitialQueries
@@ -150,11 +150,12 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
               </div>
             )}
           </div>
-          <div className={`${isDesktop ? 'relative' : 'absolute bottom-0 left-0 right-0'} `}>
+          <div className="relative">
             <div className="mx-auto max-w-xl">
               <form ref={formRef} onSubmit={handleFormSubmit}>
                 <div className="relative px-6 pb-8 pt-5">
                 <p className='uppercase text-lg font-light pl-2 pb-1'>search</p>
+                <div className="relative">
                   <Textarea
                     ref={inputRef}
                     tabIndex={0}
@@ -170,7 +171,13 @@ const BottomChatBar: React.FC<BottomChatBarProps> = ({
                     onChange={(e) => setInputValue(e.target.value)}
                   />
                   <div className="bg-transparent border-b-[1px] border-bluelight dark:border-bluedark"></div>
-
+                  <motion.button 
+                    type="submit" 
+                    className="absolute right-0 top-0 pb-1 text-textlight dark:text-textdark "
+                  >
+                    <ArrowUp size={22} weight="bold" />
+                  </motion.button>
+                  </div>
                 </div>
               </form>
             </div>

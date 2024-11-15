@@ -648,7 +648,7 @@ export default function Page() {
              >
                <div className="w-full flex flex-col items-start gap-y-8">
                <motion.div
-                className="p-12 w-40 h-40 sm:w-60 sm:h-60 justify-center mx-auto relative"
+                className="p-8 sm:p-12 w-40 h-40 sm:w-60 sm:h-60 justify-center mx-auto relative"
                 initial={{ opacity: 1 }}
                 animate={{ 
                   scale: isInputFocused ? 1.2 : [1, 1.2, 1],
@@ -659,7 +659,7 @@ export default function Page() {
                   ease: "easeInOut"
                 }}
               >
-                <div className="w-full h-full rounded-full bg-bluelight dark:bg-bluedark blur-xl" />
+                <div className="w-full h-full rounded-full bg-bluelight dark:bg-bluedark blur-lg sm:blur-xl" />
               </motion.div>
            
                  <div className="w-full mt-0 sm:mt-16 px-4 sm:px-8">
@@ -688,6 +688,12 @@ export default function Page() {
                           className="w-full rounded-none pl-2 pb-2 bg-transparent text-secondarylight dark:text-secondarydark font-light"
                         />
                         <div className="absolute bottom-0 left-6 right-6 bg-transparent border-b-[1px] border-bluelight dark:border-bluedark"></div>
+                        <motion.button 
+                          type="submit" 
+                          className="pb-1 text-textlight dark:text-textdark "
+                        >
+                          <ArrowRight size={22} weight="bold" />
+                        </motion.button>
                       </div>
                     </motion.form>
                   </div>

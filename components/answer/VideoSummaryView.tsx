@@ -112,7 +112,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       });
   
       return (
-        <p className="p-4 leading-relaxed break-words text-sm sm:text-base ">
+        <p className="p-4 leading-relaxed break-words ">
           {processedChildren}
         </p>
       );
@@ -182,7 +182,7 @@ const EditableArticleView: React.FC<EditableArticleViewProps> = ({ content, onTi
       );
     },
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-bluelight dark:border-bluedark pl-4 mt-4 mb-10  break-words font-handwriting text-base sm:text-lg text-textlight dark:text-boxlight ">
+      <blockquote className="border-l-4 border-bluelight dark:border-bluedark pl-4 mt-4 mb-10 text-base sm:text-lg break-words font-handwriting text-textlight dark:text-boxlight ">
         {renderWithClickableTimestamps(children)}
       </blockquote>
     ),
