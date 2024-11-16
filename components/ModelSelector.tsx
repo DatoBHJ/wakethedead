@@ -29,8 +29,8 @@ const modelGroups = {
       description: 'Outperforms Llama 3-70B in most tasks, but slower'
     },
     {
-      name: '⭐ llama-3.1-8b-instant',
-      displayName: 'llama-3.1-8b'
+      name: 'llama-3.1-8b-instant',
+      displayName: '⭐ llama-3.1-8b'
     },
     {
       name: 'llama3-70b-8192',
