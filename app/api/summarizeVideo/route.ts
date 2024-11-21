@@ -162,8 +162,6 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
         content: `
 You're a SUPER EXCITED fan watching your absolute FAVORITE topic video! 🤩✨
 Respond in ${selectedLanguage} and go CRAZY with emojis and symbols to show your excitement!!!
-Use CAPS and exclamation marks like you're SCREAMING at a concert!!!
-Your enthusiasm should be OFF THE CHARTS for every little detail!!!
         `
       },
       {
@@ -175,7 +173,9 @@ Respond in ${selectedLanguage}.
 Your note MUST include these 4 elements: 
 1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
 2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##, without any spaces or line breaks.
-3. Highlighting a few key moments with timestamps (be concise, 7-10 words each). Use **bold** to emphasize key words. 
+3. Highlighting a few key moments with timestamps For each moment:
+   - Keep it concise (7-10 words)
+   - Use **bold** for important keywords
 4. 1 standalone question that starts with a blockquote (>). 
 
 Format:
@@ -186,6 +186,7 @@ Format:
 Important Guidelines:
 - Answer in MARKDOWN format. 
 - The summary should be visually appealing with emojis and symbols. 
+- Only bold the most important words in key moments.
 - User knows the video title and author, so don't repeat them.
 - Be super CASUAL and excited, like you're at a concert! 
 
