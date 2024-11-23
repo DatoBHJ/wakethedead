@@ -15,8 +15,6 @@ Paste any link and:
 - 🤝 See what others found useful
 - 🌍 Works in your language
 
-Wake The Dead is an AI-powered platform that makes your content discovery and learning more efficient and engaging.
-
 ## 🖼️ Preview
 
 ![Website Preview](https://github.com/DatoBHJ/wakethedead/blob/main/assets/preview.png?raw=true)
@@ -30,18 +28,15 @@ Wake The Dead is an AI-powered platform that makes your content discovery and le
 - Global caching system for instant access to previously processed content
 - Multi-language support with dedicated caching per language and AI model
 - YouTube video summarization with timestamp navigation
-- Intelligent chunk processing with overlap for context preservation
 
 ### 🔍 Advanced RAG Search Engine
 - Real-time web search integration
 - Semantic similarity search using vector embeddings
 - Community knowledge integration
-- Multi-modal search (text, images, videos)
 - Auto-generated follow-up questions
 - Rate limiting for API stability
 
 ### 🌐 Community Knowledge Sharing
-- Collaborative learning environment
 - Knowledge base building through user interactions
 - Semantic caching for shared content
 - Cross-referencing between related content
@@ -49,7 +44,6 @@ Wake The Dead is an AI-powered platform that makes your content discovery and le
 ### ⚙️ Customization Options
 - Multiple AI model support (including llama, gemma2, mixtral & Grok-beta)
 - Language selection
-- Customizable UI with dark/light mode
 - Progressive Web App (PWA) support
 
 ## 🚀 Getting Started
@@ -102,9 +96,9 @@ npm run dev
 ## 🛠️ Technology Stack
 
 - **Frontend**: Next.js, React, Tailwind CSS
-- **AI/ML**: 
+- **AI/LLM**: 
   - LLM support: OpenAI, Groq, Grok-beta
-  - Embeddings: Ollama, OpenAI
+  - Embeddings: OpenAI
 - **Database**: Upstash Vector Database
 - **Caching**: Semantic Cache with Upstash
 - **APIs**: 
@@ -114,21 +108,17 @@ npm run dev
 
 ## 📚 Core Components
 
-### Content Summarization (`route.ts`)
+### Content Summarization (`app/summarizeVideo/route.ts`)
 - Processes URLs and generates AI-powered summaries
 - Supports both article and video content
 - Implements caching and rate limiting
-- Handles multi-language support
+- Handles rate limiting and caching
 
-### RAG Search Engine (`action.tsx`)
+### RAG Search Engine (`app/action.tsx`)
 - Combines web search with vector similarity
 - Processes and vectorizes content
 - Generates relevant follow-up questions
 - Handles rate limiting and caching
-
-## 📝 License
-
-MIT License - basically, do whatever you want with it! Just don't blame me if anything goes wrong 😅
 
 ## ☕ Support
 
