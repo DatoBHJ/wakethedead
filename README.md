@@ -79,7 +79,6 @@ UPSTASH_REDIS_REST_URL_2=your_upstash_url_2      # Required: For chunk embedding
 UPSTASH_REDIS_REST_TOKEN_2=your_upstash_token_2  # Required: For chunk embeddings
 
 # Optional API Keys
-NEXT_PUBLIC_BASE_URL=http://localhost:3000        # Optional: Default is localhost:3000
 OLLAMA_BASE_URL=http://localhost:11434/v1         # Optional: For local embeddings
 SERPER_API=your_serper_api_key                    # Optional: Alternative search API
 SEARCH_API_KEY=your_search_api_key                # Optional: Alternative search API
@@ -127,17 +126,10 @@ If you think this is cool, you can:
 - 🌐 Visit [WakeTheDead.ai](https://www.wakethedead.ai)
 - ☕ [Buy me a coffee](https://buymeacoffee.com/KingBob) (I run on caffeine)
 
-## 🙏 Acknowledgments
-
-- OpenAI for AI capabilities
-- Upstash for vector database and caching solutions
-- All contributors and supporters of the project
-
 ## 📞 Contact
 
 - 🐦 DM me on X: [@DatoBHJ](https://x.com/DatoBHJ)
 - 📧 Email me: datobhj@gmail.com
-- 🌐 Visit: [WakeTheDead.ai](https://www.wakethedead.ai)
 
 ---
 
