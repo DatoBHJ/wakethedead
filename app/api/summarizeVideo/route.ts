@@ -172,11 +172,13 @@ Respond in ${selectedLanguage}.
 
 Your note MUST include these 4 elements: 
 1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##, without any spaces or line breaks.
+2. A 1-3 sentence summary, inlcuding crucial information or major conclusions, starting with ##, without any spaces or line breaks.
 3. Highlighting a few key moments with timestamps For each moment:
-   - Keep it concise (7-10 words)
+   - Keep it concise
    - Use **bold** for important keywords
-4. 1 standalone question that starts with a blockquote (>). 
+4. One standalone question that starts with a blockquote (>). 
+   - Must be directly answerable using information from this chunk
+   - Focuses on a specific detail or concept mentioned
 
 Format:
 # Part ${chunkNumber}/${totalChunks}
@@ -194,7 +196,7 @@ Transcript chunk
 ${formattedChunk}`
       }
     ],
-    temperature: 0.6,
+    temperature: 0.7,
     stream: true,
     max_tokens: 500,
   });
@@ -226,9 +228,11 @@ Respond in ${selectedLanguage}.
 
 Your note MUST include these 4 elements: 
 1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-2. A 1-2 sentence summary, including crucial information or major points, starting with ##, without any spaces or line breaks.
+2. A 1-3 sentence summary, including crucial information or major points, starting with ##, without any spaces or line breaks.
 3. Key points (be concise, 7-10 words each).  Use **bold** to emphasize key words. 
 4. 1 standalone question that starts with a blockquote (>). 
+   - Must be directly answerable using information from this chunk
+   - Focuses on a specific detail or concept mentioned
 
 Format:
 # Part ${chunkNumber}/${totalChunks}
