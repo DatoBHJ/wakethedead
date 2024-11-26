@@ -10,18 +10,15 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Document as DocumentInterface } from 'langchain/document';
 import { performWebSearch, performImageSearch, performVideoSearch } from './tools/Providers_w_serper';
+import { functionCalling } from './function-calling';
 
 // Rate Limiting Dependencies
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { headers } from 'next/headers';
 
-// Runtime Configuration
 export const runtime = 'edge';
 
-/**
- * Interface Definitions
- */
 interface SearchResult {
   title: string;
   url: string;
@@ -41,9 +38,6 @@ interface NewsResult {
   source: string;
 }
 
-/**
- * Global Configurations and Initializations
- */
 let openai: OpenAI;
 let ratelimit: Ratelimit | undefined;
 
@@ -339,6 +333,8 @@ function removeDuplicates(
  * @param query - User's search query
  * @returns Boolean indicating if query is news-related
  */
+
+// probably dumbeest way to do this but it costs 0$ and the important thing is that it works
 function isNewsQuery(query: string): boolean {
   const newsKeywords = [
     'news', 'headline', 'breaking', 'latest', 
@@ -391,12 +387,17 @@ async function myAction(
     const currentTimestamp = new Date().toISOString();
     const isNewsSearch = isNewsQuery(userMessage);
 
+    const optimizedQueryResult = await functionCalling(userMessage);
+    const searchQuery = optimizedQueryResult.optimizedQuery || userMessage;
+
+    console.log('Optimized search query:', searchQuery,'\n');
+
     // Execute initial searches in parallel for better performance
     const [webSearchResults, relevantDocuments, images, videos] = await Promise.all([
-      performWebSearch(userMessage, config.startIndexOfPagesToScan, config.numberOfPagesToScan, isNewsSearch),
-      getUserSharedDocument(userMessage, embeddings, index),
-      isRefresh ? null : performImageSearch(userMessage),
-      isRefresh ? null : performVideoSearch(userMessage)
+        performWebSearch(searchQuery, config.startIndexOfPagesToScan, config.numberOfPagesToScan, isNewsSearch),
+        getUserSharedDocument(searchQuery, embeddings, index),
+        isRefresh ? null : performImageSearch(searchQuery),
+        isRefresh ? null : performVideoSearch(searchQuery)
     ]);
 
     // Provide immediate feedback with initial results
