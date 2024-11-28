@@ -21,14 +21,11 @@ const InitialQueries: React.FC<InitialQueriesProps> = ({ questions, handleFollow
   };
 
   const formatText = (text: string) => {
-    // ** 가 있는지 확인
     if (!text.includes('**')) {
       return text;
     }
     
-    // 강조 표시된 텍스트를 찾아서 span으로 감싸기
     return text.split('**').map((part, index) => {
-      // 홀수 인덱스(강조 표시될 부분)인 경우에만 강조 스타일 적용
       return index % 2 === 0 ? (
         <span key={index} className="font-bold">{part}</span>
       ) : (
