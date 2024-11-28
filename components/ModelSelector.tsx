@@ -11,12 +11,12 @@ const modelGroups = {
   ],
   'Meta': [
     {
-      name: 'llama-3.2-90b-text-preview',
+      name: 'llama-3.2-90b-vision-preview',
       displayName: 'llama-3.2-90b',
       description: 'Latest and largest Llama model'
     },
     {
-      name: 'llama-3.2-11b-text-preview',
+      name: 'llama-3.2-11b-vision-preview',
       displayName: 'llama-3.2-11b'
     },
     {

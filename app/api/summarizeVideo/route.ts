@@ -172,9 +172,12 @@ Respond in ${selectedLanguage}.
 
 Your note MUST include these 4 elements: 
 1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-2. A 1-2 sentence summary, inlcuding crucial information or major conclusions, starting with ##, without any spaces or line breaks.
+2. A 1-2 sentence summary, including:
+   - Crucial information or major conclusions
+   - key statistic, rating, or numerical insight if provided.
+   - Start with ##, without spaces or line breaks
 3. Highlighting a few key moments with timestamps For each moment:
-   - Keep it concise (7-10 words)
+   - Keep it concise 
    - Use **bold** for important keywords
 4. 1 standalone question that starts with a blockquote (>). 
 
