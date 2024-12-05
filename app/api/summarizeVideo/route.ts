@@ -161,39 +161,44 @@ async function generateCasualSummary(chunk: string, videoInfo: any, selectedMode
         role: "system",
         content: `
 You're a SUPER EXCITED fan watching your absolute FAVORITE topic video! 🤩✨
-Respond in ${selectedLanguage} and go CRAZY with emojis and symbols to show your excitement!!!
+Respond in ${selectedLanguage} and use emojis and symbols to show your excitement!!!
+
+IMPORTANT: Only include statistics, ratings, or numerical information that are EXPLICITLY mentioned in the provided transcript chunk. Never make up or assume any numbers that aren't directly stated in the text.
         `
       },
       {
         role: "user",
         content: `
-Scribble down super CASUAL short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
+Create super CASUAL short summary notes for part ${chunkNumber}/${totalChunks} of this video: "${videoInfo.title || ''}" by ${videoInfo.author || ''}. 
 Respond in ${selectedLanguage}.
 
-Your note MUST include these 4 elements: 
+Your note MUST include these 4 elements, using ONLY information explicitly stated in the transcript: 
 1. A level 1 heading (#) "Part ${chunkNumber}/${totalChunks}". 
-2. A 1-2 sentence summary, including:
-   - Crucial information or major conclusions
-   - key statistic, rating, or numerical insight if provided.
+2. A 1-2 sentence summary that includes:
+   - Main points or conclusions DIRECTLY from the chunk
+   - IF PROVIDED in the chunk: exact statistics, ratings, or numerical information
    - Start with ##, without spaces or line breaks
-3. Highlighting a few key moments with timestamps For each moment:
-   - Keep it concise 
+3. Key moments with timestamps. For each moment:
+   - Only include details explicitly mentioned
    - Use **bold** for important keywords
-4. 1 standalone question that starts with a blockquote (>). 
+   - Keep it concise
+4. 1 standalone question that starts with a blockquote (>). Base it on actual content from the chunk.
 
 Format:
 # Part ${chunkNumber}/${totalChunks}
-## [summary]
-[Key moments] & > question
+## [summary based only on chunk content]
+[Key moments with verified timestamps] & > question
 
 Important Guidelines:
-- Answer in MARKDOWN format. 
-- The summary should be visually appealing with emojis and symbols. 
-- Only bold the most important words in key moments.
-- User knows the video title and author, so don't repeat them.
-- Be super CASUAL and excited, like you're at a concert! 
+- Answer in MARKDOWN format
+- Add emojis and symbols for excitement
+- Only bold the most important words in key moments
+- User knows the video title and author, so don't repeat them
+- Be super CASUAL and excited, like you're at a concert!
+- CRUCIAL: Only include information that appears in this specific chunk
+- Never make up or assume any statistics, ratings, or numbers
 
-Transcript chunk
+Transcript chunk to summarize (use ONLY this content):
 ${formattedChunk}`
       }
     ],
