@@ -7,7 +7,7 @@ const client = new OpenAI({
     baseURL: config.nonOllamaBaseURL,
     apiKey: config.inferenceAPIKey
 });
-const MODEL = 'llama-3.1-70b-versatile'
+const MODEL = 'llama-3.3-70b-versatile'
 
 async function optimizeSearchQuery(query: string): Promise<string> {
     try {
