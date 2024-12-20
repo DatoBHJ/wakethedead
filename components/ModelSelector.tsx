@@ -13,21 +13,20 @@ const modelGroups = {
     {
       name: 'llama-3.3-70b-versatile',
       displayName: 'llama-3.3-70b',
-      // description: 'Outperforms Llama 3-70B in most tasks, but slower'
+      description: 'Latest and largest Llama model'
     },
     {
       name: 'llama-3.2-90b-vision-preview',
       displayName: 'llama-3.2-90b',
-      // description: 'Latest and largest Llama model'
     },
     {
       name: 'llama-3.2-11b-vision-preview',
       displayName: 'llama-3.2-11b'
     },
-    {
-      name: 'llama-3.2-3b-preview',
-      displayName: 'llama-3.2-3b'
-    },
+    // {
+    //   name: 'llama-3.2-3b-preview',
+    //   displayName: 'llama-3.2-3b'
+    // },
     {
       name: 'llama-3.1-8b-instant',
       displayName: '⭐ llama-3.1-8b'
@@ -37,11 +36,11 @@ const modelGroups = {
       displayName: 'llama3-70b',
       description: 'Smarter than gemma2-9b-it but slower'
     },
-    {
-      name: 'llama3-8b-8192',
-      displayName: '⭐ llama3-8b',
-      description: 'Smart and super fast'
-    },
+    // {
+    //   name: 'llama3-8b-8192',
+    //   displayName: '⭐ llama3-8b',
+    //   description: 'Smart and super fast'
+    // },
   ],
   'Mixtral': [
     {
