@@ -132,11 +132,11 @@ const ExampleLinks = ({ onAddLink }) => {
         ))}
       </div>
       
-      <div className="mt-10 sm:mt-16 text-center">
+      {/* <div className="mt-10 sm:mt-16 text-center">
         <Link href="/tips" className=" uppercase font-light text-xs text-secondarylight hover:text-secondarydark dark:text-userguidedarktext dark:hover:text-secondarylight transition-colors duration-200 underline underline-offset-4">
           Wake The Dead: User Guide
         </Link>
-      </div>
+      </div> */}
     </motion.div>
   );
 };

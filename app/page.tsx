@@ -174,7 +174,7 @@ export default function Page() {
   const [cards, setCards] = useState<YouTubeCard[]>([]);              // YouTube video cards data
 
   // Settings and Configuration State
-  const [selectedModel, setSelectedModel] = useState('llama-3.1-8b-instant');// Selected LLM model
+  const [selectedModel, setSelectedModel] = useState('llama-3.3-70b-versatile');// Selected LLM model
   const [selectedLanguage, setSelectedLanguage] = useState('en');      // Selected interface language
 
   // Rate Limiting State
