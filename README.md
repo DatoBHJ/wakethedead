@@ -21,39 +21,6 @@ Paste any link and:
 
 [Try Wake The Dead Now →](https://www.wakethedead.ai)
 
-## 🌟 Features
-
-### ⚡ Smart Skimming
-- AI-powered content summarization for articles, videos, and web pages
-- Global caching system for instant access to previously processed content
-- Multi-language support with dedicated caching per language and AI model
-- YouTube video summarization with timestamp navigation
-
-### 🔍 Advanced RAG Search Engine
-- Real-time web search integration
-- Semantic similarity search using vector embeddings
-- Community knowledge integration
-- Auto-generated follow-up questions
-- Rate limiting for API stability
-
-### 🌐 Community Knowledge Sharing
-- Knowledge base building through user interactions
-- Semantic caching for shared content
-- Cross-referencing between related content
-
-### ⚙️ Customization Options
-- Multiple AI model support (including llama, gemma2, mixtral & Grok-beta)
-- Language selection
-- Progressive Web App (PWA) support
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (Latest LTS version)
-- Next.js 13+
-- An Ollama instance running locally (optional, for local embeddings)
-- Various API keys (see Configuration section)
-
 ### Installation
 
 1. Clone the repository:
@@ -91,46 +58,3 @@ npm run dev
 ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 🛠️ Technology Stack
-
-- **Frontend**: Next.js, React, Tailwind CSS
-- **AI/LLM**: 
-  - LLM support: OpenAI, Groq, Grok-beta
-  - Embeddings: OpenAI
-- **Database**: Upstash Vector Database
-- **Caching**: Semantic Cache with Upstash
-- **APIs**: 
-  - Search: Serper API
-  - Various AI model APIs
-- **Development Tools**: TypeScript, ESLint
-
-## 📚 Core Components
-
-### Content Summarization (`app/summarizeVideo/route.ts`)
-- Processes URLs and generates AI-powered summaries
-- Supports both article and video content
-- Implements caching and rate limiting
-- Handles rate limiting and caching
-
-### RAG Search Engine (`app/action.tsx`)
-- Combines web search with vector similarity
-- Processes and vectorizes content
-- Generates relevant follow-up questions
-- Handles rate limiting and caching
-
-## ☕ Support
-
-If you think this is cool, you can:
-- ⭐ Star this repo
-- 🌐 Visit [WakeTheDead.ai](https://www.wakethedead.ai)
-- ☕ [Buy me a coffee](https://buymeacoffee.com/KingBob) (I run on caffeine)
-
-## 📞 Contact
-
-- 🐦 DM me on X: [@DatoBHJ](https://x.com/DatoBHJ)
-- 📧 Email me: datobhj@gmail.com
-
----
-
-Built with 🧠 and ❤️ by someone who drinks too much coffee
